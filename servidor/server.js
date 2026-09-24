@@ -16,22 +16,32 @@ const db = require('./db');
 
 const PORT = process.env.PORT || 3000;
 
-// Diretórios da nova arquitetura isolada
+// Diretórios da nova arquitetura isolada (Busca resiliente em todos os caminhos possíveis)
+const possibleAppDirs = [
+  path.join(__dirname, 'aplicativo'),
+  path.join(__dirname, '..', 'aplicativo'),
+  path.join(process.cwd(), 'aplicativo'),
+  path.join(process.cwd(), '..', 'aplicativo'),
+  __dirname
+];
+
+let APLICATIVO_DIR = __dirname;
+for (const dir of possibleAppDirs) {
+  if (fs.existsSync(path.join(dir, 'assets', 'icons')) || fs.existsSync(path.join(dir, 'index.html'))) {
+    APLICATIVO_DIR = dir;
+    break;
+  }
+}
+
 const DB_DIR = fs.existsSync(path.join(__dirname, 'database'))
   ? path.join(__dirname, 'database')
-  : path.join(__dirname, '..', 'database');
-
-const APLICATIVO_DIR = fs.existsSync(path.join(__dirname, '..', 'aplicativo'))
-  ? path.join(__dirname, '..', 'aplicativo')
-  : __dirname;
+  : (fs.existsSync(path.join(process.cwd(), 'database')) ? path.join(process.cwd(), 'database') : path.join(__dirname, '..', 'database'));
 
 const ADMIN_DIR = fs.existsSync(path.join(__dirname, 'admin'))
   ? path.join(__dirname, 'admin')
-  : __dirname;
+  : (fs.existsSync(path.join(process.cwd(), 'admin')) ? path.join(process.cwd(), 'admin') : __dirname);
 
-const ASSETS_DIR = fs.existsSync(path.join(APLICATIVO_DIR, 'assets'))
-  ? path.join(APLICATIVO_DIR, 'assets')
-  : (fs.existsSync(path.join(__dirname, 'assets')) ? path.join(__dirname, 'assets') : __dirname);
+const ASSETS_DIR = path.join(APLICATIVO_DIR, 'assets');
 
 // Ensure DB directory exists
 if (!fs.existsSync(DB_DIR)) {
@@ -2913,33 +2923,27 @@ const server = http.createServer(async (req, res) => {
     filePath = path.join(APLICATIVO_DIR, 'manifest.json');
   } else if (pathname.startsWith('/assets/')) {
     const relAsset = pathname.replace(/^\/assets\//, '');
-    const inApp = path.join(APLICATIVO_DIR, 'assets', relAsset);
-    const inServer = path.join(__dirname, 'assets', relAsset);
-    const inAdmin = path.join(ADMIN_DIR, 'assets', relAsset);
-    if (fs.existsSync(inApp)) {
-      filePath = inApp;
-    } else if (fs.existsSync(inServer)) {
-      filePath = inServer;
-    } else if (fs.existsSync(inAdmin)) {
-      filePath = inAdmin;
-    } else {
-      filePath = inApp;
-    }
+    const possiblePaths = [
+      path.join(APLICATIVO_DIR, 'assets', relAsset),
+      path.join(process.cwd(), 'aplicativo', 'assets', relAsset),
+      path.join(process.cwd(), 'assets', relAsset),
+      path.join(__dirname, 'assets', relAsset),
+      path.join(__dirname, '..', 'aplicativo', 'assets', relAsset),
+      path.join(ADMIN_DIR, 'assets', relAsset)
+    ];
+
+    filePath = possiblePaths.find(p => fs.existsSync(p)) || possiblePaths[0];
   } else {
     // Check APLICATIVO_DIR first, then ADMIN_DIR, then server root
-    const appPath = path.join(APLICATIVO_DIR, pathname);
-    const adminPath = path.join(ADMIN_DIR, pathname);
-    const serverPath = path.join(__dirname, pathname);
+    const possiblePaths = [
+      path.join(APLICATIVO_DIR, pathname),
+      path.join(process.cwd(), 'aplicativo', pathname),
+      path.join(ADMIN_DIR, pathname),
+      path.join(process.cwd(), pathname),
+      path.join(__dirname, pathname)
+    ];
 
-    if (fs.existsSync(appPath)) {
-      filePath = appPath;
-    } else if (fs.existsSync(adminPath)) {
-      filePath = adminPath;
-    } else if (fs.existsSync(serverPath)) {
-      filePath = serverPath;
-    } else {
-      filePath = appPath;
-    }
+    filePath = possiblePaths.find(p => fs.existsSync(p)) || possiblePaths[0];
   }
 
   serveStatic(res, filePath);
