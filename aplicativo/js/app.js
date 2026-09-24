@@ -1267,11 +1267,9 @@ const App = (function() {
     const adminRow = document.getElementById('admin-access-row');
     if (adminRow) adminRow.style.display = isAdmin ? 'block' : 'none';
 
-    const headerBadgePass = document.getElementById('header-admin-badge-pass');
-    if (headerBadgePass) headerBadgePass.style.display = isAdmin ? 'inline-flex' : 'none';
-
-    const headerBadgeDrv = document.getElementById('header-admin-badge-drv');
-    if (headerBadgeDrv) headerBadgeDrv.style.display = isAdmin ? 'inline-flex' : 'none';
+    document.querySelectorAll('.header-admin-badge').forEach(el => {
+      el.style.display = isAdmin ? 'inline-flex' : 'none';
+    });
   }
 
   let isVerifyingSession = false;
@@ -4803,8 +4801,24 @@ const App = (function() {
         localStorage.setItem('maxdrive_admin_email', state.currentUser.email);
       } catch (_) {}
     }
-    const adminBase = (window.MAXDRIVE_CONFIG && window.MAXDRIVE_CONFIG.API_BASE) || '';
-    window.open(adminBase ? `${adminBase}/admin.html` : '/admin.html', '_blank');
+    const isCapacitorNative = !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform()) ||
+                             window.location.protocol === 'file:' ||
+                             window.location.protocol === 'capacitor:';
+
+    let adminBase = (window.MAXDRIVE_CONFIG && window.MAXDRIVE_CONFIG.API_BASE) || '';
+    if (!adminBase || isCapacitorNative) {
+      adminBase = (window.MAXDRIVE_CONFIG && window.MAXDRIVE_CONFIG.API_BASE) || 'https://maxdrive-9us2.onrender.com';
+    }
+    adminBase = adminBase.replace(/\/+$/, '');
+    const adminUrl = adminBase ? `${adminBase}/admin.html` : '/admin.html';
+
+    if (isCapacitorNative) {
+      try {
+        window.open(adminUrl, '_system');
+        return;
+      } catch (_) {}
+    }
+    window.open(adminUrl, '_blank');
   }
 
   async function logout(force = false) {

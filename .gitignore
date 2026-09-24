@@ -1,7 +1,26 @@
-﻿node_modules/
+# Dependências e caches
+node_modules/
+.gradle/
+.idea/
+*.log
+
+# Binários pesados locais
 *.apk
 *.xz
+
+# Variáveis de ambiente sensíveis
 .env
+
+# Builds
+/build/
+android/build/
+android/app/build/
 dist/
-build/
-servidor/database/*.json
+
+# Banco de dados de corridas/mensagens locais (preserva dados operacionais essenciais)
+servidor/database/rides.json
+servidor/database/messages.json
+servidor/database/admin_messages.json
+servidor/database/payments.json
+servidor/database/push_tokens.json
+servidor/database/reports.json

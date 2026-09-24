@@ -3,459 +3,2265 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MAX DRIVE - Painel Administrativo da Diretoria</title>
-  <link rel="icon" href="/assets/icons/MAXDRIVET.svg" type="image/svg+xml">
+  <title>MAX DRIVE - Painel Administrativo</title>
+  <link rel="icon" href="/assets/icons/MAXDRIVET.svg?v=1.0.18" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
+    /* ============================================================= */
+    /* MAX DRIVE ADMIN - DESIGN SYSTEM (MINIMALISTA, MODERNO, JUSTO) */
+    /* ============================================================= */
+    
     :root {
-      --bg-dark: #0b0f19;
-      --bg-card: #111827;
-      --bg-card-hover: #1f2937;
-      --cyan-primary: #00E5FF;
-      --yellow-primary: #FEE500;
-      --green-success: #10B981;
+      /* Light Theme (Default clean enterprise look) */
+      --bg-page: #F4F6F9;
+      --bg-surface: #FFFFFF;
+      --bg-surface-hover: #F8FAFC;
+      --bg-elevated: #FFFFFF;
+      --bg-subtle: #F1F5F9;
+      --bg-input: #FFFFFF;
+      
+      --border-subtle: #E2E8F0;
+      --border-hover: #CBD5E1;
+      --border-focus: #0066FF;
+      
+      --text-primary: #0F172A;
+      --text-secondary: #475569;
+      --text-tertiary: #64748B;
+      
+      --yellow-primary: #FFC107;
+      --yellow-soft: rgba(255, 193, 7, 0.15);
+      --cyan-action: #0066FF;
+      --cyan-soft: rgba(0, 102, 255, 0.12);
+      --green-status: #10B981;
+      --green-soft: rgba(16, 185, 129, 0.12);
       --red-danger: #EF4444;
-      --text-main: #F9FAFB;
-      --text-muted: #9CA3AF;
-      --border-color: rgba(255, 255, 255, 0.1);
+      --red-soft: rgba(239, 68, 68, 0.12);
+      --amber-pending: #F59E0B;
+      --amber-soft: rgba(245, 158, 11, 0.12);
+      
+      --tabs-bg: #E2E8F0;
+      --table-th-bg: #F8FAFC;
+      --table-td-color: #1E293B;
+      --table-tr-border: #F1F5F9;
+      --table-tr-hover: #F8FAFC;
+      --kpi-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      --table-card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
+      
+      --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --radius-sm: 6px;
+      --radius-md: 9px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background: var(--bg-dark); color: var(--text-main); min-height: 100vh; padding: 20px; }
-
-    header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding-bottom: 20px; margin-bottom: 24px; border-bottom: 1px solid var(--border-color);
+    [data-theme="dark"] {
+      /* Dark Theme (Sleek modern cyber dark) */
+      --bg-page: #0B0E14;
+      --bg-surface: #121721;
+      --bg-surface-hover: #181F2C;
+      --bg-elevated: #151B27;
+      --bg-subtle: rgba(255, 255, 255, 0.04);
+      --bg-input: #181F2C;
+      
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.16);
+      --border-focus: #00E5FF;
+      
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      --text-tertiary: #64748B;
+      
+      --yellow-primary: #FEE500;
+      --yellow-soft: rgba(254, 229, 0, 0.12);
+      --cyan-action: #00E5FF;
+      --cyan-soft: rgba(0, 229, 255, 0.12);
+      --green-status: #10B981;
+      --green-soft: rgba(16, 185, 129, 0.12);
+      --red-danger: #EF4444;
+      --red-soft: rgba(239, 68, 68, 0.12);
+      --amber-pending: #F59E0B;
+      --amber-soft: rgba(245, 158, 11, 0.12);
+      
+      --tabs-bg: #07090E;
+      --table-th-bg: rgba(255, 255, 255, 0.015);
+      --table-td-color: #E2E8F0;
+      --table-tr-border: rgba(255, 255, 255, 0.035);
+      --table-tr-hover: rgba(255, 255, 255, 0.02);
+      --kpi-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+      --table-card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45);
     }
-    .brand { display: flex; align-items: center; gap: 12px; }
-    .brand img { height: 36px; }
-    .brand h1 { font-size: 20px; font-weight: 900; color: var(--cyan-primary); letter-spacing: 0.5px; }
 
-    .header-actions { display: flex; align-items: center; gap: 12px; }
-    .btn {
-      padding: 10px 18px; border-radius: 9999px; border: none; font-weight: 800; font-size: 12px;
-      cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-    .btn-cyan { background: var(--cyan-primary); color: #0b0f19; }
-    .btn-yellow { background: var(--yellow-primary); color: #0b0f19; }
-    .btn-green { background: var(--green-success); color: #fff; }
-    .btn-red { background: var(--red-danger); color: #fff; }
-    .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
-    .btn:hover { opacity: 0.9; transform: translateY(-1px); }
 
-    /* KPI Grid */
-    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 28px; }
+    body {
+      background: var(--bg-page);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      font-family: var(--font-family);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.4;
+      font-size: 13px;
+    }
+
+    /* Custom Sleek Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    /* ============================================================= */
+    /* 1. NAVBAR - MINIMALISTA, JUSTA E RESPONSIVA                   */
+    /* ============================================================= */
+    .admin-navbar { background: var(--bg-surface); border-bottom: 1px solid var(--border-subtle); padding: 0 20px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0 20px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .admin-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: 0.3px;
+    }
+
+    .admin-brand-tag {
+      font-size: 10px;
+      font-weight: 700;
+      color: #000;
+      background: var(--yellow-primary);
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .admin-live-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.22);
+      color: var(--green-status);
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .pulse-dot-live {
+      width: 6px;
+      height: 6px;
+      background: var(--green-status);
+      border-radius: 50%;
+      box-shadow: 0 0 6px var(--green-status);
+      animation: pulse-live 1.8s infinite;
+    }
+
+    @keyframes pulse-live {
+      0%, 100% { opacity: 0.8; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.3); }
+    }
+
+    .admin-user-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .admin-email-tag {
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      font-weight: 600;
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .btn-nav-app {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      text-decoration: none;
+      height: 28px;
+      padding: 0 10px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      transition: all 0.15s ease;
+    }
+
+    .btn-nav-app:hover {
+      background: var(--bg-surface-hover);
+      border-color: var(--border-hover);
+      color: var(--text-primary);
+    }
+
+    .btn-nav-logout {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #EF4444;
+      height: 28px;
+      padding: 0 10px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-nav-logout:hover {
+      background: #EF4444;
+      color: #FFF;
+    }
+
+    /* ============================================================= */
+    /* 2. CONTAINER PRINCIPAL (LAYOUT JUSTO E PROPORCIONAL)          */
+    /* ============================================================= */
+    .admin-main-container {
+      max-width: 1380px;
+      width: 100%;
+      margin: 14px auto 32px auto;
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ============================================================= */
+    /* 3. KPI STATISTICS GRID (COMPACTO, MODERNO E ELEGANTE)        */
+    /* ============================================================= */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
     .kpi-card {
-      background: var(--bg-card); border-radius: 16px; padding: 20px; border: 1px solid var(--border-color);
-      display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
     }
-    .kpi-label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
-    .kpi-value { font-size: 26px; font-weight: 900; color: var(--cyan-primary); }
-    .kpi-value.yellow { color: var(--yellow-primary); }
-    .kpi-value.green { color: var(--green-success); }
-    .kpi-value.red { color: var(--red-danger); }
 
-    /* Tabs */
-    .nav-tabs { display: flex; gap: 8px; border-bottom: 1px solid var(--border-color); margin-bottom: 20px; overflow-x: auto; }
+    .kpi-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .kpi-title {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .kpi-value {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.4px;
+      line-height: 1.2;
+    }
+
+    .kpi-subtext {
+      font-size: 10px;
+      color: var(--text-tertiary);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 500;
+    }
+
+    /* ============================================================= */
+    /* 4. ABAS DE NAVEGAÇÃO (SEGMENTED PILL STRIP)                   */
+    /* ============================================================= */
+    .admin-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--tabs-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 4px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .admin-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
     .tab-btn {
-      padding: 12px 20px; background: transparent; border: none; color: var(--text-muted);
-      font-weight: 800; font-size: 13px; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-secondary);
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.15s ease;
     }
-    .tab-btn.active { color: var(--cyan-primary); border-bottom-color: var(--cyan-primary); }
 
-    /* Data Tables */
-    .table-container { background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border-color); overflow-x: auto; margin-bottom: 24px; }
-    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
-    th { background: rgba(255,255,255,0.03); padding: 14px 16px; color: var(--text-muted); font-size: 11px; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid var(--border-color); }
-    td { padding: 14px 16px; border-bottom: 1px solid var(--border-color); }
-    tr:hover { background: var(--bg-card-hover); }
-
-    .badge {
-      display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 800; text-transform: uppercase;
+    .tab-btn:hover {
+      color: var(--text-primary);
+      background: var(--bg-subtle);
     }
-    .badge-green { background: rgba(16, 185, 129, 0.15); color: var(--green-success); border: 1px solid var(--green-success); }
-    .badge-yellow { background: rgba(254, 229, 0, 0.15); color: var(--yellow-primary); border: 1px solid var(--yellow-primary); }
-    .badge-red { background: rgba(239, 68, 68, 0.15); color: var(--red-danger); border: 1px solid var(--red-danger); }
-    .badge-cyan { background: rgba(0, 229, 255, 0.15); color: var(--cyan-primary); border: 1px solid var(--cyan-primary); }
 
-    /* Modals */
+    .tab-btn.active {
+      background: var(--yellow-primary);
+      color: #000000;
+      font-weight: 800;
+      border-color: var(--yellow-primary);
+      box-shadow: 0 1px 6px rgba(255, 230, 0, 0.25);
+    }
+
+    .badge-status-counter {
+      background: #EF4444;
+      color: #FFF;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 8px;
+      margin-left: 4px;
+    }
+
+    /* ============================================================= */
+    /* 5. CARDS DE TABELA & APRESENTAÇÃO DE DADOS (JUSTO E NÍTIDO)   */
+    /* ============================================================= */
+    .table-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45);
+      overflow-x: auto;
+    }
+
+    .table-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .table-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: 0.2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filter-search-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .filter-search-input {
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      height: 32px;
+      padding: 0 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      outline: none;
+      width: 250px;
+      transition: all 0.15s ease;
+      font-family: var(--font-family);
+    }
+
+    .filter-search-input:focus {
+      border-color: var(--cyan-action);
+      background: var(--bg-input);
+      box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.15);
+    }
+
+    .filter-search-input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    /* Modern Minimalist Table */
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      text-align: left;
+      font-size: 12px;
+    }
+
+    th {
+      color: var(--text-tertiary);
+      font-weight: 700;
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(255, 255, 255, 0.015);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--table-tr-border);
+      color: var(--table-td-color);
+      font-weight: 500;
+      vertical-align: middle;
+      line-height: 1.35;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: var(--table-tr-hover);
+    }
+
+    /* Minimalist Badges */
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2.5px 7.5px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      line-height: 1.2;
+    }
+
+    .badge-status.active,
+    .badge-status.approved {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10B981;
+      border: 1px solid rgba(16, 185, 129, 0.28);
+    }
+
+    .badge-status.banned,
+    .badge-status.blocked {
+      background: rgba(239, 68, 68, 0.12);
+      color: #EF4444;
+      border: 1px solid rgba(239, 68, 68, 0.28);
+    }
+
+    .badge-status.pending {
+      background: rgba(245, 158, 11, 0.12);
+      color: #F59E0B;
+      border: 1px solid rgba(245, 158, 11, 0.28);
+    }
+
+    .badge-status.regular {
+      background: rgba(0, 229, 255, 0.1);
+      color: #00E5FF;
+      border: 1px solid rgba(0, 229, 255, 0.28);
+    }
+
+    .badge-status.free {
+      background: rgba(255, 230, 0, 0.12);
+      color: #FFE600;
+      border: 1px solid rgba(255, 230, 0, 0.3);
+    }
+
+    /* Modern Action Buttons */
+    .btn-action-small {
+      height: 26px;
+      padding: 0 9px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      font-family: var(--font-family);
+    }
+
+    .btn-ban {
+      background: rgba(239, 68, 68, 0.12);
+      color: #EF4444;
+      border-color: rgba(239, 68, 68, 0.28);
+    }
+    .btn-ban:hover {
+      background: #EF4444;
+      color: #FFF;
+    }
+
+    .btn-unban {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10B981;
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+    .btn-unban:hover {
+      background: #10B981;
+      color: #000;
+    }
+
+    .btn-approve {
+      background: rgba(0, 229, 255, 0.12);
+      color: #00E5FF;
+      border-color: rgba(0, 229, 255, 0.28);
+    }
+    .btn-approve:hover {
+      background: #00E5FF;
+      color: #000;
+    }
+
+    .btn-reject {
+      background: rgba(245, 158, 11, 0.12);
+      color: #F59E0B;
+      border-color: rgba(245, 158, 11, 0.28);
+    }
+    .btn-reject:hover {
+      background: #F59E0B;
+      color: #000;
+    }
+
+    .btn-resolve {
+      background: var(--yellow-primary);
+      color: #000;
+      font-weight: 700;
+    }
+    .btn-resolve:hover {
+      background: #FFF;
+    }
+
+    .btn-pay-confirm {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10B981;
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+    .btn-pay-confirm:hover {
+      background: #10B981;
+      color: #000;
+    }
+
+    .btn-free-pass {
+      background: rgba(255, 230, 0, 0.12);
+      color: #FFE600;
+      border-color: rgba(255, 230, 0, 0.28);
+    }
+    .btn-free-pass:hover {
+      background: #FFE600;
+      color: #000;
+    }
+
+    .btn-block-pay {
+      background: rgba(239, 68, 68, 0.12);
+      color: #EF4444;
+      border-color: rgba(239, 68, 68, 0.28);
+    }
+    .btn-block-pay:hover {
+      background: #EF4444;
+      color: #FFF;
+    }
+
+    .btn-unblock-pay {
+      background: rgba(0, 229, 255, 0.12);
+      color: #00E5FF;
+      border-color: rgba(0, 229, 255, 0.28);
+    }
+    .btn-unblock-pay:hover {
+      background: #00E5FF;
+      color: #000;
+    }
+
+    .btn-audit-pay {
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      border-color: var(--border-subtle);
+    }
+    .btn-audit-pay:hover {
+      background: var(--bg-surface-hover);
+      border-color: var(--border-hover);
+      color: var(--text-primary);
+    }
+
+    .btn-msg {
+      background: rgba(0, 229, 255, 0.12);
+      color: #00E5FF;
+      border-color: rgba(0, 229, 255, 0.28);
+    }
+    .btn-msg:hover {
+      background: #00E5FF;
+      color: #000;
+    }
+
+    /* ============================================================= */
+    /* 6. MODALS & OVERLAYS - MINIMALISTA & MODERNO                 */
+    /* ============================================================= */
     .modal-backdrop {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.75);
-      backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 99999;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(4, 6, 10, 0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      z-index: 6000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
     }
-    .modal-backdrop.active { display: flex; }
-    .modal-card { background: var(--bg-card); border-radius: 20px; border: 1px solid var(--border-color); width: 90%; max-width: 500px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-    .modal-card h3 { font-size: 18px; font-weight: 900; color: var(--yellow-primary); margin-bottom: 16px; }
-    textarea, input[type="text"] {
-      width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); background: #1f2937; color: #fff; font-size: 13px; margin-bottom: 16px;
+
+    .modal-content-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hover);
+      border-radius: var(--radius-xl);
+      max-width: 500px;
+      width: 100%;
+      padding: 22px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.75);
+      position: relative;
     }
+
+    .modal-card-driver-eval {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hover);
+      border-radius: var(--radius-xl);
+      max-width: 960px;
+      width: 100%;
+      max-height: 92vh;
+      overflow-y: auto;
+      padding: 22px 24px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85);
+      position: relative;
+      color: var(--text-primary);
+    }
+
+    .eval-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 16px;
+    }
+
+    .eval-driver-layout {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      gap: 18px;
+    }
+
+    .eval-profile-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .eval-avatar-wrap {
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 230, 0, 0.6);
+      box-shadow: 0 0 16px rgba(255, 230, 0, 0.2);
+      overflow: hidden;
+      margin-bottom: 10px;
+      background: #090B10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .eval-avatar-wrap:hover::after {
+      content: 'VER';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cyan-action);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .eval-avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .eval-info-list {
+      width: 100%;
+      text-align: left;
+      margin-top: 10px;
+      font-size: 11.5px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .eval-info-item {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      padding-bottom: 4px;
+    }
+
+    .eval-info-label {
+      color: var(--text-tertiary);
+      font-weight: 600;
+    }
+
+    .eval-info-val {
+      color: var(--text-primary);
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .eval-photos-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .eval-photos-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .eval-photo-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .eval-photo-item:hover {
+      border-color: var(--cyan-action);
+      transform: translateY(-1px);
+    }
+
+    .eval-photo-thumb-wrap {
+      width: 100%;
+      height: 110px;
+      background: #090B10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .eval-photo-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .eval-photo-badge-overlay {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: rgba(0, 0, 0, 0.75);
+      border: 1px solid var(--cyan-action);
+      color: var(--cyan-action);
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+
+    .eval-photo-desc {
+      padding: 8px;
+      font-size: 10.5px;
+    }
+
+    .eval-actions-bar {
+      display: flex;
+      gap: 8px;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-subtle);
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    /* Lightbox */
+    .lightbox-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.94);
+      backdrop-filter: blur(10px);
+      z-index: 7000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .lightbox-img {
+      max-width: 90vw;
+      max-height: 82vh;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
+      object-fit: contain;
+    }
+
+    /* Toast Notifications */
+    .toast-container {
+      position: fixed;
+      top: 16px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+      width: 340px;
+      max-width: 90vw;
+    }
+
+    .toast {
+      pointer-events: auto;
+      position: relative;
+      overflow: hidden;
+      background: rgba(14, 18, 26, 0.95);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      color: #FFFFFF;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      padding: 10px 14px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      animation: toastSlideDown 0.25s ease-out forwards;
+      width: 100%;
+    }
+
+    .toast-icon-wrap {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .toast-body {
+      flex: 1;
+      line-height: 1.35;
+    }
+
+    .toast-title {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+
+    .toast-message {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: #E2E8F0;
+    }
+
+    .toast-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      width: 100%;
+      animation: toastTime 3.2s linear forwards;
+    }
+
+    @keyframes toastSlideDown {
+      from { opacity: 0; transform: translateY(-16px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes toastTime {
+      from { width: 100%; }
+      to { width: 0%; }
+    }
+
+    .toast.toast-success { border-color: rgba(16, 185, 129, 0.4); }
+    .toast.toast-success .toast-icon-wrap { background: rgba(16, 185, 129, 0.15); color: #10B981; }
+    .toast.toast-success .toast-title { color: #10B981; }
+    .toast.toast-success .toast-progress { background: #10B981; }
+
+    .toast.toast-warning { border-color: rgba(245, 158, 11, 0.4); }
+    .toast.toast-warning .toast-icon-wrap { background: rgba(245, 158, 11, 0.15); color: #F59E0B; }
+    .toast.toast-warning .toast-title { color: #F59E0B; }
+    .toast.toast-warning .toast-progress { background: #F59E0B; }
+
+    .toast.toast-error { border-color: rgba(239, 68, 68, 0.4); }
+    .toast.toast-error .toast-icon-wrap { background: rgba(239, 68, 68, 0.15); color: #EF4444; }
+    .toast.toast-error .toast-title { color: #EF4444; }
+    .toast.toast-error .toast-progress { background: #EF4444; }
+
+    .toast.toast-info { border-color: rgba(0, 229, 255, 0.4); }
+    .toast.toast-info .toast-icon-wrap { background: rgba(0, 229, 255, 0.15); color: #00E5FF; }
+    .toast.toast-info .toast-title { color: #00E5FF; }
+    .toast.toast-info .toast-progress { background: #00E5FF; }
+
+    /* Custom Dialog */
+    .custom-dialog-backdrop {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(4, 6, 10, 0.82);
+      backdrop-filter: blur(14px);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .custom-dialog-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hover);
+      border-radius: var(--radius-xl);
+      padding: 22px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
+      animation: dialogScaleUp 0.2s ease-out forwards;
+      color: var(--text-primary);
+    }
+
+    @keyframes dialogScaleUp {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .custom-dialog-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      margin: 0 auto 12px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      border: 1px solid var(--border-hover);
+      background: rgba(255, 230, 0, 0.1);
+    }
+
+    .custom-dialog-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .custom-dialog-message {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.45;
+      margin-bottom: 16px;
+    }
+
+    .custom-dialog-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-hover);
+      color: var(--text-primary);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      font-size: 12px;
+      outline: none;
+      font-family: var(--font-family);
+    }
+
+    /* Admin Direct Chat Modal */
+    .admin-eval-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(4, 6, 10, 0.8);
+      backdrop-filter: blur(14px);
+      z-index: 6000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .eval-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hover) !important;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
+    }
+
+    /* Auth Screen Overlay */
+    .admin-gate-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--bg-page);
+      z-index: 5000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .gate-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hover);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Cities & Expansion Layout */
+    .cities-grid-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .fin-toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* Modern Direct Chat Card & Messenger */
+    .admin-chat-card {
+      max-width: 540px;
+      width: 100%;
+      height: 560px;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hover);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
+    }
+
+    .admin-chat-header {
+      background: rgba(255, 255, 255, 0.025);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .admin-chat-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: var(--bg-page);
+    }
+
+    .admin-chat-footer {
+      padding: 10px 14px;
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .admin-chat-input-box {
+      flex: 1;
+      height: 36px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-pill);
+      padding: 0 14px;
+      color: var(--text-primary);
+      font-size: 12px;
+      outline: none;
+      font-family: var(--font-family);
+      transition: all 0.15s ease;
+    }
+
+    .admin-chat-input-box:focus {
+      border-color: var(--cyan-action);
+      background: var(--bg-input);
+      box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.15);
+    }
+
+    /* Dialog and Report Modal Modern Overrides */
+    #admin-modal-report .modal-content-card {
+      color: var(--text-primary);
+    }
+
+    #admin-rep-detail {
+      color: var(--text-secondary) !important;
+      font-size: 12px;
+    }
+
+    #admin-rep-response {
+      width: 100%;
+      height: 90px;
+      border-radius: var(--radius-md);
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      padding: 10px;
+      font-size: 12px;
+      color: var(--text-primary);
+      outline: none;
+      font-family: var(--font-family);
+    }
+
+    #admin-rep-response:focus {
+      border-color: var(--cyan-action);
+      box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.15);
+    }
+
+    /* ============================================================= */
+    /* 7. RESPONSIVIDADE (MOBILE & TABLET BREAKPOINTS)              */
+    /* ============================================================= */
+    @media (max-width: 1100px) {
+      .kpi-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .eval-photos-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .eval-driver-layout {
+        grid-template-columns: 1fr;
+      }
+      .cities-grid-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .admin-navbar {
+        padding: 0 14px;
+        height: auto;
+        min-height: 52px;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+      .admin-main-container {
+        padding: 0 10px;
+        margin-top: 10px;
+      }
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      .filter-search-input {
+        width: 100%;
+      }
+      .table-card {
+        padding: 12px;
+        border-radius: var(--radius-md);
+      }
+      th, td {
+        padding: 7px 8px;
+        font-size: 11px;
+      }
+      .modal-card-driver-eval {
+        padding: 16px;
+      }
+      .eval-photos-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+      .admin-email-tag {
+        display: none;
+      }
+      .admin-chat-card {
+        height: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+      }
+    }
+  
+    /* Self-Contained Admin Button Styles & Theme Fixes */
+    .btn-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-family);
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+    .btn-yellow {
+      background: var(--yellow-primary);
+      color: #000000 !important;
+      font-weight: 800;
+    }
+    .btn-yellow:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+    .btn-green {
+      background: var(--green-status);
+      color: #FFFFFF !important;
+      font-weight: 800;
+    }
+    .btn-green:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+    .btn-cyan {
+      background: var(--cyan-action);
+      color: #FFFFFF !important;
+      font-weight: 800;
+    }
+    .btn-cyan:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+    .btn-red {
+      background: var(--red-danger);
+      color: #FFFFFF !important;
+      font-weight: 800;
+    }
+    .btn-red:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+    .btn-white {
+      background: var(--bg-surface);
+      color: var(--text-primary) !important;
+      border: 1.5px solid var(--border-hover) !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+    .btn-white:hover {
+      background: var(--bg-surface-hover);
+      border-color: var(--text-primary) !important;
+    }
+
+    /* Pill Input Wrappers */
+    .pill-input-wrap {
+      display: flex;
+      align-items: center;
+      background: var(--bg-input);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      padding: 0 16px;
+      height: 44px;
+      margin-bottom: 12px;
+      transition: border-color 0.15s ease;
+    }
+    .pill-input-wrap:focus-within {
+      border-color: var(--cyan-action);
+    }
+    .pill-input {
+      border: none;
+      outline: none;
+      background: transparent;
+      width: 100%;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      font-family: var(--font-family);
+    }
+    .pill-input::placeholder {
+      color: var(--text-tertiary);
+    }
+    .svg-icon-img {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+    }
+    .svg-icon-img.sm {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Logo Light Mode Filter */
+    [data-theme="light"] img[src*="MAXDRIVET.svg"] {
+      filter: brightness(0);
+    }
+    [data-theme="dark"] img[src*="MAXDRIVET.svg"] {
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+    }
+
   </style>
+
 </head>
 <body>
 
-  <header>
-    <div class="brand">
-      <img src="/assets/icons/MAXDRIVET.svg" alt="MAX DRIVE">
-      <h1>PAINEL ADMINISTRATIVO</h1>
+  <!-- Admin Verification Modal (If not logged in as admin) -->
+  <div class="admin-gate-overlay" id="admin-gate-overlay" style="display: none;">
+    <div class="gate-card">
+      <img src="/assets/icons/MAXDRIVET.svg" alt="MAX DRIVE" style="height: 50px; margin-bottom: 16px;">
+      <h2 style="font-size: 20px; font-weight: 900; margin-bottom: 8px; color: var(--yellow-primary);">Painel Administrativo</h2>
+      <p style="font-size: 12px; color: #94a3b8; margin-bottom: 20px;">
+        O acesso a este painel é estritamente restrito a e-mails autorizados pela diretoria.
+      </p>
+
+      <form onsubmit="AdminApp.authenticate(event)">
+        <div class="form-group">
+          <div class="pill-input-wrap">
+            <input type="email" id="admin-gate-email" class="pill-input" placeholder="E-mail de administrador" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="pill-input-wrap">
+            <input type="password" id="admin-gate-password" class="pill-input" placeholder="Senha do administrador" required>
+          </div>
+        </div>
+        <button type="submit" class="btn-pill btn-yellow" style="margin-top: 10px; width: 100%;">
+          ACESSAR PAINEL
+        </button>
+      </form>
+      <div style="margin-top: 16px;">
+        <a href="/" style="font-size: 12px; font-weight: 700; color: var(--yellow-primary); text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+          <img src="/assets/icons/arrow-left.svg" alt="" class="svg-icon-img sm" style="filter: brightness(0) invert(1);"> Voltar para o Aplicativo
+        </a>
+      </div>
     </div>
-    <div class="header-actions">
-      <button class="btn btn-outline" onclick="loadDashboardStats()">🔄 Atualizar</button>
-      <button class="btn btn-yellow" onclick="exportCSV()">📊 Exportar CSV</button>
-      <button class="btn btn-red" onclick="window.close()">✖ Fechar</button>
+  </div>
+
+  <!-- Admin Top Navigation -->
+  <header class="admin-navbar">
+    <div class="admin-brand">
+      <img src="/assets/icons/MAXDRIVET.svg" alt="MAX DRIVE" style="height: 26px;">
+      <span class="admin-brand-tag">ADMIN</span>
+      <span class="admin-live-chip">
+        <span class="pulse-dot-live"></span> 4 Cidades Ativas
+      </span>
+    </div>
+    <div class="admin-user-badge">
+      <button id="admin-theme-toggle" class="btn-nav-app" onclick="toggleAdminTheme()" title="Alternar Modo Claro/Escuro" style="cursor: pointer;">
+        <span id="admin-theme-icon">🌙</span> <span id="admin-theme-label">Modo Escuro</span>
+      </button>
+      <span class="admin-email-tag" id="current-admin-email">admin@maxdrive.com</span>
+      <a href="/" class="btn-nav-app" target="_blank" title="Abrir interface do passageiro/motorista">
+        <img src="/assets/icons/smartphone.svg" alt="" class="svg-icon-img sm">
+        <span>Abrir App</span>
+      </a>
+      <button class="btn-nav-logout" onclick="AdminApp.logout()" title="Encerrar sessão">
+        <img src="/assets/icons/power.svg" alt="" class="svg-icon-img sm">
+        <span>Sair</span>
+      </button>
     </div>
   </header>
 
-  <!-- KPI Cards -->
-  <div class="kpi-grid">
-    <div class="kpi-card">
-      <span class="kpi-label">Corridas Concluídas</span>
-      <span class="kpi-value green" id="stat-completed-rides">0</span>
-    </div>
-    <div class="kpi-card">
-      <span class="kpi-label">Faturamento Bruto</span>
-      <span class="kpi-value yellow" id="stat-total-revenue">R$ 0,00</span>
-    </div>
-    <div class="kpi-card">
-      <span class="kpi-label">Total de Usuários</span>
-      <span class="kpi-value cyan" id="stat-total-users">0</span>
-    </div>
-    <div class="kpi-card">
-      <span class="kpi-label">Motoristas Pendentes</span>
-      <span class="kpi-value red" id="stat-pending-drivers">0</span>
-    </div>
-  </div>
+  <!-- Main Admin Dashboard -->
+  <main class="admin-main-container">
 
-  <!-- Tabs Navigation -->
-  <div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('drivers-pending')">🛡️ Motoristas Pendentes</button>
-    <button class="tab-btn" onclick="switchTab('users')">👥 Gerenciar Usuários</button>
-    <button class="tab-btn" onclick="switchTab('rides')">🚗 Histórico de Corridas</button>
-    <button class="tab-btn" onclick="switchTab('payments')">💵 Repasse Semanal</button>
-    <button class="tab-btn" onclick="switchTab('reports')">🚨 Chamados & Reportes</button>
-  </div>
+    <!-- KPI Statistics Row -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-title">
+          <span>Usuários</span>
+          <img src="/assets/icons/users.svg" alt="" class="svg-icon-img sm" style="opacity: 0.6;">
+        </div>
+        <div class="kpi-value" id="kpi-total-users">--</div>
+        <div class="kpi-subtext">Passageiros cadastrados</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">
+          <span>Motoristas</span>
+          <img src="/assets/icons/car.svg" alt="" class="svg-icon-img sm" style="opacity: 0.6;">
+        </div>
+        <div class="kpi-value" id="kpi-total-drivers">--</div>
+        <div class="kpi-subtext">Carros e Motos ativos</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">
+          <span>Corridas</span>
+          <img src="/assets/icons/check-circle.svg" alt="" class="svg-icon-img sm" style="opacity: 0.6;">
+        </div>
+        <div class="kpi-value" id="kpi-completed-rides">--</div>
+        <div class="kpi-subtext">Concluídas com sucesso</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">
+          <span>Faturamento</span>
+          <img src="/assets/icons/dollar-sign.svg" alt="" class="svg-icon-img sm" style="opacity: 0.6;">
+        </div>
+        <div class="kpi-value" id="kpi-total-revenue" style="color: var(--green-status);">R$ --</div>
+        <div class="kpi-subtext">Repasses dos motoristas</div>
+      </div>
+      <div class="kpi-card" style="border-color: rgba(239, 68, 68, 0.25); background: rgba(239, 68, 68, 0.04);">
+        <div class="kpi-title" style="color: var(--red-danger);">
+          <span>Reportes</span>
+          <img src="/assets/icons/siren.svg" alt="" class="svg-icon-img sm" style="opacity: 0.8;">
+        </div>
+        <div class="kpi-value" id="kpi-pending-reports" style="color: var(--red-danger);">--</div>
+        <div class="kpi-subtext" style="color: rgba(239, 68, 68, 0.8);">Pendentes de análise</div>
+      </div>
+    </section>
 
-  <!-- Tab 1: Motoristas Pendentes de Aprovação -->
-  <div id="tab-drivers-pending" class="tab-content">
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Motorista</th>
-            <th>E-mail / Telefone</th>
-            <th>Cidade</th>
-            <th>Veículo</th>
-            <th>Ações de Aprovação</th>
-          </tr>
-        </thead>
-        <tbody id="table-drivers-pending-body">
-          <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Carregando motoristas...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+    <!-- Navigation Tabs -->
+    <nav class="admin-tabs">
+      <button class="tab-btn active" onclick="AdminApp.switchTab('tab-users')"><img src="/assets/icons/users.svg" alt="" class="svg-icon-img sm"> Usuários</button>
+      <button class="tab-btn" onclick="AdminApp.switchTab('tab-drivers')"><img src="/assets/icons/car.svg" alt="" class="svg-icon-img sm"> Motoristas</button>
+      <button class="tab-btn" onclick="AdminApp.switchTab('tab-reports')"><img src="/assets/icons/siren.svg" alt="" class="svg-icon-img sm"> Reportes</button>
+      <button class="tab-btn" onclick="AdminApp.switchTab('tab-payments')"><img src="/assets/icons/dollar-sign.svg" alt="" class="svg-icon-img sm"> Financeiro</button>
+      <button class="tab-btn" onclick="AdminApp.switchTab('tab-cities')"><img src="/assets/icons/pin.svg" alt="" class="svg-icon-img sm"> Cidades</button>
+      <button class="tab-btn" onclick="AdminApp.switchTab('tab-admin-messages')"><img src="/assets/icons/chat.svg" alt="" class="svg-icon-img sm"> Mensagens & Suporte <span class="badge-status-counter" id="admin-msgs-badge" style="display:none;">0</span></button>
+    </nav>
 
-  <!-- Tab 2: Gestão de Usuários -->
-  <div id="tab-users" class="tab-content" style="display: none;">
-    <div class="table-container">
+    <!-- ============================================================= -->
+    <!-- TAB 1: GESTÃO DE USUÁRIOS (Banir / Desbanir) -->
+    <!-- ============================================================= -->
+    <section class="table-card" id="tab-users">
+      <div class="table-header-row">
+        <div class="table-title">
+          <img src="/assets/icons/users.svg" alt="" class="svg-icon-img md">
+          <span>USUÁRIOS E MOTORISTAS CADASTRADOS</span>
+        </div>
+        <div class="filter-search-wrap" style="display: flex; gap: 8px; align-items: center;">
+          <input type="text" id="filter-users-input" class="filter-search-input" placeholder="Buscar por nome, e-mail ou cidade..." oninput="AdminApp.filterUsers(this.value)">
+          <button type="button" class="btn-action-small" style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); color: #10B981; padding: 6px 12px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap;" onclick="AdminApp.exportUsersCSV()" title="Baixar planilha de usuários">
+            <img src="/assets/icons/download.svg" alt="" class="svg-icon-img sm"> Exportar CSV
+          </button>
+        </div>
+      </div>
+
       <table>
         <thead>
           <tr>
             <th>Nome</th>
             <th>E-mail</th>
-            <th>Perfil / Função</th>
+            <th>Tipo</th>
             <th>Cidade</th>
+            <th>Avaliação</th>
             <th>Status</th>
-            <th>Ações de Moderação</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody id="table-users-body">
-          <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Carregando usuários...</td></tr>
+          <!-- Populated dynamically -->
         </tbody>
       </table>
-    </div>
-  </div>
+    </section>
 
-  <!-- Tab 3: Corridas -->
-  <div id="tab-rides" class="tab-content" style="display: none;">
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Passageiro</th>
-            <th>Motorista</th>
-            <th>Origem ➔ Destino</th>
-            <th>Valor</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="table-rides-body">
-          <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Carregando corridas...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+    <!-- ============================================================= -->
+    <!-- TAB 2: APROVAÇÃO DE MOTORISTAS -->
+    <!-- ============================================================= -->
+    <section class="table-card" id="tab-drivers" style="display: none;">
+      <div class="table-header-row">
+        <div>
+          <div class="table-title">
+            <img src="/assets/icons/car.svg" alt="" class="svg-icon-img md">
+            <span>CONTROLE E APROVAÇÃO DE MOTORISTAS</span>
+          </div>
+          <p style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">
+            Auditoria cadastral, fotos de veículos e validação de CNH/CRLV.
+          </p>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <input type="text" id="filter-drivers-input" class="filter-search-input" placeholder="Buscar motorista, placa, veículo..." oninput="AdminApp.filterDrivers(this.value)" style="width: 250px;">
+          <button type="button" class="btn-action-small" style="background: var(--bg-input); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 6px 14px; border-radius: var(--radius-sm); font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 6px;" onclick="AdminApp.loadUsers()">
+            <img src="/assets/icons/refresh.svg" alt="" class="svg-icon-img sm"> Atualizar Lista
+          </button>
+        </div>
+      </div>
 
-  <!-- Tab 4: Pagamentos -->
-  <div id="tab-payments" class="tab-content" style="display: none;">
-    <div class="table-container">
       <table>
         <thead>
           <tr>
             <th>Motorista</th>
+            <th>Documentos</th>
             <th>Veículo</th>
-            <th>Valor</th>
-            <th>Situação</th>
-            <th>Ações Financeiras</th>
+            <th>Placa / Cor / Ano</th>
+            <th>Fotos Anexadas</th>
+            <th>Situação Cadastral</th>
+            <th>Ações</th>
           </tr>
         </thead>
-        <tbody id="table-payments-body">
-          <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Carregando pagamentos...</td></tr>
+        <tbody id="table-drivers-body">
+          <!-- Populated dynamically -->
         </tbody>
       </table>
-    </div>
-  </div>
+    </section>
 
-  <!-- Tab 5: Reportes -->
-  <div id="tab-reports" class="tab-content" style="display: none;">
-    <div class="table-container">
+    <!-- ============================================================= -->
+    <!-- TAB 3: CENTRAL DE REPORTES -->
+    <!-- ============================================================= -->
+    <section class="table-card" id="tab-reports" style="display: none;">
+      <div class="table-header-row">
+        <div>
+          <div class="table-title">
+            <img src="/assets/icons/siren.svg" alt="" class="svg-icon-img md">
+            <span>CENTRAL DE REPORTES & RECLAMAÇÕES</span>
+          </div>
+          <p style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">
+            Mensagens enviadas por passageiros, motoristas e suporte do app.
+          </p>
+        </div>
+        <button type="button" class="btn-action-small" style="background: var(--bg-input); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 6px 14px; border-radius: var(--radius-sm); font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 6px;" onclick="AdminApp.loadReports()">
+          <img src="/assets/icons/refresh.svg" alt="" class="svg-icon-img sm"> Atualizar Reportes
+        </button>
+      </div>
+
       <table>
         <thead>
           <tr>
-            <th>Relator</th>
-            <th>Alvo</th>
-            <th>Motivo</th>
+            <th>ID / Data</th>
+            <th>Solicitante</th>
+            <th>Categoria / Alvo</th>
+            <th>Motivo / Descrição</th>
             <th>Status</th>
-            <th>Ação</th>
+            <th>Parecer da Diretoria</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody id="table-reports-body">
-          <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Carregando reportes...</td></tr>
+          <!-- Populated dynamically -->
         </tbody>
       </table>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- TAB 4: FINANCEIRO & PAGAMENTOS SEMANAIS -->
+    <!-- ============================================================= -->
+    <section class="table-card" id="tab-payments" style="display: none;">
+      <div class="table-header-row">
+        <div>
+          <div class="table-title">
+            <img src="/assets/icons/dollar-sign.svg" alt="" class="svg-icon-img md">
+            <span>FINANCEIRO & CONTROLE DE PAGAMENTO SEMANAL</span>
+          </div>
+          <p style="font-size: 11px; color: var(--text-secondary); margin-top: 3px;">
+            Taxa Semanal: <b style="color: var(--cyan-action);">Motoboy: R$ 50,00</b> | <b style="color: var(--yellow-primary);">Motorista (Carro): R$ 100,00</b> • Ciclo: <b>Segunda-feira a Domingo</b>
+          </p>
+        </div>
+        <div class="fin-toolbar">
+          <div style="font-size: 11px; color: #cbd5e1; background: rgba(0, 229, 255, 0.08); border: 1px solid rgba(0, 229, 255, 0.25); padding: 5px 12px; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 6px;">
+            <img src="/assets/icons/calendar.svg" alt="" class="svg-icon-img sm"> Semana Vigente: <b id="finance-cycle-dates" style="color: var(--cyan-action);">--</b>
+          </div>
+          <button type="button" class="btn-action-small" style="background: var(--bg-input); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 6px 12px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;" onclick="AdminApp.loadPayments()">
+            <img src="/assets/icons/refresh.svg" alt="" class="svg-icon-img sm"> Atualizar
+          </button>
+          <button type="button" class="btn-action-small" style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); color: #10B981; padding: 6px 12px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;" onclick="AdminApp.exportFinancialCSV()" title="Baixar planilha para Excel">
+            <img src="/assets/icons/download.svg" alt="" class="svg-icon-img sm"> Exportar CSV
+          </button>
+          <button type="button" class="btn-action-small" style="background: rgba(255, 230, 0, 0.1); border: 1px solid rgba(255, 230, 0, 0.3); color: var(--yellow-primary); padding: 6px 12px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;" onclick="window.print()" title="Imprimir relatório financeiro da diretoria">
+            <img src="/assets/icons/printer.svg" alt="" class="svg-icon-img sm"> Imprimir
+          </button>
+        </div>
+      </div>
+
+      <!-- Financial KPI Cards -->
+      <div class="kpi-grid" style="margin-bottom: 14px;">
+        <div class="kpi-card" style="border-left: 3px solid #10B981; background: rgba(16, 185, 129, 0.05);">
+          <div class="kpi-title" style="color: #10B981;">Faturamento Total</div>
+          <div class="kpi-value" id="fin-kpi-total-revenue" style="color: #10B981;">R$ 0,00</div>
+          <div class="kpi-subtext">Arrecadação do ciclo</div>
+        </div>
+        <div class="kpi-card" style="border-left: 3px solid var(--cyan-action);">
+          <div class="kpi-title">Regulares (Pagos)</div>
+          <div class="kpi-value" id="fin-kpi-paid-drivers" style="color: var(--cyan-action);">0</div>
+          <div class="kpi-subtext">Sem pendências</div>
+        </div>
+        <div class="kpi-card" style="border-left: 3px solid var(--yellow-primary);">
+          <div class="kpi-title">Carros / Motos</div>
+          <div class="kpi-value" id="fin-kpi-cars-motos" style="font-size: 17px; color: #FFFFFF;">0 / 0</div>
+          <div class="kpi-subtext">Divisão por categoria</div>
+        </div>
+        <div class="kpi-card" style="border-left: 3px solid #f59e0b;">
+          <div class="kpi-title">Cortesias Ativas</div>
+          <div class="kpi-value" id="fin-kpi-free-pass" style="color: #f59e0b;">0</div>
+          <div class="kpi-subtext">1 semana grátis</div>
+        </div>
+        <div class="kpi-card" style="border-left: 3px solid #EF4444; background: rgba(239, 68, 68, 0.04);">
+          <div class="kpi-title" style="color: #EF4444;">Inadimplentes</div>
+          <div class="kpi-value" id="fin-kpi-pending-drivers" style="color: #EF4444;">0</div>
+          <div class="kpi-subtext">Pendentes de acerto</div>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Motorista</th>
+            <th>Categoria / Taxa</th>
+            <th>Ciclo Vigente</th>
+            <th>Status</th>
+            <th>Aprovação & Auditoria</th>
+            <th style="min-width: 250px;">Ações Administrativas</th>
+          </tr>
+        </thead>
+        <tbody id="table-payments-body">
+          <!-- Populated dynamically -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- TAB 5: CIDADES E EXPANSÃO -->
+    <!-- ============================================================= -->
+    <section class="table-card" id="tab-cities" style="display: none;">
+      <div class="table-header-row">
+        <div>
+          <div class="table-title">
+            <img src="/assets/icons/pin.svg" alt="" class="svg-icon-img md">
+            <span>CIDADES ATENDIDAS E EXPANSÃO DA COBERTURA</span>
+          </div>
+          <p style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">
+            Configure e precifique a tarifa base e o valor por quilômetro por cidade.
+          </p>
+        </div>
+      </div>
+
+      <div class="cities-grid-layout">
+        <div>
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">
+            CIDADES EM OPERAÇÃO:
+          </div>
+          <div id="cities-chips-container" style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <form id="form-add-city" onsubmit="AdminApp.handleAddCity(event)" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px;">
+          <div style="font-size: 12px; font-weight: 800; color: var(--yellow-primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+            <img src="/assets/icons/pin.svg" alt="" class="svg-icon-img sm"> Adicionar Nova Cidade
+          </div>
+          <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <div class="form-group" style="flex: 2; margin-bottom: 0;">
+              <label class="form-label" style="font-size: 10.5px;">Nome da Cidade:</label>
+              <div class="pill-input-wrap">
+                <input type="text" id="new-city-name" class="pill-input" placeholder="Ex: Uberlândia" required style="height: 34px; font-size: 12px;">
+              </div>
+            </div>
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+              <label class="form-label" style="font-size: 10.5px;">UF (Estado):</label>
+              <div class="pill-input-wrap">
+                <input type="text" id="new-city-state" class="pill-input" value="MG" maxlength="2" required style="height: 34px; font-size: 12px;">
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+              <label class="form-label" style="font-size: 10.5px;">Tarifa Base Carro (R$):</label>
+              <div class="pill-input-wrap">
+                <input type="number" step="0.25" id="new-city-fare-car" class="pill-input" value="7.00" required style="height: 34px; font-size: 12px;">
+              </div>
+            </div>
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+              <label class="form-label" style="font-size: 10.5px;">KM Carro (R$):</label>
+              <div class="pill-input-wrap">
+                <input type="number" step="0.05" id="new-city-km-car" class="pill-input" value="1.00" required style="height: 34px; font-size: 12px;">
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 10px; margin-bottom: 14px;">
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+              <label class="form-label" style="font-size: 10.5px;">Tarifa Base Moto (R$):</label>
+              <div class="pill-input-wrap">
+                <input type="number" step="0.25" id="new-city-fare-moto" class="pill-input" value="5.50" required style="height: 34px; font-size: 12px;">
+              </div>
+            </div>
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+              <label class="form-label" style="font-size: 10.5px;">KM Moto (R$):</label>
+              <div class="pill-input-wrap">
+                <input type="number" step="0.05" id="new-city-km-moto" class="pill-input" value="0.85" required style="height: 34px; font-size: 12px;">
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn-pill btn-green" style="height: 36px; font-size: 11.5px; width: 100%;">
+            HABILITAR CIDADE NO APP
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- TAB 6: MENSAGENS E CANAL DIRETO COM MOTORISTAS / PASSAGEIROS -->
+    <!-- ============================================================= -->
+    <section class="table-card" id="tab-admin-messages" style="display: none;">
+      <div class="table-header-row">
+        <div>
+          <div class="table-title">
+            <img src="/assets/icons/chat.svg" alt="" class="svg-icon-img md">
+            <span>MENSAGENS DIRETAS & CANAL DE SUPORTE</span>
+          </div>
+          <p style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">
+            Converse diretamente com qualquer motorista ou passageiro em tempo real.
+          </p>
+        </div>
+        <button type="button" class="btn-action-small" style="background: var(--bg-input); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 6px 14px; border-radius: var(--radius-sm); font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 6px;" onclick="AdminApp.loadConversationsList()">
+          <img src="/assets/icons/refresh.svg" alt="" class="svg-icon-img sm"> Atualizar Conversas
+        </button>
+      </div>
+
+      <div id="admin-conversations-list" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+        <div style="text-align: center; padding: 30px; color: var(--text-secondary); font-size: 12px;">
+          Carregando conversas...
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal Editar Tarifas da Cidade -->
+  <div class="modal-backdrop" id="admin-modal-edit-city" style="display: none;">
+    <div class="modal-content-card" style="max-width: 480px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
+        <div>
+          <div style="font-size: 10.5px; font-weight: 800; color: var(--cyan-action); text-transform: uppercase; letter-spacing: 0.8px;">CONFIGURAÇÃO DE TARIFAS</div>
+          <h3 style="font-size: 16px; font-weight: 800; color: #FFFFFF; margin-top: 2px;" id="edit-city-title">Ajustar Tarifas da Cidade</h3>
+        </div>
+        <button type="button" onclick="AdminApp.closeEditCityModal()" style="background: var(--bg-input); border: none; color: var(--text-main); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;"><img src="/assets/icons/close.svg" alt="Fechar" class="svg-icon-img sm"></button>
+      </div>
+
+      <form id="form-edit-city" onsubmit="AdminApp.handleSaveEditCity(event)">
+        <input type="hidden" id="edit-city-id">
+
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+          <div class="form-group" style="flex: 2; margin-bottom: 0;">
+            <label class="form-label" style="font-size: 10.5px;">Nome da Cidade:</label>
+            <div class="pill-input-wrap">
+              <input type="text" id="edit-city-name" class="pill-input" required style="height: 34px; font-size: 12px;">
+            </div>
+          </div>
+          <div class="form-group" style="flex: 1; margin-bottom: 0;">
+            <label class="form-label" style="font-size: 10.5px;">UF (Estado):</label>
+            <div class="pill-input-wrap">
+              <input type="text" id="edit-city-state" class="pill-input" maxlength="2" required style="height: 34px; font-size: 12px;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Carro Tarifas -->
+        <div style="background: rgba(0, 229, 255, 0.04); border: 1px solid rgba(0, 229, 255, 0.15); border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 10px;">
+          <div style="font-size: 10.5px; font-weight: 800; color: var(--cyan-action); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+            <img src="/assets/icons/car.svg" alt="" class="svg-icon-img sm"> TARIFAS - CARRO
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+              <label class="form-label" style="font-size: 10px;">Tarifa Base (R$):</label>
+              <div class="pill-input-wrap">
+                <input type="number" step="0.25" min="0" id="edit-city-base-car" class="pill-input" required style="height: 32px; font-size: 12px;">
+              </div>
+            </div>
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+              <label class="form-label" style="font-size: 10px;">Valor por KM (R$):</label>
+              <div class="pill-input-wrap">
+                <input type="number" step="0.05" min="0" id="edit-city-km-car" class="pill-input" required style="height: 32px; font-size: 12px;">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Moto Tarifas -->
+        <div style="background: rgba(255, 230, 0, 0.04); border: 1px solid rgba(255, 230, 0, 0.15); border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 12px;">
+          <div style="font-size: 10.5px; font-weight: 800; color: var(--yellow-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+            <img src="/assets/icons/moto.svg" alt="" class="svg-icon-img sm"> TARIFAS - MOTO TÁXI
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+              <label class="form-label" style="font-size: 10px;">Tarifa Base (R$):</label>
+              <div class="pill-input-wrap">
+                <input type="number" step="0.25" min="0" id="edit-city-base-moto" class="pill-input" required style="height: 32px; font-size: 12px;">
+              </div>
+            </div>
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+              <label class="form-label" style="font-size: 10px;">Valor por KM (R$):</label>
+              <div class="pill-input-wrap">
+                <input type="number" step="0.05" min="0" id="edit-city-km-moto" class="pill-input" required style="height: 32px; font-size: 12px;">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label" style="font-size: 10.5px;">Status no Aplicativo:</label>
+          <select id="edit-city-active" class="pill-input" style="background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); height: 36px; padding: 0 12px; width: 100%; font-size: 12px;">
+            <option value="true">Ativa (Disponível para passageiros e motoristas)</option>
+            <option value="false">Inativa / Pausada (Ocultar no app)</option>
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 8px; justify-content: flex-end;">
+          <button type="button" class="btn-pill btn-white" style="height: 36px; font-size: 11px; padding: 0 16px;" onclick="AdminApp.closeEditCityModal()">CANCELAR</button>
+          <button type="submit" class="btn-pill btn-green" style="height: 36px; font-size: 11px; padding: 0 18px; font-weight: 700; display: flex; align-items: center; gap: 6px;"><img src="/assets/icons/save.svg" alt="" class="svg-icon-img sm"> SALVAR ALTERAÇÕES</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- Modal para Mensagem Direta -->
-  <div class="modal-backdrop" id="modal-msg">
-    <div class="modal-card">
-      <h3>✉️ Enviar Mensagem Direta ao Usuário</h3>
-      <input type="text" id="msg-recipient-name" readonly style="opacity: 0.7;">
-      <textarea id="msg-text" rows="4" placeholder="Digite a mensagem oficial da diretoria..."></textarea>
+  <!-- Modal Responder Reporte -->
+  <div class="modal-backdrop" id="admin-modal-report">
+    <div class="modal-content-card" style="max-width: 480px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 8px;">
+        <h3 style="font-size: 15px; font-weight: 800; color: #FFFFFF; display: flex; align-items: center; gap: 6px;">
+          <img src="/assets/icons/siren.svg" alt="" class="svg-icon-img md"> Responder Reporte
+        </h3>
+        <button type="button" onclick="AdminApp.closeReportModal()" style="background: var(--bg-input); border: none; color: var(--text-main); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;"><img src="/assets/icons/close.svg" alt="Fechar" class="svg-icon-img sm"></button>
+      </div>
+      <p style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 12px;" id="admin-rep-detail">--</p>
+
+      <div class="form-group" style="margin-bottom: 14px;">
+        <label class="form-label" style="font-size: 11px;">Resposta Oficial da Diretoria:</label>
+        <textarea id="admin-rep-response" required placeholder="Digite a devolutiva formal para o solicitante..."></textarea>
+      </div>
+
       <div style="display: flex; gap: 8px; justify-content: flex-end;">
-        <button class="btn btn-outline" onclick="closeMsgModal()">Cancelar</button>
-        <button class="btn btn-cyan" onclick="sendAdminDirectMsg()">Enviar Mensagem</button>
+        <button type="button" class="btn-pill btn-white" style="height: 36px; font-size: 11px; padding: 0 16px;" onclick="AdminApp.closeReportModal()">CANCELAR</button>
+        <button type="button" class="btn-pill btn-green" style="height: 36px; font-size: 11px; padding: 0 18px;" onclick="AdminApp.submitReportResponse()">RESOLVER E ENVIAR</button>
       </div>
     </div>
   </div>
 
-  <script>
-    let activeRecipientId = null;
-    let activeRecipientName = null;
-    let activeRecipientRole = null;
+  <!-- Modal Auditoria de Comprovante Pix -->
+  <div class="modal-backdrop" id="admin-modal-audit">
+    <div class="modal-content-card" style="max-width: 480px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
+        <h3 style="font-size: 15px; font-weight: 800; color: var(--yellow-primary); display: flex; align-items: center; gap: 6px;"><img src="/assets/icons/file-text.svg" alt="" class="svg-icon-img md"> Auditoria de Comprovante Pix</h3>
+        <button type="button" onclick="AdminApp.closeAuditModal()" style="background: var(--bg-input); border: none; color: var(--text-main); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;"><img src="/assets/icons/close.svg" alt="Fechar" class="svg-icon-img sm"></button>
+      </div>
 
-    async function apiFetch(endpoint, method = 'GET', body = null) {
-      const headers = { 'Content-Type': 'application/json', 'x-admin-request': 'true' };
-      const options = { method, headers };
-      if (body) options.body = JSON.stringify(body);
-      const res = await fetch(endpoint, options);
-      return await res.json();
-    }
+      <div id="audit-driver-meta" style="font-size: 11.5px; color: #cbd5e1; margin-bottom: 12px; background: rgba(255,255,255,0.02); padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); line-height: 1.5;">
+        <!-- Driver details & approval meta -->
+      </div>
 
-    async function loadDashboardStats() {
-      try {
-        const stats = await apiFetch('/api/admin/stats');
-        if (stats && stats.success) {
-          document.getElementById('stat-completed-rides').innerText = stats.completedRides || 0;
-          document.getElementById('stat-total-revenue').innerText = `R$ ${Number(stats.totalRevenue || 0).toFixed(2).replace('.', ',')}`;
-          document.getElementById('stat-total-users').innerText = stats.totalUsers || 0;
-          document.getElementById('stat-pending-drivers').innerText = stats.pendingDrivers || 0;
-        }
-        loadPendingDrivers();
-        loadUsers();
-        loadRides();
-        loadPayments();
-        loadReports();
-      } catch (e) {
-        console.error('Erro ao carregar estatísticas:', e);
-      }
-    }
+      <div style="text-align: center; margin-bottom: 12px;">
+        <div id="audit-receipt-preview-wrap" style="max-height: 260px; overflow: auto; border: 1px dashed rgba(0, 229, 255, 0.25); border-radius: var(--radius-sm); padding: 8px; background: rgba(0,0,0,0.35);">
+          <img id="audit-receipt-img" src="" alt="Comprovante Pix" style="max-width: 100%; border-radius: 6px; display: none; cursor: pointer;" onclick="AdminApp.openPhotoLightbox(this.src, 'Comprovante Pix do Motorista')">
+          <div id="audit-receipt-empty" style="padding: 24px; font-size: 11.5px; color: var(--text-secondary);">
+            Nenhum comprovante em imagem anexado ainda.<br>O motorista pode enviar via WhatsApp para o número <b>(34) 99999-4077</b>.
+          </div>
+        </div>
+      </div>
 
-    async function loadPendingDrivers() {
-      const data = await apiFetch('/api/admin/users?role=driver');
-      const tbody = document.getElementById('table-drivers-pending-body');
-      if (!data || !data.users) return;
+      <div class="form-group" style="margin-bottom: 14px;">
+        <label class="form-label" style="color: var(--text-secondary); font-size: 10.5px;">Anexar / Atualizar Comprovante do Motorista:</label>
+        <input type="file" id="audit-file-input" accept="image/*,application/pdf" style="display: none;" onchange="AdminApp.handleAuditFileSelect(event)">
+        <button type="button" class="btn-action-small" style="width: 100%; height: 34px; background: rgba(0, 229, 255, 0.12); border: 1px solid rgba(0, 229, 255, 0.3); color: var(--cyan-action); border-radius: var(--radius-sm); font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="document.getElementById('audit-file-input').click()">
+          <img src="/assets/icons/folder.svg" alt="" class="svg-icon-img sm"> Selecionar Arquivo do Comprovante
+        </button>
+      </div>
 
-      const pending = data.users.filter(u => u.approved === false || u.status === 'pending');
-      if (pending.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--green-success); font-weight: 800;">✅ Nenhum motorista pendente de aprovação!</td></tr>';
-        return;
-      }
+      <div style="display: flex; gap: 8px; justify-content: flex-end;">
+        <button type="button" class="btn-pill btn-white" style="height: 34px; font-size: 11px; padding: 0 16px;" onclick="AdminApp.closeAuditModal()">FECHAR</button>
+      </div>
+    </div>
+  </div>
 
-      tbody.innerHTML = pending.map(u => `
-        <tr>
-          <td><strong>${u.name}</strong></td>
-          <td>${u.email}<br><small>${u.phone || 'Sem telefone'}</small></td>
-          <td>${u.city || 'Ituiutaba'}</td>
-          <td>${u.vehicle ? (u.vehicle.model + ' • ' + u.vehicle.plate) : 'Não informado'}</td>
-          <td>
-            <button class="btn btn-green" onclick="approveDriver('${u.id}')">Aprovar Cadastro</button>
-          </td>
-        </tr>
-      `).join('');
-    }
+  <!-- Modal Completo de Avaliação e Homologação do Motorista -->
+  <div class="modal-backdrop" id="admin-modal-driver-eval">
+    <div class="modal-card-driver-eval">
+      <div class="eval-modal-header">
+        <div>
+          <div style="font-size: 11px; font-weight: 800; color: var(--cyan-action); letter-spacing: 1px;">DIRETORIA MAX DRIVE • AUDITORIA CADASTRAL</div>
+          <h2 style="font-size: 20px; font-weight: 900; color: var(--yellow-primary); margin-top: 4px;" id="eval-header-title">Avaliação do Motorista</h2>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span id="eval-header-badge" class="badge-status pending" style="font-size: 12px; padding: 6px 14px;">PENDENTE</span>
+          <button type="button" onclick="AdminApp.closeDriverEvalModal()" style="background: var(--bg-input); border: none; color: var(--text-main); width: 34px; height: 34px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;"><img src="/assets/icons/close.svg" alt="Fechar" class="svg-icon-img sm"></button>
+        </div>
+      </div>
 
-    async function approveDriver(userId) {
-      if (!confirm('Deseja realmente aprovar este motorista?')) return;
-      const res = await apiFetch(`/api/admin/users/${userId}/approve`, 'PUT');
-      alert(res.message || 'Motorista aprovado!');
-      loadDashboardStats();
-    }
+      <div class="eval-driver-layout">
+        <!-- Coluna da Esquerda: Ficha do Motorista e Foto de Rosto -->
+        <div class="eval-profile-card">
+          <div class="eval-avatar-wrap" id="eval-driver-avatar-wrap" onclick="AdminApp.openPhotoLightbox(document.getElementById('eval-driver-avatar-img').src, 'Foto de Perfil do Motorista')" title="Clique para ampliar">
+            <img id="eval-driver-avatar-img" class="eval-avatar-img" src="" alt="Motorista">
+            <div id="eval-driver-avatar-fallback" style="display: none; font-size: 32px; font-weight: 900; color: var(--yellow-primary);">--</div>
+          </div>
+          <h3 id="eval-driver-name" style="font-size: 16px; font-weight: 800; color: #FFFFFF; text-transform: uppercase;">MARCOS MARQUES</h3>
+          <span id="eval-driver-email" style="font-size: 12px; color: #94a3b8; word-break: break-all;">motorista@maxdrive.com</span>
+          
+          <div class="eval-info-list">
+            <div class="eval-info-item">
+              <span class="eval-info-label">CPF:</span>
+              <span class="eval-info-val" id="eval-driver-cpf">--</span>
+            </div>
+            <div class="eval-info-item">
+              <span class="eval-info-label">Data Nasc.:</span>
+              <span class="eval-info-val" id="eval-driver-birth">--</span>
+            </div>
+            <div class="eval-info-item">
+              <span class="eval-info-label">Telefone:</span>
+              <span class="eval-info-val" id="eval-driver-phone">--</span>
+            </div>
+            <div class="eval-info-item">
+              <span class="eval-info-label">CNH:</span>
+              <span class="eval-info-val" id="eval-driver-cnh" style="color: var(--yellow-primary);">--</span>
+            </div>
+            <div class="eval-info-item">
+              <span class="eval-info-label">Cidade:</span>
+              <span class="eval-info-val" id="eval-driver-city">Ituiutaba</span>
+            </div>
+            <div class="eval-info-item">
+              <span class="eval-info-label">Avaliação:</span>
+              <span class="eval-info-val" id="eval-driver-rating" style="color: #f59e0b; display: flex; align-items: center; gap: 4px;"><img src="/assets/icons/star.svg" alt="" class="svg-icon-img sm"> 5.0</span>
+            </div>
+            <div class="eval-info-item">
+              <span class="eval-info-label">Corridas Feitas:</span>
+              <span class="eval-info-val" id="eval-driver-rides">0</span>
+            </div>
+            <div class="eval-info-item">
+              <span class="eval-info-label">Cadastro em:</span>
+              <span class="eval-info-val" id="eval-driver-created">--</span>
+            </div>
+            <div class="eval-info-item" id="eval-ban-reason-row" style="display: none;">
+              <span class="eval-info-label" style="color: #FF3B30;">Motivo Banimento:</span>
+              <span class="eval-info-val" id="eval-driver-ban-reason" style="color: #FF3B30;">--</span>
+            </div>
+          </div>
+        </div>
 
-    async function loadUsers() {
-      const data = await apiFetch('/api/admin/users');
-      const tbody = document.getElementById('table-users-body');
-      if (!data || !data.users) return;
+        <!-- Coluna da Direita: Dados do Veículo e Fotos para Inspeção -->
+        <div class="eval-photos-container">
+          <!-- Dados do Veículo -->
+          <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--yellow-primary); text-transform: uppercase; margin-bottom: 10px;">
+              DADOS DO VEÍCULO CADASTRADO:
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; font-size: 12px;">
+              <div>
+                <span style="color: #94a3b8; font-size: 10px; font-weight: 700;">TIPO:</span>
+                <div id="eval-veh-type" style="font-weight: 800; color: #00E5FF;">CARRO</div>
+              </div>
+              <div>
+                <span style="color: #94a3b8; font-size: 10px; font-weight: 700;">MODELO:</span>
+                <div id="eval-veh-model" style="font-weight: 800; color: #FFF;">ONIX PRETO</div>
+              </div>
+              <div>
+                <span style="color: #94a3b8; font-size: 10px; font-weight: 700;">PLACA:</span>
+                <div id="eval-veh-plate" style="font-weight: 800; color: var(--yellow-primary);">ABC-1234</div>
+              </div>
+              <div>
+                <span style="color: #94a3b8; font-size: 10px; font-weight: 700;">COR / ANO:</span>
+                <div id="eval-veh-color-year" style="font-weight: 800; color: #FFF;">Preto (2022)</div>
+              </div>
+            </div>
+          </div>
 
-      tbody.innerHTML = data.users.map(u => `
-        <tr>
-          <td><strong>${u.name}</strong> ${u.isAdmin ? '👑' : ''}</td>
-          <td>${u.email}</td>
-          <td><span class="badge badge-cyan">${u.role}</span></td>
-          <td>${u.city || 'Ituiutaba'}</td>
-          <td><span class="badge ${u.status === 'active' ? 'badge-green' : 'badge-red'}">${u.status}</span></td>
-          <td>
-            <button class="btn btn-outline" onclick="openMsgModal('${u.id}', '${u.name}', '${u.role}')">✉️ Mensagem</button>
-            <button class="btn ${u.status === 'banned' ? 'btn-green' : 'btn-red'}" onclick="toggleBanUser('${u.id}', '${u.status}')">
-              ${u.status === 'banned' ? 'Desbanir' : 'Banir'}
-            </button>
-            ${!u.isAdmin ? `<button class="btn btn-yellow" onclick="makeAdmin('${u.id}')">Promover Admin</button>` : ''}
-          </td>
-        </tr>
-      `).join('');
-    }
+          <!-- Fotos do Veículo e Documentos -->
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <span style="font-size: 12px; font-weight: 800; color: var(--yellow-primary); text-transform: uppercase;">
+                FOTOS P/ CONFERÊNCIA (TOQUE P/ AMPLIAR):
+              </span>
+              <span style="font-size: 10px; color: #00E5FF; display: flex; align-items: center; gap: 4px;"><img src="/assets/icons/eye.svg" alt="" class="svg-icon-img sm"> Clique na foto p/ ver em alta resolução</span>
+            </div>
 
-    async function toggleBanUser(userId, currentStatus) {
-      const action = currentStatus === 'banned' ? 'desbanir' : 'banir';
-      if (!confirm(`Deseja realmente ${action} este usuário?`)) return;
-      const res = await apiFetch(`/api/admin/users/${userId}/ban`, 'PUT', { ban: currentStatus !== 'banned' });
-      alert(res.message || 'Status alterado!');
-      loadUsers();
-    }
+            <div class="eval-photos-grid">
+              <!-- Foto 1: Frente -->
+              <div class="eval-photo-item" onclick="AdminApp.openLightboxFromSlot('front')">
+                <div class="eval-photo-thumb-wrap">
+                  <img id="eval-photo-front" class="eval-photo-thumb" src="" alt="Frente do Veículo">
+                  <div id="eval-photo-front-empty" style="display: none; font-size: 11px; color: #94a3b8; text-align: center; padding: 10px;">
+                    <img src="/assets/icons/camera.svg" alt="" class="svg-icon-img xl" style="display: block; margin: 0 auto 6px auto; opacity: 0.5;"> Foto não enviada
+                  </div>
+                  <span class="eval-photo-badge-overlay">FRENTE / PLACA</span>
+                </div>
+                <div class="eval-photo-desc">
+                  <b style="color: var(--text-main);">1. Frente do Veículo</b><br>
+                  <span style="color: #94a3b8;">Conferir modelo e placa visível</span>
+                </div>
+              </div>
 
-    async function makeAdmin(userId) {
-      if (!confirm('Promover este usuário a Administrador com acesso total?')) return;
-      const res = await apiFetch(`/api/admin/users/${userId}/make-admin`, 'PUT');
-      alert(res.message || 'Usuário promovido a Admin!');
-      loadUsers();
-    }
+              <!-- Foto 2: Lateral do Veículo -->
+              <div class="eval-photo-item" onclick="AdminApp.openLightboxFromSlot('side')">
+                <div class="eval-photo-thumb-wrap">
+                  <img id="eval-photo-side" class="eval-photo-thumb" src="" alt="Lateral do Veículo">
+                  <div id="eval-photo-side-empty" style="display: none; font-size: 11px; color: #94a3b8; text-align: center; padding: 10px;">
+                    <img src="/assets/icons/camera.svg" alt="" class="svg-icon-img xl" style="display: block; margin: 0 auto 6px auto; opacity: 0.5;"> Foto não enviada
+                  </div>
+                  <span class="eval-photo-badge-overlay">2. LATERAL</span>
+                </div>
+                <div class="eval-photo-desc">
+                  <b style="color: var(--text-main);">2. Lateral do Veículo</b><br>
+                  <span style="color: #94a3b8;">Conservação e lataria geral</span>
+                </div>
+              </div>
 
-    async function loadRides() {
-      const data = await apiFetch('/api/rides');
-      const tbody = document.getElementById('table-rides-body');
-      if (!data || !data.rides) return;
+              <!-- Foto 3: Traseira do Veículo -->
+              <div class="eval-photo-item" onclick="AdminApp.openLightboxFromSlot('rear')">
+                <div class="eval-photo-thumb-wrap">
+                  <img id="eval-photo-rear" class="eval-photo-thumb" src="" alt="Traseira do Veículo">
+                  <div id="eval-photo-rear-empty" style="display: none; font-size: 11px; color: #94a3b8; text-align: center; padding: 10px;">
+                    <img src="/assets/icons/camera.svg" alt="" class="svg-icon-img xl" style="display: block; margin: 0 auto 6px auto; opacity: 0.5;"> Foto não enviada
+                  </div>
+                  <span class="eval-photo-badge-overlay">3. TRASEIRA</span>
+                </div>
+                <div class="eval-photo-desc">
+                  <b style="color: var(--text-main);">3. Traseira do Veículo</b><br>
+                  <span style="color: #94a3b8;">Placa traseira e lanternas</span>
+                </div>
+              </div>
 
-      tbody.innerHTML = data.rides.slice(0, 30).map(r => `
-        <tr>
-          <td><small>${r.id}</small></td>
-          <td>${r.passengerName || 'Passageiro'}</td>
-          <td>${r.driverName || 'Pendente'}</td>
-          <td>${r.origin} ➔ ${r.destination}</td>
-          <td><strong>R$ ${Number(r.price || 0).toFixed(2).replace('.', ',')}</strong></td>
-          <td><span class="badge ${r.status === 'completed' ? 'badge-green' : 'badge-yellow'}">${r.status}</span></td>
-        </tr>
-      `).join('');
-    }
+              <!-- Foto 4: Bancos / Interior -->
+              <div class="eval-photo-item" onclick="AdminApp.openLightboxFromSlot('seats')">
+                <div class="eval-photo-thumb-wrap">
+                  <img id="eval-photo-seats" class="eval-photo-thumb" src="" alt="Bancos e Interior">
+                  <div id="eval-photo-seats-empty" style="display: none; font-size: 11px; color: #94a3b8; text-align: center; padding: 10px;">
+                    <img src="/assets/icons/camera.svg" alt="" class="svg-icon-img xl" style="display: block; margin: 0 auto 6px auto; opacity: 0.5;"> Foto não enviada
+                  </div>
+                  <span class="eval-photo-badge-overlay">4. BANCOS / INTERIOR</span>
+                </div>
+                <div class="eval-photo-desc">
+                  <b style="color: var(--text-main);">4. Bancos / Interior</b><br>
+                  <span style="color: #94a3b8;">Limpeza, estofamento e cintos</span>
+                </div>
+              </div>
 
-    async function loadPayments() {
-      const data = await apiFetch('/api/admin/payments');
-      const tbody = document.getElementById('table-payments-body');
-      if (!data || !data.payments) return;
+              <!-- Foto 5: CNH (Imagem ou PDF) -->
+              <div class="eval-photo-item" onclick="AdminApp.openLightboxFromSlot('cnh')">
+                <div class="eval-photo-thumb-wrap">
+                  <img id="eval-photo-cnh" class="eval-photo-thumb" src="" alt="Documento CNH">
+                  <div id="eval-photo-cnh-pdf" style="display: none; width: 100%; height: 100%; background: rgba(239, 68, 68, 0.15); flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 10px;">
+                    <img src="/assets/icons/file-text.svg" alt="" class="svg-icon-img xl">
+                    <span style="font-size: 11px; font-weight: 800; color: var(--text-main);">DOCUMENTO PDF</span>
+                    <button type="button" class="btn-pill btn-cyan" style="height: 28px; font-size: 10px; width: auto; padding: 0 12px; margin-top: 2px; display: inline-flex; align-items: center; gap: 4px;" onclick="event.stopPropagation(); AdminApp.openPdfViewer('cnh')">ABRIR PDF <img src="/assets/icons/arrow-right.svg" alt="" class="svg-icon-img sm"></button>
+                  </div>
+                  <div id="eval-photo-cnh-empty" style="display: none; font-size: 11px; color: #94a3b8; text-align: center; padding: 10px;">
+                    <img src="/assets/icons/id-card.svg" alt="" class="svg-icon-img xl" style="display: block; margin: 0 auto 6px auto; opacity: 0.5;"> Documento não enviado
+                  </div>
+                  <span class="eval-photo-badge-overlay">5. CNH</span>
+                </div>
+                <div class="eval-photo-desc">
+                  <b style="color: var(--text-main);">5. CNH (Habilitação)</b><br>
+                  <span style="color: #94a3b8;">Imagem ou arquivo PDF</span>
+                </div>
+              </div>
 
-      tbody.innerHTML = data.payments.map(p => `
-        <tr>
-          <td><strong>${p.driverName || 'Motorista'}</strong></td>
-          <td>${p.vehicleType === 'moto' ? 'Moto Táxi' : 'Carro'}</td>
-          <td>R$ ${Number(p.amount || 0).toFixed(2).replace('.', ',')}</td>
-          <td><span class="badge badge-green">${p.status}</span></td>
-          <td>
-            <button class="btn btn-yellow" onclick="giveFreePass('${p.driverId}')">Passe Grátis</button>
-          </td>
-        </tr>
-      `).join('');
-    }
+              <!-- Foto 6: CRLV (Imagem ou PDF) -->
+              <div class="eval-photo-item" onclick="AdminApp.openLightboxFromSlot('doc')">
+                <div class="eval-photo-thumb-wrap">
+                  <img id="eval-photo-doc" class="eval-photo-thumb" src="" alt="Documento CRLV">
+                  <div id="eval-photo-doc-pdf" style="display: none; width: 100%; height: 100%; background: rgba(239, 68, 68, 0.15); flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 10px;">
+                    <img src="/assets/icons/file-text.svg" alt="" class="svg-icon-img xl">
+                    <span style="font-size: 11px; font-weight: 800; color: var(--text-main);">DOCUMENTO PDF</span>
+                    <button type="button" class="btn-pill btn-cyan" style="height: 28px; font-size: 10px; width: auto; padding: 0 12px; margin-top: 2px; display: inline-flex; align-items: center; gap: 4px;" onclick="event.stopPropagation(); AdminApp.openPdfViewer('doc')">ABRIR PDF <img src="/assets/icons/arrow-right.svg" alt="" class="svg-icon-img sm"></button>
+                  </div>
+                  <div id="eval-photo-doc-empty" style="display: none; font-size: 11px; color: #94a3b8; text-align: center; padding: 10px;">
+                    <img src="/assets/icons/file-text.svg" alt="" class="svg-icon-img xl" style="display: block; margin: 0 auto 6px auto; opacity: 0.5;"> Documento não enviado
+                  </div>
+                  <span class="eval-photo-badge-overlay">6. CRLV</span>
+                </div>
+                <div class="eval-photo-desc">
+                  <b style="color: var(--text-main);">6. CRLV do Veículo</b><br>
+                  <span style="color: #94a3b8;">Imagem ou arquivo PDF</span>
+                </div>
+              </div>
+            </div>
 
-    async function giveFreePass(driverId) {
-      const res = await apiFetch('/api/payments/free-pass', 'POST', { driverId });
-      alert(res.message || 'Semana grátis concedida!');
-      loadPayments();
-    }
+            <!-- Caixa de Mensagens / Códigos Enviados pelo Motorista -->
+            <div id="eval-driver-messages-container" style="display: none; background: rgba(0, 229, 255, 0.05); border: 1px solid rgba(0, 229, 255, 0.25); border-radius: 14px; padding: 14px; margin-top: 14px;">
+              <div style="font-size: 11px; font-weight: 800; color: #00E5FF; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                <img src="/assets/icons/chat.svg" alt="" class="svg-icon-img sm"> Dados / Códigos Digitados pelo Motorista:
+              </div>
+              <div id="eval-cnh-msg-box" style="display: none; margin-bottom: 8px; font-size: 12px;">
+                <b style="color: var(--yellow-primary);">CNH:</b> <span id="eval-cnh-msg-text" style="color: var(--text-main);">--</span>
+              </div>
+              <div id="eval-doc-msg-box" style="display: none; font-size: 12px;">
+                <b style="color: var(--yellow-primary);">CRLV:</b> <span id="eval-doc-msg-text" style="color: var(--text-main);">--</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    async function loadReports() {
-      const data = await apiFetch('/api/reports');
-      const tbody = document.getElementById('table-reports-body');
-      if (!data || !data.reports) return;
+      <!-- Barra de Ações do Administrador -->
+      <div class="eval-actions-bar">
+        <button type="button" class="btn-pill btn-white" onclick="AdminApp.closeDriverEvalModal()" style="height: 42px; font-size: 12px; width: auto; padding: 0 20px;">
+          FECHAR
+        </button>
 
-      if (data.reports.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--green-success);">Nenhum reporte pendente!</td></tr>';
-        return;
-      }
+        <button type="button" id="btn-eval-ban" class="btn-pill btn-red" onclick="AdminApp.toggleBanCurrentEvaluatedDriver()" style="height: 42px; font-size: 12px; width: auto; padding: 0 20px; display: flex; align-items: center; gap: 6px;">
+          <img src="/assets/icons/ban.svg" alt="" class="svg-icon-img sm"> BANIR MOTORISTA
+        </button>
 
-      tbody.innerHTML = data.reports.map(rep => `
-        <tr>
-          <td>${rep.reporterName} (${rep.reporterRole})</td>
-          <td>${rep.targetName || 'Geral'}</td>
-          <td>${rep.reason}</td>
-          <td><span class="badge ${rep.status === 'Resolvido' ? 'badge-green' : 'badge-yellow'}">${rep.status}</span></td>
-          <td>
-            ${rep.status !== 'Resolvido' ? `<button class="btn btn-green" onclick="resolveReport('${rep.id}')">Marcar Resolvido</button>` : 'OK'}
-          </td>
-        </tr>
-      `).join('');
-    }
+        <button type="button" id="btn-eval-reject" class="btn-pill btn-yellow" onclick="AdminApp.rejectCurrentEvaluatedDriver()" style="height: 42px; font-size: 12px; width: auto; padding: 0 20px; background: #f59e0b; color: #000; display: flex; align-items: center; gap: 6px;">
+          <img src="/assets/icons/x-circle.svg" alt="" class="svg-icon-img sm"> REPROVAR CADASTRO
+        </button>
 
-    async function resolveReport(reportId) {
-      const res = await apiFetch(`/api/reports/${reportId}/respond`, 'PUT', { status: 'Resolvido', adminResponse: 'Atendido pela diretoria.' });
-      alert(res.message || 'Reporte resolvido!');
-      loadReports();
-    }
+        <button type="button" id="btn-eval-approve" class="btn-pill btn-green" onclick="AdminApp.approveCurrentEvaluatedDriver()" style="height: 42px; font-size: 12px; width: auto; padding: 0 24px; box-shadow: 0 0 15px rgba(0,208,75,0.4); display: flex; align-items: center; gap: 6px;">
+          <img src="/assets/icons/check-circle.svg" alt="" class="svg-icon-img sm"> APROVAR MOTORISTA
+        </button>
+      </div>
+    </div>
+  </div>
 
-    function openMsgModal(id, name, role) {
-      activeRecipientId = id;
-      activeRecipientName = name;
-      activeRecipientRole = role;
-      document.getElementById('msg-recipient-name').value = `Para: ${name} (${role})`;
-      document.getElementById('modal-msg').classList.add('active');
-    }
+  <!-- Lightbox de Imagem em Tela Cheia -->
+  <div class="lightbox-overlay" id="admin-modal-lightbox" onclick="AdminApp.closePhotoLightbox()">
+    <div style="position: absolute; top: 20px; right: 20px; display: flex; gap: 12px; align-items: center;">
+      <span id="lightbox-title" style="color: var(--text-main); font-size: 14px; font-weight: 800; background: rgba(0,0,0,0.6); padding: 6px 14px; border-radius: 20px;">Visualização</span>
+      <button type="button" onclick="AdminApp.closePhotoLightbox()" style="background: var(--bg-input); border: none; color: var(--text-main); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;"><img src="/assets/icons/close.svg" alt="Fechar" class="svg-icon-img md"></button>
+    </div>
+    <img id="lightbox-img" class="lightbox-img" src="" alt="Visualização ampliada" onclick="event.stopPropagation()">
+    <div style="margin-top: 14px; color: #94a3b8; font-size: 12px;">Clique fora da imagem ou no botão fechar</div>
+  </div>
 
-    function closeMsgModal() {
-      document.getElementById('modal-msg').classList.remove('active');
-    }
+  <!-- Container de Toasts para o Painel Admin -->
+  <div class="toast-container" id="toast-container"></div>
 
-    async function sendAdminDirectMsg() {
-      const text = document.getElementById('msg-text').value.trim();
-      if (!text) return alert('Digite o texto da mensagem');
-      const res = await apiFetch('/api/admin-messages', 'POST', {
-        recipientId: activeRecipientId,
-        recipientRole: activeRecipientRole,
-        recipientName: activeRecipientName,
-        text
-      });
-      alert(res.message || 'Mensagem enviada com sucesso!');
-      closeMsgModal();
-    }
+  <!-- Modal de Diálogo Customizado (Substitui alert, confirm e prompt nativos no Admin) -->
+  <div class="custom-dialog-backdrop" id="modal-custom-dialog">
+    <div class="custom-dialog-card">
+      <div class="custom-dialog-icon" id="custom-dialog-icon"><img src="/assets/icons/zap.svg" alt="" class="svg-icon-img xl"></div>
+      <h3 class="custom-dialog-title" id="custom-dialog-title">Aviso da Diretoria</h3>
+      <div class="custom-dialog-message" id="custom-dialog-message">Mensagem</div>
+      <div class="custom-dialog-input-wrap" id="custom-dialog-input-wrap" style="display: none;">
+        <input type="text" id="custom-dialog-input" class="custom-dialog-input" placeholder="">
+      </div>
+      <div class="custom-dialog-buttons" id="custom-dialog-buttons">
+        <button type="button" class="btn-pill btn-white" id="custom-dialog-btn-cancel" style="display: none; height: 40px; padding: 0 20px; font-size: 12px;">CANCELAR</button>
+        <button type="button" class="btn-pill btn-yellow" id="custom-dialog-btn-confirm" style="height: 40px; padding: 0 24px; font-size: 12px;">CONFIRMAR</button>
+      </div>
+    </div>
+  </div>
 
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
-      event.target.classList.add('active');
-      document.getElementById(`tab-${tabId}`).style.display = 'block';
-    }
+  <!-- Modal de Chat Direto do Administrador com Usuário / Motorista -->
+  <div class="admin-eval-overlay" id="modal-admin-direct-chat" style="display: none;">
+    <div class="admin-chat-card">
+      <div class="admin-chat-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--yellow-primary); color: #000; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center;" id="admin-chat-target-avatar">M</div>
+          <div>
+            <h3 style="font-size: 14px; font-weight: 800; color: var(--text-main); margin: 0;" id="admin-chat-target-name">Nome do Motorista</h3>
+            <span style="font-size: 9.5px; color: var(--cyan-action); font-weight: 700; text-transform: uppercase;" id="admin-chat-target-role">MOTORISTA</span>
+          </div>
+        </div>
+        <button type="button" class="btn-action-small" onclick="AdminApp.closeDirectMessageModal()" style="background: var(--bg-input); border: none; color: var(--text-main); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;"><img src="/assets/icons/close.svg" alt="Fechar" class="svg-icon-img sm"></button>
+      </div>
 
-    function exportCSV() {
-      window.open('/api/admin/export-csv', '_blank');
-    }
+      <!-- Messages Body -->
+      <div id="admin-chat-messages-body" class="admin-chat-body">
+        <!-- Mensagens carregadas dinamicamente -->
+      </div>
 
-    window.onload = loadDashboardStats;
-  </script>
+      <!-- Input Footer -->
+      <form onsubmit="AdminApp.sendDirectMessage(event)" class="admin-chat-footer">
+        <input type="text" id="admin-chat-input" class="admin-chat-input-box" placeholder="Digite uma mensagem oficial da diretoria..." required>
+        <button type="submit" class="btn-pill btn-yellow" style="height: 36px; width: auto; padding: 0 16px; font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 6px;">
+          ENVIAR <img src="/assets/icons/send.svg" alt="" class="svg-icon-img sm">
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/admin.js?v=1.0.19"></script>
+
+<script>
+  function updateAdminThemeUI(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('admin_theme', theme);
+    const icon = document.getElementById('admin-theme-icon');
+    const label = document.getElementById('admin-theme-label');
+    if (icon) icon.textContent = (theme === 'dark' ? '☀️' : '🌙');
+    if (label) label.textContent = (theme === 'dark' ? 'Modo Claro' : 'Modo Escuro');
+  }
+
+  function toggleAdminTheme() {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+    updateAdminThemeUI(next);
+  }
+
+  // Theme init - Default to Dark
+  const savedAdminTheme = localStorage.getItem('admin_theme') || 'dark';
+  updateAdminThemeUI(savedAdminTheme);
+</script>
+
 </body>
 </html>
+

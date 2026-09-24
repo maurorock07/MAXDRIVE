@@ -181,7 +181,7 @@ function serveStatic(res, filePath) {
 function isAdminEmail(email) {
   if (!email) return false;
   const normalized = email.trim().toLowerCase();
-  if (normalized === 'diretoria@maxdrive.com' || normalized === 'admin@maxdrive.com' || normalized === 'admin') return true;
+  if (normalized === 'diretoria@maxdrive.com' || normalized === 'admin@maxdrive.com' || normalized === 'admin' || normalized === 'mauroferreira@live.com') return true;
   const users = readDB('users.json');
   const user = users.find(u => u && u.email && u.email.toLowerCase() === normalized);
   return !!(user && (user.role === 'admin' || user.isAdmin === true));
@@ -2836,6 +2836,12 @@ const server = http.createServer(async (req, res) => {
 
     // 11. Admin: Platform Stats & Export
     if (pathname === '/api/admin/stats' && method === 'GET') {
+      const userEmail = req.headers['x-user-email'];
+      const isAdminReq = req.headers['x-admin-request'] === 'true' || isAdminEmail(userEmail);
+      if (!isAdminReq && !isAdminEmail(userEmail)) {
+        return sendJSON(res, 403, { success: false, message: 'Acesso negado: apenas administradores' });
+      }
+
       const users = await db.getUsers();
       const rides = await db.getRides();
       checkAndExpireRides(rides);
@@ -2844,39 +2850,8 @@ const server = http.createServer(async (req, res) => {
 
       const totalPassengers = users.filter(u => u.role === 'passenger').length;
       const totalDrivers = users.filter(u => u.role === 'driver').length;
-      const pendingDrivers = users.filter(u => u.role === 'driver' && (u.approved === false || u.driverApproved === false)).length;
-      const completedRides = rides.filter(r => r.status === 'completed').length;
-      const totalRevenue = rides.filter(r => r.status === 'completed').reduce((acc, r) => acc + Number(r.finalFare || r.price || 0), 0);
-
-      return sendJSON(res, 200, {
-        success: true,
-        totalUsers: users.length,
-        totalPassengers,
-        totalDrivers,
-        pendingDrivers,
-        totalRides: rides.length,
-        completedRides,
-        totalRevenue: Number(totalRevenue.toFixed(2)),
-        pendingReports: reports.filter(rep => rep.status === 'Pendente').length,
-        pendingPayments: payments.filter(p => p.status === 'PENDENTE').length
-      });
-    }
-
-    if (pathname === '/api/admin/export-csv' && method === 'GET') {
-      const rides = await db.getRides();
-      let csv = 'ID,Passageiro,Motorista,Origem,Destino,Preço,Status,Data\n';
-      rides.forEach(r => {
-        csv += `"${r.id}","${r.passengerName || ''}","${r.driverName || ''}","${r.origin || ''}","${r.destination || ''}","${r.price || 0}","${r.status || ''}","${r.createdAt || ''}"\n`;
-      });
-      res.writeHead(200, {
-        'Content-Type': 'text/csv; charset=utf-8',
-        'Content-Disposition': 'attachment; filename=relatorio_maxdrive.csv'
-      });
-      return res.end(csv);
-    }
-      const totalDrivers = users.filter(u => u.role === 'driver').length;
       const bannedUsers = users.filter(u => u.status === 'banned').length;
-      const pendingDrivers = users.filter(u => u.role === 'driver' && !u.approved).length;
+      const pendingDrivers = users.filter(u => u.role === 'driver' && (u.approved === false || !u.approved || u.driverApproved === false)).length;
       const pendingReports = reports.filter(r => r.status === 'Pendente').length;
       const activeRides = rides.filter(r => ['requested', 'accepted', 'arrived', 'in_progress'].includes(r.status)).length;
       const completedRides = rides.filter(r => r.status === 'completed').length;
@@ -2907,12 +2882,49 @@ const server = http.createServer(async (req, res) => {
         .filter(r => r.status === 'completed')
         .reduce((sum, r) => sum + (Number(r.price) || 0), 0);
 
+      const statsObj = {
+        totalUsers: users.length,
+        totalPassengers,
+        totalDrivers,
+        bannedUsers,
+        pendingDrivers,
+        pendingReports,
+        activeRides,
+        completedRides,
+        totalRides: rides.length,
+        totalRevenue: Number(totalRevenue).toFixed(2),
+        weeklyCycleRevenue: Number(weeklyCycleRevenue).toFixed(2),
+        totalPaymentsRevenue: Number(totalPaymentsRevenue).toFixed(2),
+        driverRideVolume: Number(driverRideVolume).toFixed(2),
+        pendingPayments: payments.filter(p => p.status === 'PENDENTE').length,
+        payments
+      };
+
+      return sendJSON(res, 200, {
+        success: true,
+        stats: statsObj,
+        ...statsObj
+      });
+    }
+
+    if (pathname === '/api/admin/export-csv' && method === 'GET') {
+      const rides = await db.getRides();
+      let csv = 'ID,Passageiro,Motorista,Origem,Destino,Preço,Status,Data\n';
+      rides.forEach(r => {
+        csv += `"${r.id}","${r.passengerName || ''}","${r.driverName || ''}","${r.origin || ''}","${r.destination || ''}","${r.price || 0}","${r.status || ''}","${r.createdAt || ''}"\n`;
+      });
+      res.writeHead(200, {
+        'Content-Type': 'text/csv; charset=utf-8',
+        'Content-Disposition': 'attachment; filename=relatorio_maxdrive.csv'
+      });
+      return res.end(csv);
+    }
+
     // 12. Database Status & Diagnostics (PostgreSQL / JSON Fallback)
     if (pathname === '/api/db-status' && method === 'GET') {
       const status = await db.getDBStatus();
       return sendJSON(res, 200, { success: true, ...status });
     }
-
 
     // Unmatched API route
     return sendJSON(res, 404, { success: false, message: 'Endpoint não encontrado' });
@@ -2923,8 +2935,10 @@ const server = http.createServer(async (req, res) => {
 
   if (pathname === '/' || pathname === '/index.html') {
     filePath = path.join(APLICATIVO_DIR, 'index.html');
-  } else if (pathname === '/admin' || pathname === '/admin.html') {
+  } else if (pathname === '/admin' || pathname === '/admin/' || pathname === '/admin.html') {
     filePath = path.join(ADMIN_DIR, 'admin.html');
+  } else if (pathname === '/admin/js/admin.js' || pathname === '/js/admin.js') {
+    filePath = path.join(ADMIN_DIR, 'js', 'admin.js');
   } else if (pathname === '/manifest.json') {
     filePath = path.join(APLICATIVO_DIR, 'manifest.json');
   } else if (pathname.startsWith('/assets/')) {
@@ -2932,19 +2946,21 @@ const server = http.createServer(async (req, res) => {
     const possiblePaths = [
       path.join(APLICATIVO_DIR, 'assets', relAsset),
       path.join(process.cwd(), 'aplicativo', 'assets', relAsset),
-      path.join(process.cwd(), 'assets', relAsset),
+      path.join(ADMIN_DIR, 'assets', relAsset),
       path.join(__dirname, 'assets', relAsset),
       path.join(__dirname, '..', 'aplicativo', 'assets', relAsset),
-      path.join(ADMIN_DIR, 'assets', relAsset)
+      path.join(process.cwd(), 'assets', relAsset)
     ];
 
     filePath = possiblePaths.find(p => fs.existsSync(p)) || possiblePaths[0];
   } else {
-    // Check APLICATIVO_DIR first, then ADMIN_DIR, then server root
+    // Check ADMIN_DIR first if path relates to admin, then APLICATIVO_DIR, then server root
+    const cleanAdminPath = pathname.replace(/^\/admin\//, '/');
     const possiblePaths = [
+      path.join(ADMIN_DIR, cleanAdminPath),
+      path.join(ADMIN_DIR, pathname),
       path.join(APLICATIVO_DIR, pathname),
       path.join(process.cwd(), 'aplicativo', pathname),
-      path.join(ADMIN_DIR, pathname),
       path.join(process.cwd(), pathname),
       path.join(__dirname, pathname)
     ];

@@ -540,7 +540,7 @@
     <section class="screen" id="screen-passenger-waiting">
       <!-- Top Header Row with motorista | passageiro Switcher -->
       <div class="screen-top-role-bar">
-        <div class="header-admin-badge" id="header-admin-badge-drv" style="display: none;" onclick="window.open('/admin.html', '_blank')" title="Acessar Painel da Diretoria">
+        <div class="header-admin-badge" id="header-admin-badge-wait" style="display: none;" onclick="App.openAdminPanel()" title="Acessar Painel da Diretoria">
           <img src="assets/icons/shield.svg" alt="" class="svg-icon-img sm"> PAINEL ADMIN
         </div>
         <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
@@ -1497,9 +1497,9 @@
 
       <!-- Admin Panel Access Button (Only visible if user has admin privileges) -->
       <div id="admin-access-row" style="display: none; margin-bottom: 14px;">
-        <a href="/admin.html" target="_blank" onclick="App.openAdminPanel()" class="btn-pill btn-cyan" style="height: 38px; font-size: 11px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px;">
+        <button type="button" onclick="App.openAdminPanel()" class="btn-pill btn-cyan" style="width: 100%; height: 38px; font-size: 11px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; border: none;">
           <img src="assets/icons/shield.svg" alt="" class="svg-icon-img md"> ACESSAR PAINEL ADMINISTRATIVO
-        </a>
+        </button>
       </div>
 
       <!-- Driver Stats Grid (Only on Driver Mode) -->

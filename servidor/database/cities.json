@@ -1,0 +1,456 @@
+[
+  {
+    "id": "araguari",
+    "name": "Araguari",
+    "state": "MG",
+    "active": true,
+    "baseFareCar": 7,
+    "kmRateCar": 2,
+    "baseFareMoto": 6,
+    "kmRateMoto": 1.5,
+    "locations": [
+      {
+        "lat": -18.6475,
+        "lng": -48.1872,
+        "name": "Centro - Rua Rui Barbosa"
+      },
+      {
+        "lat": -18.639,
+        "lng": -48.195,
+        "name": "Bairro Bosque - Av. Minas Gerais"
+      },
+      {
+        "lat": -18.652,
+        "lng": -48.175,
+        "name": "Bairro Sibipiruna"
+      },
+      {
+        "lat": -18.646,
+        "lng": -48.188,
+        "name": "Praça Manoel Bonito"
+      }
+    ]
+  },
+  {
+    "id": "araxa",
+    "name": "Araxá",
+    "state": "MG",
+    "active": true,
+    "baseFareCar": 7,
+    "kmRateCar": 2,
+    "baseFareMoto": 6,
+    "kmRateMoto": 1.5,
+    "locations": [
+      {
+        "lat": -19.5931,
+        "lng": -46.9406,
+        "name": "Centro - Av. Getúlio Vargas"
+      },
+      {
+        "lat": -19.585,
+        "lng": -46.932,
+        "name": "Barreiro - Estância Hidromineral"
+      },
+      {
+        "lat": -19.601,
+        "lng": -46.952,
+        "name": "Bairro Urciano Lemos"
+      }
+    ]
+  },
+  {
+    "id": "canapolis",
+    "name": "Canápolis",
+    "state": "MG",
+    "active": true,
+    "baseFareCar": 7,
+    "kmRateCar": 2,
+    "baseFareMoto": 6,
+    "kmRateMoto": 1.5,
+    "locations": [
+      {
+        "lat": -18.7233,
+        "lng": -49.5039,
+        "name": "Centro - Praça Matriz"
+      },
+      {
+        "lat": -18.728,
+        "lng": -49.498,
+        "name": "Bairro Residencial Laranjeiras"
+      }
+    ]
+  },
+  {
+    "id": "capinopolis",
+    "name": "Capinópolis",
+    "state": "MG",
+    "active": true,
+    "baseFareCar": 7,
+    "kmRateCar": 2,
+    "baseFareMoto": 6,
+    "kmRateMoto": 1.5,
+    "locations": [
+      {
+        "lat": -18.6822,
+        "lng": -49.5694,
+        "name": "Centro - Praça João Moreira de Souza"
+      },
+      {
+        "lat": -18.675,
+        "lng": -49.575,
+        "name": "Bairro Semíramis"
+      },
+      {
+        "lat": -18.684,
+        "lng": -49.568,
+        "name": "Terminal Rodoviário"
+      }
+    ]
+  },
+  {
+    "id": "centralina",
+    "name": "Centralina",
+    "state": "MG",
+    "active": true,
+    "baseFareCar": 7,
+    "kmRateCar": 2,
+    "baseFareMoto": 6,
+    "kmRateMoto": 1.5,
+    "locations": [
+      {
+        "lat": -18.5819,
+        "lng": -49.5392,
+        "name": "Centro - Av. Prefeito Dacio"
+      },
+      {
+        "lat": -18.587,
+        "lng": -49.532,
+        "name": "Bairro São José"
+      }
+    ]
+  },
+  {
+    "id": "frutal",
+    "name": "Frutal",
+    "state": "MG",
+    "active": true,
+    "baseFareCar": 7,
+    "kmRateCar": 2,
+    "baseFareMoto": 6,
+    "kmRateMoto": 1.5,
+    "locations": [
+      {
+        "lat": -20.0242,
+        "lng": -48.9406,
+        "name": "Centro - Av. Juscelino Kubitschek"
+      },
+      {
+        "lat": -20.018,
+        "lng": -48.932,
+        "name": "UEMG - Campus Frutal"
+      },
+      {
+        "lat": -20.031,
+        "lng": -48.951,
+        "name": "Bairro Alto Boa Vista"
+      }
+    ]
+  },
+  {
+    "id": "ituiutaba",
+    "name": "Ituiutaba",
+    "state": "MG",
+    "active": true,
+    "baseFareCar": 7,
+    "kmRateCar": 2,
+    "baseFareMoto": 6,
+    "kmRateMoto": 1.5,
+    "locations": [
+      {
+        "lat": -18.9688,
+        "lng": -49.4642,
+        "name": "Centro - Praça da Prefeitura"
+      },
+      {
+        "lat": -18.975,
+        "lng": -49.452,
+        "name": "Bairro Platina - Av. 31"
+      },
+      {
+        "lat": -18.985,
+        "lng": -49.47,
+        "name": "Bairro Universitário - UEMG / FACIP"
+      },
+      {
+        "lat": -18.955,
+        "lng": -49.48,
+        "name": "Bairro Novo Tempo - Av. 17"
+      },
+      {
+        "lat": -18.971,
+        "lng": -49.46,
+        "name": "Terminal Rodoviário"
+      }
+    ]
+  },
+  {
+    "id": "itumbiara",
+    "name": "Itumbiara",
+    "state": "GO",
+    "active": true,
+    "baseFareCar": 7,
+    "kmRateCar": 2,
+    "baseFareMoto": 6,
+    "kmRateMoto": 1.5,
+    "locations": [
+      {
+        "lat": -18.4194,
+        "lng": -49.2158,
+        "name": "Centro - Av. Afonso Pena"
+      },
+      {
+        "lat": -18.412,
+        "lng": -49.208,
+        "name": "Beira Rio - Orla do Rio Paranaíba"
+      },
+      {
+        "lat": -18.428,
+        "lng": -49.228,
+        "name": "Bairro Novo Horizonte"
+      }
+    ]
+  },
+  {
+    "id": "iturama",
+    "name": "Iturama",
+    "state": "MG",
+    "active": true,
+    "baseFareCar": 7,
+    "kmRateCar": 2,
+    "baseFareMoto": 6,
+    "kmRateMoto": 1.5,
+    "locations": [
+      {
+        "lat": -19.7289,
+        "lng": -50.1964,
+        "name": "Centro - Av. Campina Verde"
+      },
+      {
+        "lat": -19.721,
+        "lng": -50.188,
+        "name": "Bairro Tiradentes"
+      },
+      {
+        "lat": -19.736,
+        "lng": -50.205,
+        "name": "UFTM - Campus Iturama"
+      }
+    ]
+  },
+  {
+    "id": "monte_carmelo",
+    "name": "Monte Carmelo",
+    "state": "MG",
+    "active": true,
+    "baseFareCar": 7,
+    "kmRateCar": 2,
+    "baseFareMoto": 6,
+    "kmRateMoto": 1.5,
+    "locations": [
+      {
+        "lat": -18.7258,
+        "lng": -47.4989,
+        "name": "Centro - Praça da Matriz"
+      },
+      {
+        "lat": -18.718,
+        "lng": -47.49,
+        "name": "UFU - Campus Monte Carmelo"
+      }
+    ]
+  },
+  {
+    "id": "patos_de_minas",
+    "name": "Patos de Minas",
+    "state": "MG",
+    "active": true,
+    "baseFareCar": 7,
+    "kmRateCar": 2,
+    "baseFareMoto": 6,
+    "kmRateMoto": 1.5,
+    "locations": [
+      {
+        "lat": -18.5789,
+        "lng": -46.5181,
+        "name": "Centro - Av. Getúlio Vargas"
+      },
+      {
+        "lat": -18.571,
+        "lng": -46.51,
+        "name": "Orla da Lagoa Grande"
+      },
+      {
+        "lat": -18.589,
+        "lng": -46.528,
+        "name": "UNIPAM - Campus Universitário"
+      }
+    ]
+  },
+  {
+    "id": "patrocinio",
+    "name": "Patrocínio",
+    "state": "MG",
+    "active": true,
+    "baseFareCar": 7,
+    "kmRateCar": 2,
+    "baseFareMoto": 6,
+    "kmRateMoto": 1.5,
+    "locations": [
+      {
+        "lat": -18.9439,
+        "lng": -46.9928,
+        "name": "Centro - Av. Rui Barbosa"
+      },
+      {
+        "lat": -18.937,
+        "lng": -46.985,
+        "name": "Bairro Morada Nova"
+      }
+    ]
+  },
+  {
+    "id": "prata",
+    "name": "Prata",
+    "state": "MG",
+    "active": true,
+    "baseFareCar": 7,
+    "kmRateCar": 2,
+    "baseFareMoto": 6,
+    "kmRateMoto": 1.5,
+    "locations": [
+      {
+        "lat": -19.3072,
+        "lng": -48.9242,
+        "name": "Centro - Praça XV de Novembro"
+      },
+      {
+        "lat": -19.3,
+        "lng": -48.918,
+        "name": "Bairro Pratinha"
+      }
+    ]
+  },
+  {
+    "id": "santa_vitoria",
+    "name": "Santa Vitória",
+    "state": "MG",
+    "active": true,
+    "baseFareCar": 7,
+    "kmRateCar": 2,
+    "baseFareMoto": 6,
+    "kmRateMoto": 1.5,
+    "locations": [
+      {
+        "lat": -18.8436,
+        "lng": -50.1219,
+        "name": "Centro - Av. São Paulo"
+      },
+      {
+        "lat": -18.85,
+        "lng": -50.115,
+        "name": "Bairro Brasil"
+      },
+      {
+        "lat": -18.84,
+        "lng": -50.11,
+        "name": "Parque de Exposições"
+      }
+    ]
+  },
+  {
+    "id": "tupaciguara",
+    "name": "Tupaciguara",
+    "state": "MG",
+    "active": true,
+    "baseFareCar": 7,
+    "kmRateCar": 2,
+    "baseFareMoto": 6,
+    "kmRateMoto": 1.5,
+    "locations": [
+      {
+        "lat": -18.5922,
+        "lng": -48.705,
+        "name": "Centro - Praça Raul Soares"
+      },
+      {
+        "lat": -18.585,
+        "lng": -48.698,
+        "name": "Bairro Tiradentes"
+      }
+    ]
+  },
+  {
+    "id": "uberaba",
+    "name": "Uberaba",
+    "state": "MG",
+    "active": true,
+    "baseFareCar": 7.5,
+    "kmRateCar": 2,
+    "baseFareMoto": 6,
+    "kmRateMoto": 1.5,
+    "locations": [
+      {
+        "lat": -19.7483,
+        "lng": -47.9319,
+        "name": "Centro - Praça Rui Barbosa"
+      },
+      {
+        "lat": -19.738,
+        "lng": -47.922,
+        "name": "UFTM - Campus Abadia"
+      },
+      {
+        "lat": -19.759,
+        "lng": -47.945,
+        "name": "Shopping Uberaba / Av. Leopoldino de Oliveira"
+      }
+    ]
+  },
+  {
+    "id": "uberlandia",
+    "name": "Uberlândia",
+    "state": "MG",
+    "active": true,
+    "baseFareCar": 7,
+    "kmRateCar": 2,
+    "baseFareMoto": 6,
+    "kmRateMoto": 1.5,
+    "locations": [
+      {
+        "lat": -18.9186,
+        "lng": -48.2772,
+        "name": "Centro - Av. Afonso Pena / Praça Tubal Vilela"
+      },
+      {
+        "lat": -18.91,
+        "lng": -48.26,
+        "name": "UFU - Campus Santa Mônica"
+      },
+      {
+        "lat": -18.928,
+        "lng": -48.29,
+        "name": "Center Shopping / Av. João Naves de Ávila"
+      },
+      {
+        "lat": -18.895,
+        "lng": -48.25,
+        "name": "Bairro Tibery"
+      },
+      {
+        "lat": -18.94,
+        "lng": -48.27,
+        "name": "Bairro Rondon Pacheco / Uberlândia Shopping"
+      }
+    ]
+  }
+]
