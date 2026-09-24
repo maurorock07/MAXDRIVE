@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100%" height="100%">
+  <!-- Soft ground shadow -->
+  <ellipse cx="32" cy="56.5" rx="25" ry="3.5" fill="#020835" opacity="0.16"/>
+
+  <!-- ================= WHEELS ================= -->
+  <!-- Rear Wheel -->
+  <circle cx="16" cy="44" r="9.5" fill="#020835"/>
+  <circle cx="16" cy="44" r="6" fill="#FFFFFF"/>
+  <circle cx="16" cy="44" r="5" fill="#07154D"/>
+  <circle cx="16" cy="44" r="4.2" fill="none" stroke="#00E5FF" stroke-width="0.8" opacity="0.9"/>
+  <!-- Rear Wheel Hub -->
+  <circle cx="16" cy="44" r="2.2" fill="#020835"/>
+  <circle cx="16" cy="44" r="1" fill="#FEE500"/>
+
+  <!-- Front Wheel -->
+  <circle cx="48" cy="44" r="9.5" fill="#020835"/>
+  <circle cx="48" cy="44" r="6" fill="#FFFFFF"/>
+  <circle cx="48" cy="44" r="5" fill="#07154D"/>
+  <circle cx="48" cy="44" r="4.2" fill="none" stroke="#00E5FF" stroke-width="0.8" opacity="0.9"/>
+  <!-- Front Wheel Hub -->
+  <circle cx="48" cy="44" r="2.2" fill="#020835"/>
+  <circle cx="48" cy="44" r="1" fill="#FEE500"/>
+
+  <!-- Front Brake Caliper Accent -->
+  <rect x="43.5" y="41.5" width="2.8" height="4.5" rx="1.2" fill="#FEE500"/>
+
+  <!-- ================= SUSPENSION & FRAME ================= -->
+  <!-- Upside-down Front Fork Stanchion -->
+  <line x1="48" y1="44" x2="41" y2="23" stroke="#00E5FF" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="43" y1="29" x2="41" y2="23" stroke="#FEE500" stroke-width="2.2" stroke-linecap="round"/>
+
+  <!-- Front Fender Hugger -->
+  <path d="M 43 38 C 45 35 52 36 55 40" fill="none" stroke="#07154D" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Rear Swingarm -->
+  <line x1="16" y1="44" x2="28" y2="42" stroke="#0E236B" stroke-width="2.8" stroke-linecap="round"/>
+
+  <!-- Upswept Sport Exhaust Muffler -->
+  <path d="M 28 46 L 14 39.5 L 14.8 37 L 29 42.5 Z" fill="#020835"/>
+  <polygon points="14,39.5 11,38 11.8,35.5 14.8,37" fill="#00E5FF"/>
+
+  <!-- Engine / Lower Fairing Solid Block -->
+  <path d="M 26 43 L 39 43 L 42 35 L 34 32 L 25 36 Z" fill="#07154D"/>
+  <circle cx="33" cy="38.5" r="3.2" fill="#020835"/>
+  <circle cx="33" cy="38.5" r="1.2" fill="#00E5FF"/>
+
+  <!-- ================= MAIN BODY & SEAT ================= -->
+  <!-- Streamlined Aerodynamic Body (Tank to Tail Cowl) -->
+  <path d="M 12 26 
+           C 16 25 21 26 25 29 
+           C 28 31 31 31 34 29 
+           C 36 26 39 22 43 22 
+           C 47 22 50 25 51 29 
+           L 49 35 
+           L 42 35 
+           L 38 29 
+           L 27 34 
+           L 18 32 
+           C 15 32 12 29 12 26 Z" 
+        fill="#07154D"/>
+
+  <!-- Ergonomic Two-Tier Seat (Negative Space / Dark Inset) -->
+  <path d="M 15 26.5 C 19 25.5 24 26.5 27 29 C 29 30 32 30 35 28 L 34 29.5 C 31 31.5 28 31.5 26 29.5 C 23 27.5 18 27 15 27.5 Z" fill="#020835"/>
+
+  <!-- Cyan Dynamic Speed Stripe -->
+  <path d="M 16 27 C 22 27 28 30 35 27 C 39 25 43 24.5 46 26" fill="none" stroke="#00E5FF" stroke-width="1.3" stroke-linecap="round"/>
+
+  <!-- MAX Yellow Accent Detail -->
+  <polygon points="37,24 40,24 38.5,26.5" fill="#FEE500"/>
+
+  <!-- Rear LED Tail Light (Sharp Blade) -->
+  <polygon points="12,25.5 10,26 12,27.5" fill="#FF3B30"/>
+
+  <!-- ================= FRONT FAIRING & COCKPIT ================= -->
+  <!-- Aerodynamic Front Windscreen -->
+  <path d="M 42 22 L 45 17 L 48 21 Z" fill="#00E5FF" opacity="0.85"/>
+
+  <!-- Handlebar and Sport Mirror -->
+  <line x1="41" y1="21" x2="38" y2="18" stroke="#020835" stroke-width="1.8" stroke-linecap="round"/>
+  <circle cx="37" cy="17" r="1.3" fill="#020835"/>
+  <!-- Mirror -->
+  <ellipse cx="37" cy="14" rx="2" ry="1.2" fill="#07154D" stroke="#00E5FF" stroke-width="0.6"/>
+
+  <!-- LED Front Headlight (Clean Crisp Blade) -->
+  <polygon points="49,27 52.5,28.5 50.5,32 47.5,30" fill="#FFFFFF"/>
+  <path d="M 48 27 L 52.5 28.5 L 50.5 32" fill="none" stroke="#00E5FF" stroke-width="1.2" stroke-linecap="round"/>
+</svg>

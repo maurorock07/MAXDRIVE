@@ -236,15 +236,29 @@ const AdminApp = (function() {
       });
       const data = await res.json();
 
-      if (res.ok && data.user && data.user.isAdmin) {
+      const isPermitted = res.ok && data.user && (
+        data.user.isAdmin === true ||
+        data.user.role === 'admin' ||
+        (data.user.email && data.user.email.toLowerCase() === 'admin@maxdrive.com') ||
+        (data.user.email && data.user.email.toLowerCase() === 'mauroferreira@live.com')
+      );
+
+      if (isPermitted) {
         adminEmail = data.user.email;
         localStorage.setItem('maxdrive_admin_email', adminEmail);
         document.getElementById('admin-gate-overlay').style.display = 'none';
+        showToast('Login de administrador realizado com sucesso!', 'success');
         checkAuth();
+      } else if (!res.ok) {
+        showDialog({
+          title: 'Falha no Acesso',
+          message: data.message || 'E-mail ou senha incorretos. Verifique suas credenciais.',
+          type: 'alert'
+        });
       } else {
         showDialog({
-          title: 'Acesso Negado',
-          message: 'Acesso negado: apenas o e-mail cadastrado como Administrador pode acessar este painel.',
+          title: 'Permissão Insuficiente',
+          message: 'Esta conta não possui privilégios de Administrador da plataforma MAX DRIVE.',
           type: 'alert'
         });
       }

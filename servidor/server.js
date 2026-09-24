@@ -140,13 +140,52 @@ function sendJSON(res, statusCode, data) {
   res.end(JSON.stringify(data));
 }
 
+// Fallback profundo para localizar qualquer asset (ícones, sons, imagens) em múltiplos caminhos
+function findAssetFallback(requestedPath) {
+  if (!requestedPath || typeof requestedPath !== 'string') return null;
+  const fileName = path.basename(requestedPath);
+  const ext = path.extname(requestedPath).toLowerCase();
+  const subFolder = (ext === '.svg' || ext === '.png' || ext === '.ico') ? 'icons' : ((ext === '.jpg' || ext === '.jpeg') ? 'images' : ((ext === '.mp3' || ext === '.wav') ? 'sounds' : ''));
+
+  const candidateDirs = [
+    path.join(APLICATIVO_DIR, 'assets', subFolder),
+    path.join(__dirname, 'assets', subFolder),
+    path.join(process.cwd(), 'aplicativo', 'assets', subFolder),
+    path.join(process.cwd(), 'assets', subFolder),
+    path.join(ADMIN_DIR, 'assets', subFolder),
+    path.join(__dirname, '..', 'aplicativo', 'assets', subFolder),
+    path.join(APLICATIVO_DIR, 'assets'),
+    path.join(__dirname, 'assets'),
+    path.join(process.cwd(), 'assets'),
+    path.join(APLICATIVO_DIR),
+    path.join(ADMIN_DIR),
+    path.join(__dirname),
+    path.join(process.cwd())
+  ];
+
+  for (const d of candidateDirs) {
+    const full = path.join(d, fileName);
+    try {
+      if (fs.existsSync(full) && !fs.statSync(full).isDirectory()) {
+        return full;
+      }
+    } catch (_) {}
+  }
+  return null;
+}
+
 // Serve static file safely
 function serveStatic(res, filePath) {
   try {
     if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
-      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
-      res.end('404 Not Found');
-      return;
+      const fallback = findAssetFallback(filePath);
+      if (fallback) {
+        filePath = fallback;
+      } else {
+        res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+        res.end('404 Not Found');
+        return;
+      }
     }
 
     const ext = path.extname(filePath).toLowerCase();

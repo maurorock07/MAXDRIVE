@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100%" height="100%">
+  <!-- Soft ground shadow -->
+  <ellipse cx="32" cy="56.5" rx="25" ry="3.5" fill="#020835" opacity="0.16"/>
+
+  <!-- Wheels / Tires (Wide stance) -->
+  <rect x="5" y="38" width="8.5" height="17" rx="4" fill="#020835"/>
+  <rect x="50.5" y="38" width="8.5" height="17" rx="4" fill="#020835"/>
+
+  <!-- Aerodynamic Side Mirrors -->
+  <path d="M 6.5 28 C 3.5 28 2.5 30.5 3.5 33 C 4.5 35 7 35 10 34.5 L 11 30 Z" fill="#07154D"/>
+  <path d="M 57.5 28 C 60.5 28 61.5 30.5 60.5 33 C 59.5 35 57 35 54 34.5 L 53 30 Z" fill="#07154D"/>
+  <!-- Mirror Glass Refraction -->
+  <path d="M 4 32 C 4.5 30.5 6.5 29.5 9 30 L 9 33.5 Z" fill="#00E5FF" opacity="0.75"/>
+  <path d="M 60 32 C 59.5 30.5 57.5 29.5 55 30 L 55 33.5 Z" fill="#00E5FF" opacity="0.75"/>
+
+  <!-- Main Vehicle Body Shell (Clean Modern Silhouette) -->
+  <path d="M 18 13.5
+           C 22 12.5 42 12.5 46 13.5
+           C 51 14.5 53.5 19.5 55.5 28
+           L 57 37
+           C 58.5 42.5 58 48 56 51.5
+           C 54 54 49.5 54.5 44 54.5
+           L 20 54.5
+           C 14.5 54.5 10 54 8 51.5
+           C 6 48 5.5 42.5 7 37
+           L 8.5 28
+           C 10.5 19.5 13 14.5 18 13.5 Z"
+        fill="#07154D"/>
+
+  <!-- Windshield with Clean Glass Highlight -->
+  <path d="M 19 15.5
+           C 23 14.5 41 14.5 45 15.5
+           C 47.5 16.5 49.5 20.5 51 27.5
+           L 13 27.5
+           C 14.5 20.5 16.5 16.5 19 15.5 Z"
+        fill="#00E5FF" opacity="0.85"/>
+  <!-- Windshield Reflection Slash -->
+  <path d="M 28 16 L 24 27 L 27 27 L 31 16 Z" fill="#FFFFFF" opacity="0.45"/>
+
+  <!-- Hood Character Contours -->
+  <path d="M 17 28 L 20 37.5 L 44 37.5 L 47 28" fill="none" stroke="#0E236B" stroke-width="1.3" stroke-linejoin="round"/>
+
+  <!-- Modern Full-LED Headlights -->
+  <!-- Left Headlight -->
+  <path d="M 9.5 33.5 C 13 32.5 18 33 21.5 36 C 21.5 38.5 18 39.5 12 39.5 C 9.5 39.5 8.5 37 9.5 33.5 Z" fill="#FFFFFF"/>
+  <path d="M 9.5 33.5 C 13.5 32.5 18 33 21.5 36" fill="none" stroke="#00E5FF" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Right Headlight -->
+  <path d="M 54.5 33.5 C 51 32.5 46 33 42.5 36 C 42.5 38.5 46 39.5 52 39.5 C 54.5 39.5 55.5 37 54.5 33.5 Z" fill="#FFFFFF"/>
+  <path d="M 54.5 33.5 C 50.5 32.5 46 33 42.5 36" fill="none" stroke="#00E5FF" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- MAX DRIVE Yellow Brand Accent on Center -->
+  <polygon points="32,33.5 34.5,36.5 32,39.5 29.5,36.5" fill="#FEE500"/>
+
+  <!-- Lower Sport Grille & Aerodynamic Bumper -->
+  <rect x="19" y="42" width="26" height="7.5" rx="3.5" fill="#020835"/>
+  <!-- Grille Accent Line -->
+  <line x1="23" y1="45.5" x2="41" y2="45.5" stroke="#00E5FF" stroke-width="1.2" stroke-linecap="round" opacity="0.8"/>
+
+  <!-- Lower DRL Fog Light Accents -->
+  <circle cx="12.5" cy="45.5" r="1.6" fill="#00E5FF"/>
+  <circle cx="51.5" cy="45.5" r="1.6" fill="#00E5FF"/>
+</svg>

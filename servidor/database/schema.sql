@@ -226,3 +226,30 @@ CREATE TABLE IF NOT EXISTS push_tokens (
 CREATE INDEX IF NOT EXISTS idx_push_tokens_user_id ON push_tokens(user_id);
 CREATE INDEX IF NOT EXISTS idx_push_tokens_role_city ON push_tokens(role, city);
 
+-- 11. INSERÇÃO/SINCRONIZAÇÃO DE ADMINISTRADORES INICIAIS
+INSERT INTO users (id, name, email, password, role, is_admin, status, approved)
+VALUES (
+    'usr-admin-default',
+    'DIRETORIA MAX DRIVE',
+    'admin@maxdrive.com',
+    'pbkdf2:a1b2c3d4e5f60718293a4b5c6d7e8f90:550f08a891ba184f570999ee4d9a25875f37c804bbf1f39c11720d55e26c41c39d407357e69f31fc82e369610a712cf1b898d7f4cd60c9c9cc780eeb0e10bc80',
+    'admin',
+    TRUE,
+    'active',
+    TRUE
+)
+ON CONFLICT (id) DO UPDATE SET is_admin = TRUE, role = 'admin';
+
+INSERT INTO users (id, name, email, password, role, is_admin, status, approved)
+VALUES (
+    'usr-1790052678195',
+    'MAURO FERREIRA',
+    'mauroferreira@live.com',
+    'pbkdf2:511f18b82452f6ff305d323c2487b31c:b08af5b0d1912a7979f6c811400423a89324baa8c72f44c61f72b103713e53a1712f9d56fc7065a61f3a407ed7fe9bad8fce8af1786e3cb8a2894b7535d8adfc',
+    'admin',
+    TRUE,
+    'active',
+    TRUE
+)
+ON CONFLICT (id) DO UPDATE SET is_admin = TRUE, role = 'admin';
+
