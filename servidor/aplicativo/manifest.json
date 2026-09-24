@@ -1,0 +1,19 @@
+{
+  "name": "MAX DRIVE",
+  "short_name": "MAX DRIVE",
+  "description": "Corridas e Entregas a Preço Justo",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#080A0F",
+  "theme_color": "#080A0F",
+  "icons": [
+    {
+      "src": "assets/icons/MAXDRIVE.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["travel", "navigation", "transportation"]
+}
