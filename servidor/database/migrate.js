@@ -428,24 +428,11 @@ async function runMigration() {
     console.log('\n[10/10] 📍 Migrando coordenadas geoespaciais reais (street_coordinates.json)...');
     const streetCoordsData = readJsonFile('street_coordinates.json') || {};
     let coordsCount = 0;
+    const allCoordsRows = [];
     for (const [cityKey, streetsMap] of Object.entries(streetCoordsData)) {
       if (typeof streetsMap === 'object') {
         for (const [streetName, data] of Object.entries(streetsMap)) {
-          await client.query(`
-            INSERT INTO street_coordinates (
-              city_key, street_name, lat, lng, min_lat, max_lat, min_lng, max_lng,
-              min_num, max_num, bairro, created_at
-            )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW())
-            ON CONFLICT (city_key, street_name) DO UPDATE SET
-              lat = EXCLUDED.lat,
-              lng = EXCLUDED.lng,
-              min_lat = EXCLUDED.min_lat,
-              max_lat = EXCLUDED.max_lat,
-              min_lng = EXCLUDED.min_lng,
-              max_lng = EXCLUDED.max_lng,
-              bairro = EXCLUDED.bairro
-          `, [
+          allCoordsRows.push([
             cityKey,
             streetName,
             Number(data.lat || 0),
@@ -458,9 +445,41 @@ async function runMigration() {
             data.maxNum !== undefined ? Number(data.maxNum) : null,
             data.bairro || ''
           ]);
-          coordsCount++;
         }
       }
+    }
+
+    const CHUNK_SIZE = 150;
+    for (let i = 0; i < allCoordsRows.length; i += CHUNK_SIZE) {
+      const chunk = allCoordsRows.slice(i, i + CHUNK_SIZE);
+      const valueClauses = [];
+      const params = [];
+      let pIdx = 1;
+      for (const row of chunk) {
+        const placeholders = [];
+        for (const val of row) {
+          placeholders.push(`$${pIdx++}`);
+          params.push(val);
+        }
+        valueClauses.push(`(${placeholders.join(', ')}, NOW())`);
+      }
+      const batchSql = `
+        INSERT INTO street_coordinates (
+          city_key, street_name, lat, lng, min_lat, max_lat, min_lng, max_lng,
+          min_num, max_num, bairro, created_at
+        )
+        VALUES ${valueClauses.join(', ')}
+        ON CONFLICT (city_key, street_name) DO UPDATE SET
+          lat = EXCLUDED.lat,
+          lng = EXCLUDED.lng,
+          min_lat = EXCLUDED.min_lat,
+          max_lat = EXCLUDED.max_lat,
+          min_lng = EXCLUDED.min_lng,
+          max_lng = EXCLUDED.max_lng,
+          bairro = EXCLUDED.bairro
+      `;
+      await client.query(batchSql, params);
+      coordsCount += chunk.length;
     }
     console.log(`✅ ${coordsCount} coordenadas geoespaciais migradas com sucesso.`);
 

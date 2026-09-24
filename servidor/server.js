@@ -354,7 +354,10 @@ function extractHouseNumber(str) {
 
 async function loadStreetCoordinates() {
   try {
-    const raw = await db.getStreetCoordinates();
+    let raw = readDB('street_coordinates.json');
+    if (!raw || Object.keys(raw).length === 0) {
+      raw = await db.getStreetCoordinates();
+    }
     STREET_COORDINATES_DATA = raw || {};
     streetIndexMap.clear();
     for (const [cityKey, streets] of Object.entries(STREET_COORDINATES_DATA)) {
@@ -471,7 +474,7 @@ function geocodeWithPhoton(query, cityKey) {
     const fullQuery = `${cleanQ}, ${cInfo.name}, ${stateCode}, Brasil`;
     const urlStr = `https://photon.komoot.io/api/?q=${encodeURIComponent(fullQuery)}&lat=${cInfo.lat}&lon=${cInfo.lng}&limit=1`;
 
-    const req = https.get(urlStr, { headers: { 'User-Agent': 'MaxDriveApp/1.0 (contact@maxdrive.local)' }, timeout: 2500 }, (res) => {
+    const req = https.get(urlStr, { headers: { 'User-Agent': 'MaxDriveApp/1.0 (contact@maxdrive.local)' }, timeout: 5000 }, (res) => {
       let data = '';
       res.on('data', c => data += c);
       res.on('end', () => {
@@ -1377,38 +1380,39 @@ const server = http.createServer(async (req, res) => {
       // Fallback to in-memory streetIndexMap/JSON if SQL returned empty
       if (items.length === 0) {
         const cityIndex = streetIndexMap.get(cityParam);
-        const cityStreetsData = readDB('city_streets.json');
-        const list = cityStreetsData[cityParam] || [];
-
-        let matchedNames = [];
-        if (!qNorm) {
-          matchedNames = list.slice(0, limit);
-        } else {
-          const prefixMatches = [];
-          const containsMatches = [];
-          for (let i = 0; i < list.length; i++) {
-            const street = list[i];
-            const sNorm = normalize(street);
-            if (sNorm.startsWith(qNorm)) {
-              prefixMatches.push(street);
-              if (prefixMatches.length >= limit) break;
-            } else if (sNorm.includes(qNorm)) {
-              containsMatches.push(street);
+        if (cityIndex) {
+          for (const [key, sData] of cityIndex.entries()) {
+            const sNorm = normalize(sData.name);
+            const bNorm = sData.bairro ? normalize(sData.bairro) : '';
+            if (!qNorm || sNorm.includes(qNorm) || bNorm.includes(qNorm) || key.includes(qNorm)) {
+              items.push({
+                name: sData.name,
+                bairro: sData.bairro || 'Centro',
+                lat: Number(sData.lat),
+                lng: Number(sData.lng)
+              });
+              if (items.length >= limit) break;
             }
           }
-          matchedNames = prefixMatches.concat(containsMatches).slice(0, limit);
         }
 
-        items = matchedNames.map(sName => {
-          const norm = normalizeStreetKey(sName);
-          const sData = cityIndex ? cityIndex.get(norm) : null;
-          return {
-            name: sName,
-            bairro: (sData && sData.bairro) || 'Centro',
-            lat: sData ? sData.lat : null,
-            lng: sData ? sData.lng : null
-          };
-        });
+        if (items.length === 0) {
+          const cityStreetsData = readDB('city_streets.json');
+          const list = cityStreetsData[cityParam] || [];
+          const center = CITY_DEFAULT_CENTERS[cityParam] || CITY_DEFAULT_CENTERS.ituiutaba;
+          for (const street of list) {
+            const sNorm = normalize(street);
+            if (!qNorm || sNorm.includes(qNorm)) {
+              items.push({
+                name: street,
+                bairro: 'Centro',
+                lat: center.lat,
+                lng: center.lng
+              });
+              if (items.length >= limit) break;
+            }
+          }
+        }
       }
 
       const matchedNames = items.map(it => it.name);
