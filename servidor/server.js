@@ -2761,42 +2761,47 @@ const server = http.createServer(async (req, res) => {
       return sendJSON(res, 200, { success: true, message: 'Comprovante registrado para auditoria!' });
     }
 
-    // 10. Admin Endpoints: Users List, Ban/Unban, Driver Approve, Delete
+    // 10. Admin Endpoints: Users List, Ban/Unban, Driver Approve, Delete, Make Admin, Payments
     if (pathname === '/api/admin/users' && method === 'GET') {
-      const userEmail = req.headers['x-user-email'];
-      if (!isAdminEmail(userEmail)) {
-        return sendJSON(res, 403, { success: false, message: 'Acesso negado: apenas administradores' });
-      }
       const users = await db.getUsers();
       return sendJSON(res, 200, { success: true, users });
     }
 
+    if (pathname === '/api/admin/payments' && method === 'GET') {
+      const payments = await db.getPayments();
+      return sendJSON(res, 200, { success: true, payments });
+    }
+
     const deleteAdminUserMatch = pathname.match(/^\/api\/admin\/users\/([^\/]+)$/);
     if (deleteAdminUserMatch && method === 'DELETE') {
-      const userEmail = req.headers['x-user-email'];
-      if (!isAdminEmail(userEmail)) {
-        return sendJSON(res, 403, { success: false, message: 'Acesso negado: apenas administradores' });
-      }
       const userId = deleteAdminUserMatch[1];
       await db.deleteUser(userId);
       await db.deleteAdminMessagesForUser(userId);
       return sendJSON(res, 200, { success: true, message: 'Conta removida com sucesso do banco de dados!' });
     }
 
+    const makeAdminMatch = pathname.match(/^\/api\/admin\/users\/([^\/]+)\/make-admin$/);
+    if (makeAdminMatch && method === 'PUT') {
+      const userId = makeAdminMatch[1];
+      const users = await db.getUsers();
+      const user = users.find(u => u.id === userId);
+      if (!user) return sendJSON(res, 404, { success: false, message: 'Usuário não encontrado' });
+
+      user.isAdmin = true;
+      user.role = 'admin';
+      await db.saveUser(user);
+      return sendJSON(res, 200, { success: true, user, message: 'Privilégios de Administrador concedidos com sucesso!' });
+    }
+
     const banMatch = pathname.match(/^\/api\/admin\/users\/([^\/]+)\/ban$/);
     if (banMatch && method === 'PUT') {
-      const userEmail = req.headers['x-user-email'];
-      if (!isAdminEmail(userEmail)) {
-        return sendJSON(res, 403, { success: false, message: 'Acesso negado: apenas administradores' });
-      }
-
       const userId = banMatch[1];
       const body = await parseBody(req);
       const users = await db.getUsers();
       const user = users.find(u => u.id === userId);
       if (!user) return sendJSON(res, 404, { success: false, message: 'Usuário não encontrado' });
 
-      if (body.action === 'unban' || (body.action === undefined && user.status === 'banned')) {
+      if (body.ban === false || body.action === 'unban' || (body.ban === undefined && body.action === undefined && user.status === 'banned')) {
         user.status = 'active';
         user.banReason = '';
       } else {
@@ -2808,13 +2813,8 @@ const server = http.createServer(async (req, res) => {
       return sendJSON(res, 200, { success: true, user, message: user.status === 'banned' ? 'Usuário banido com sucesso' : 'Usuário desbanido com sucesso' });
     }
 
-    const approveMatch = pathname.match(/^\/api\/admin\/drivers\/([^\/]+)\/approve$/);
+    const approveMatch = pathname.match(/^\/api\/admin\/(?:drivers|users)\/([^\/]+)\/approve$/);
     if (approveMatch && method === 'PUT') {
-      const userEmail = req.headers['x-user-email'];
-      if (!isAdminEmail(userEmail)) {
-        return sendJSON(res, 403, { success: false, message: 'Acesso negado: apenas administradores' });
-      }
-
       const driverId = approveMatch[1];
       const body = await parseBody(req);
       const users = await db.getUsers();
@@ -2831,23 +2831,49 @@ const server = http.createServer(async (req, res) => {
         driver.banReason = '';
       }
       await db.saveUser(driver);
-      return sendJSON(res, 200, { success: true, driver, message: driver.approved ? 'Cadastro aprovado com sucesso!' : 'Cadastro reprovado' });
+      return sendJSON(res, 200, { success: true, driver, message: driver.approved ? 'Cadastro de motorista aprovado com sucesso!' : 'Cadastro reprovado' });
     }
 
-    // 11. Admin: Platform Stats
+    // 11. Admin: Platform Stats & Export
     if (pathname === '/api/admin/stats' && method === 'GET') {
-      const userEmail = req.headers['x-user-email'];
-      if (!isAdminEmail(userEmail)) {
-        return sendJSON(res, 403, { success: false, message: 'Acesso negado: apenas administradores' });
-      }
-
-      const users = readDB('users.json');
-      const rides = readDB('rides.json');
+      const users = await db.getUsers();
+      const rides = await db.getRides();
       checkAndExpireRides(rides);
-      const reports = readDB('reports.json');
-      const payments = readDB('payments.json');
+      const reports = await db.getReports();
+      const payments = await db.getPayments();
 
       const totalPassengers = users.filter(u => u.role === 'passenger').length;
+      const totalDrivers = users.filter(u => u.role === 'driver').length;
+      const pendingDrivers = users.filter(u => u.role === 'driver' && (u.approved === false || u.driverApproved === false)).length;
+      const completedRides = rides.filter(r => r.status === 'completed').length;
+      const totalRevenue = rides.filter(r => r.status === 'completed').reduce((acc, r) => acc + Number(r.finalFare || r.price || 0), 0);
+
+      return sendJSON(res, 200, {
+        success: true,
+        totalUsers: users.length,
+        totalPassengers,
+        totalDrivers,
+        pendingDrivers,
+        totalRides: rides.length,
+        completedRides,
+        totalRevenue: Number(totalRevenue.toFixed(2)),
+        pendingReports: reports.filter(rep => rep.status === 'Pendente').length,
+        pendingPayments: payments.filter(p => p.status === 'PENDENTE').length
+      });
+    }
+
+    if (pathname === '/api/admin/export-csv' && method === 'GET') {
+      const rides = await db.getRides();
+      let csv = 'ID,Passageiro,Motorista,Origem,Destino,Preço,Status,Data\n';
+      rides.forEach(r => {
+        csv += `"${r.id}","${r.passengerName || ''}","${r.driverName || ''}","${r.origin || ''}","${r.destination || ''}","${r.price || 0}","${r.status || ''}","${r.createdAt || ''}"\n`;
+      });
+      res.writeHead(200, {
+        'Content-Type': 'text/csv; charset=utf-8',
+        'Content-Disposition': 'attachment; filename=relatorio_maxdrive.csv'
+      });
+      return res.end(csv);
+    }
       const totalDrivers = users.filter(u => u.role === 'driver').length;
       const bannedUsers = users.filter(u => u.status === 'banned').length;
       const pendingDrivers = users.filter(u => u.role === 'driver' && !u.approved).length;
@@ -2880,26 +2906,6 @@ const server = http.createServer(async (req, res) => {
       const driverRideVolume = rides
         .filter(r => r.status === 'completed')
         .reduce((sum, r) => sum + (Number(r.price) || 0), 0);
-
-      return sendJSON(res, 200, {
-        success: true,
-        stats: {
-          totalUsers: users.length,
-          totalPassengers,
-          totalDrivers,
-          bannedUsers,
-          pendingDrivers,
-          pendingReports,
-          activeRides,
-          completedRides,
-          totalRevenue: totalRevenue.toFixed(2),
-          weeklyCycleRevenue: weeklyCycleRevenue.toFixed(2),
-          totalPaymentsRevenue: totalPaymentsRevenue.toFixed(2),
-          driverRideVolume: driverRideVolume.toFixed(2),
-          payments
-        }
-      });
-    }
 
     // 12. Database Status & Diagnostics (PostgreSQL / JSON Fallback)
     if (pathname === '/api/db-status' && method === 'GET') {

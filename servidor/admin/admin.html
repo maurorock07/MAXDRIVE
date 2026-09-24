@@ -3,14 +3,459 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MAX DRIVE - Painel Administrativo</title>
+  <title>MAX DRIVE - Painel Administrativo da Diretoria</title>
+  <link rel="icon" href="/assets/icons/MAXDRIVET.svg" type="image/svg+xml">
   <style>
-    body { font-family: system-ui, -apple-system, sans-serif; background: #0b0f19; color: #fff; padding: 20px; }
-    h1 { color: #00E5FF; }
+    :root {
+      --bg-dark: #0b0f19;
+      --bg-card: #111827;
+      --bg-card-hover: #1f2937;
+      --cyan-primary: #00E5FF;
+      --yellow-primary: #FEE500;
+      --green-success: #10B981;
+      --red-danger: #EF4444;
+      --text-main: #F9FAFB;
+      --text-muted: #9CA3AF;
+      --border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg-dark); color: var(--text-main); min-height: 100vh; padding: 20px; }
+
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-bottom: 20px; margin-bottom: 24px; border-bottom: 1px solid var(--border-color);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand img { height: 36px; }
+    .brand h1 { font-size: 20px; font-weight: 900; color: var(--cyan-primary); letter-spacing: 0.5px; }
+
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .btn {
+      padding: 10px 18px; border-radius: 9999px; border: none; font-weight: 800; font-size: 12px;
+      cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-cyan { background: var(--cyan-primary); color: #0b0f19; }
+    .btn-yellow { background: var(--yellow-primary); color: #0b0f19; }
+    .btn-green { background: var(--green-success); color: #fff; }
+    .btn-red { background: var(--red-danger); color: #fff; }
+    .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
+    .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* KPI Grid */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 28px; }
+    .kpi-card {
+      background: var(--bg-card); border-radius: 16px; padding: 20px; border: 1px solid var(--border-color);
+      display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    }
+    .kpi-label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+    .kpi-value { font-size: 26px; font-weight: 900; color: var(--cyan-primary); }
+    .kpi-value.yellow { color: var(--yellow-primary); }
+    .kpi-value.green { color: var(--green-success); }
+    .kpi-value.red { color: var(--red-danger); }
+
+    /* Tabs */
+    .nav-tabs { display: flex; gap: 8px; border-bottom: 1px solid var(--border-color); margin-bottom: 20px; overflow-x: auto; }
+    .tab-btn {
+      padding: 12px 20px; background: transparent; border: none; color: var(--text-muted);
+      font-weight: 800; font-size: 13px; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s;
+    }
+    .tab-btn.active { color: var(--cyan-primary); border-bottom-color: var(--cyan-primary); }
+
+    /* Data Tables */
+    .table-container { background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border-color); overflow-x: auto; margin-bottom: 24px; }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+    th { background: rgba(255,255,255,0.03); padding: 14px 16px; color: var(--text-muted); font-size: 11px; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid var(--border-color); }
+    td { padding: 14px 16px; border-bottom: 1px solid var(--border-color); }
+    tr:hover { background: var(--bg-card-hover); }
+
+    .badge {
+      display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 800; text-transform: uppercase;
+    }
+    .badge-green { background: rgba(16, 185, 129, 0.15); color: var(--green-success); border: 1px solid var(--green-success); }
+    .badge-yellow { background: rgba(254, 229, 0, 0.15); color: var(--yellow-primary); border: 1px solid var(--yellow-primary); }
+    .badge-red { background: rgba(239, 68, 68, 0.15); color: var(--red-danger); border: 1px solid var(--red-danger); }
+    .badge-cyan { background: rgba(0, 229, 255, 0.15); color: var(--cyan-primary); border: 1px solid var(--cyan-primary); }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 99999;
+    }
+    .modal-backdrop.active { display: flex; }
+    .modal-card { background: var(--bg-card); border-radius: 20px; border: 1px solid var(--border-color); width: 90%; max-width: 500px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+    .modal-card h3 { font-size: 18px; font-weight: 900; color: var(--yellow-primary); margin-bottom: 16px; }
+    textarea, input[type="text"] {
+      width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); background: #1f2937; color: #fff; font-size: 13px; margin-bottom: 16px;
+    }
   </style>
 </head>
 <body>
-  <h1>Painel Administrativo MAX DRIVE</h1>
-  <p>Gestão e Auditoria de Corridas e Motoristas.</p>
+
+  <header>
+    <div class="brand">
+      <img src="/assets/icons/MAXDRIVET.svg" alt="MAX DRIVE">
+      <h1>PAINEL ADMINISTRATIVO</h1>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline" onclick="loadDashboardStats()">🔄 Atualizar</button>
+      <button class="btn btn-yellow" onclick="exportCSV()">📊 Exportar CSV</button>
+      <button class="btn btn-red" onclick="window.close()">✖ Fechar</button>
+    </div>
+  </header>
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <span class="kpi-label">Corridas Concluídas</span>
+      <span class="kpi-value green" id="stat-completed-rides">0</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Faturamento Bruto</span>
+      <span class="kpi-value yellow" id="stat-total-revenue">R$ 0,00</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Total de Usuários</span>
+      <span class="kpi-value cyan" id="stat-total-users">0</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Motoristas Pendentes</span>
+      <span class="kpi-value red" id="stat-pending-drivers">0</span>
+    </div>
+  </div>
+
+  <!-- Tabs Navigation -->
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('drivers-pending')">🛡️ Motoristas Pendentes</button>
+    <button class="tab-btn" onclick="switchTab('users')">👥 Gerenciar Usuários</button>
+    <button class="tab-btn" onclick="switchTab('rides')">🚗 Histórico de Corridas</button>
+    <button class="tab-btn" onclick="switchTab('payments')">💵 Repasse Semanal</button>
+    <button class="tab-btn" onclick="switchTab('reports')">🚨 Chamados & Reportes</button>
+  </div>
+
+  <!-- Tab 1: Motoristas Pendentes de Aprovação -->
+  <div id="tab-drivers-pending" class="tab-content">
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Motorista</th>
+            <th>E-mail / Telefone</th>
+            <th>Cidade</th>
+            <th>Veículo</th>
+            <th>Ações de Aprovação</th>
+          </tr>
+        </thead>
+        <tbody id="table-drivers-pending-body">
+          <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Carregando motoristas...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 2: Gestão de Usuários -->
+  <div id="tab-users" class="tab-content" style="display: none;">
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Perfil / Função</th>
+            <th>Cidade</th>
+            <th>Status</th>
+            <th>Ações de Moderação</th>
+          </tr>
+        </thead>
+        <tbody id="table-users-body">
+          <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Carregando usuários...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 3: Corridas -->
+  <div id="tab-rides" class="tab-content" style="display: none;">
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Passageiro</th>
+            <th>Motorista</th>
+            <th>Origem ➔ Destino</th>
+            <th>Valor</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="table-rides-body">
+          <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Carregando corridas...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 4: Pagamentos -->
+  <div id="tab-payments" class="tab-content" style="display: none;">
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Motorista</th>
+            <th>Veículo</th>
+            <th>Valor</th>
+            <th>Situação</th>
+            <th>Ações Financeiras</th>
+          </tr>
+        </thead>
+        <tbody id="table-payments-body">
+          <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Carregando pagamentos...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 5: Reportes -->
+  <div id="tab-reports" class="tab-content" style="display: none;">
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Relator</th>
+            <th>Alvo</th>
+            <th>Motivo</th>
+            <th>Status</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody id="table-reports-body">
+          <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Carregando reportes...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal para Mensagem Direta -->
+  <div class="modal-backdrop" id="modal-msg">
+    <div class="modal-card">
+      <h3>✉️ Enviar Mensagem Direta ao Usuário</h3>
+      <input type="text" id="msg-recipient-name" readonly style="opacity: 0.7;">
+      <textarea id="msg-text" rows="4" placeholder="Digite a mensagem oficial da diretoria..."></textarea>
+      <div style="display: flex; gap: 8px; justify-content: flex-end;">
+        <button class="btn btn-outline" onclick="closeMsgModal()">Cancelar</button>
+        <button class="btn btn-cyan" onclick="sendAdminDirectMsg()">Enviar Mensagem</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let activeRecipientId = null;
+    let activeRecipientName = null;
+    let activeRecipientRole = null;
+
+    async function apiFetch(endpoint, method = 'GET', body = null) {
+      const headers = { 'Content-Type': 'application/json', 'x-admin-request': 'true' };
+      const options = { method, headers };
+      if (body) options.body = JSON.stringify(body);
+      const res = await fetch(endpoint, options);
+      return await res.json();
+    }
+
+    async function loadDashboardStats() {
+      try {
+        const stats = await apiFetch('/api/admin/stats');
+        if (stats && stats.success) {
+          document.getElementById('stat-completed-rides').innerText = stats.completedRides || 0;
+          document.getElementById('stat-total-revenue').innerText = `R$ ${Number(stats.totalRevenue || 0).toFixed(2).replace('.', ',')}`;
+          document.getElementById('stat-total-users').innerText = stats.totalUsers || 0;
+          document.getElementById('stat-pending-drivers').innerText = stats.pendingDrivers || 0;
+        }
+        loadPendingDrivers();
+        loadUsers();
+        loadRides();
+        loadPayments();
+        loadReports();
+      } catch (e) {
+        console.error('Erro ao carregar estatísticas:', e);
+      }
+    }
+
+    async function loadPendingDrivers() {
+      const data = await apiFetch('/api/admin/users?role=driver');
+      const tbody = document.getElementById('table-drivers-pending-body');
+      if (!data || !data.users) return;
+
+      const pending = data.users.filter(u => u.approved === false || u.status === 'pending');
+      if (pending.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--green-success); font-weight: 800;">✅ Nenhum motorista pendente de aprovação!</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = pending.map(u => `
+        <tr>
+          <td><strong>${u.name}</strong></td>
+          <td>${u.email}<br><small>${u.phone || 'Sem telefone'}</small></td>
+          <td>${u.city || 'Ituiutaba'}</td>
+          <td>${u.vehicle ? (u.vehicle.model + ' • ' + u.vehicle.plate) : 'Não informado'}</td>
+          <td>
+            <button class="btn btn-green" onclick="approveDriver('${u.id}')">Aprovar Cadastro</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function approveDriver(userId) {
+      if (!confirm('Deseja realmente aprovar este motorista?')) return;
+      const res = await apiFetch(`/api/admin/users/${userId}/approve`, 'PUT');
+      alert(res.message || 'Motorista aprovado!');
+      loadDashboardStats();
+    }
+
+    async function loadUsers() {
+      const data = await apiFetch('/api/admin/users');
+      const tbody = document.getElementById('table-users-body');
+      if (!data || !data.users) return;
+
+      tbody.innerHTML = data.users.map(u => `
+        <tr>
+          <td><strong>${u.name}</strong> ${u.isAdmin ? '👑' : ''}</td>
+          <td>${u.email}</td>
+          <td><span class="badge badge-cyan">${u.role}</span></td>
+          <td>${u.city || 'Ituiutaba'}</td>
+          <td><span class="badge ${u.status === 'active' ? 'badge-green' : 'badge-red'}">${u.status}</span></td>
+          <td>
+            <button class="btn btn-outline" onclick="openMsgModal('${u.id}', '${u.name}', '${u.role}')">✉️ Mensagem</button>
+            <button class="btn ${u.status === 'banned' ? 'btn-green' : 'btn-red'}" onclick="toggleBanUser('${u.id}', '${u.status}')">
+              ${u.status === 'banned' ? 'Desbanir' : 'Banir'}
+            </button>
+            ${!u.isAdmin ? `<button class="btn btn-yellow" onclick="makeAdmin('${u.id}')">Promover Admin</button>` : ''}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function toggleBanUser(userId, currentStatus) {
+      const action = currentStatus === 'banned' ? 'desbanir' : 'banir';
+      if (!confirm(`Deseja realmente ${action} este usuário?`)) return;
+      const res = await apiFetch(`/api/admin/users/${userId}/ban`, 'PUT', { ban: currentStatus !== 'banned' });
+      alert(res.message || 'Status alterado!');
+      loadUsers();
+    }
+
+    async function makeAdmin(userId) {
+      if (!confirm('Promover este usuário a Administrador com acesso total?')) return;
+      const res = await apiFetch(`/api/admin/users/${userId}/make-admin`, 'PUT');
+      alert(res.message || 'Usuário promovido a Admin!');
+      loadUsers();
+    }
+
+    async function loadRides() {
+      const data = await apiFetch('/api/rides');
+      const tbody = document.getElementById('table-rides-body');
+      if (!data || !data.rides) return;
+
+      tbody.innerHTML = data.rides.slice(0, 30).map(r => `
+        <tr>
+          <td><small>${r.id}</small></td>
+          <td>${r.passengerName || 'Passageiro'}</td>
+          <td>${r.driverName || 'Pendente'}</td>
+          <td>${r.origin} ➔ ${r.destination}</td>
+          <td><strong>R$ ${Number(r.price || 0).toFixed(2).replace('.', ',')}</strong></td>
+          <td><span class="badge ${r.status === 'completed' ? 'badge-green' : 'badge-yellow'}">${r.status}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadPayments() {
+      const data = await apiFetch('/api/admin/payments');
+      const tbody = document.getElementById('table-payments-body');
+      if (!data || !data.payments) return;
+
+      tbody.innerHTML = data.payments.map(p => `
+        <tr>
+          <td><strong>${p.driverName || 'Motorista'}</strong></td>
+          <td>${p.vehicleType === 'moto' ? 'Moto Táxi' : 'Carro'}</td>
+          <td>R$ ${Number(p.amount || 0).toFixed(2).replace('.', ',')}</td>
+          <td><span class="badge badge-green">${p.status}</span></td>
+          <td>
+            <button class="btn btn-yellow" onclick="giveFreePass('${p.driverId}')">Passe Grátis</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function giveFreePass(driverId) {
+      const res = await apiFetch('/api/payments/free-pass', 'POST', { driverId });
+      alert(res.message || 'Semana grátis concedida!');
+      loadPayments();
+    }
+
+    async function loadReports() {
+      const data = await apiFetch('/api/reports');
+      const tbody = document.getElementById('table-reports-body');
+      if (!data || !data.reports) return;
+
+      if (data.reports.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--green-success);">Nenhum reporte pendente!</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = data.reports.map(rep => `
+        <tr>
+          <td>${rep.reporterName} (${rep.reporterRole})</td>
+          <td>${rep.targetName || 'Geral'}</td>
+          <td>${rep.reason}</td>
+          <td><span class="badge ${rep.status === 'Resolvido' ? 'badge-green' : 'badge-yellow'}">${rep.status}</span></td>
+          <td>
+            ${rep.status !== 'Resolvido' ? `<button class="btn btn-green" onclick="resolveReport('${rep.id}')">Marcar Resolvido</button>` : 'OK'}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function resolveReport(reportId) {
+      const res = await apiFetch(`/api/reports/${reportId}/respond`, 'PUT', { status: 'Resolvido', adminResponse: 'Atendido pela diretoria.' });
+      alert(res.message || 'Reporte resolvido!');
+      loadReports();
+    }
+
+    function openMsgModal(id, name, role) {
+      activeRecipientId = id;
+      activeRecipientName = name;
+      activeRecipientRole = role;
+      document.getElementById('msg-recipient-name').value = `Para: ${name} (${role})`;
+      document.getElementById('modal-msg').classList.add('active');
+    }
+
+    function closeMsgModal() {
+      document.getElementById('modal-msg').classList.remove('active');
+    }
+
+    async function sendAdminDirectMsg() {
+      const text = document.getElementById('msg-text').value.trim();
+      if (!text) return alert('Digite o texto da mensagem');
+      const res = await apiFetch('/api/admin-messages', 'POST', {
+        recipientId: activeRecipientId,
+        recipientRole: activeRecipientRole,
+        recipientName: activeRecipientName,
+        text
+      });
+      alert(res.message || 'Mensagem enviada com sucesso!');
+      closeMsgModal();
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+      event.target.classList.add('active');
+      document.getElementById(`tab-${tabId}`).style.display = 'block';
+    }
+
+    function exportCSV() {
+      window.open('/api/admin/export-csv', '_blank');
+    }
+
+    window.onload = loadDashboardStats;
+  </script>
 </body>
 </html>
