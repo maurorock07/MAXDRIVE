@@ -15,19 +15,28 @@
                            window.location.protocol === 'capacitor:' ||
                            (window.location.hostname === 'localhost' && window.location.port !== '3000' && window.location.port !== '3001');
 
-  // 2. Permitir sobrescrever via localStorage (útil para testes em rede local no celular)
-  const savedApiServer = localStorage.getItem('maxdrive_api_server');
+  // Limpar qualquer URL antiga salva com porta :3000 no localStorage
+  let savedApiServer = localStorage.getItem('maxdrive_api_server') || '';
+  if (savedApiServer && (savedApiServer.includes('onrender.com') || savedApiServer.includes(':3000'))) {
+    localStorage.removeItem('maxdrive_api_server');
+    savedApiServer = '';
+  }
 
   // 3. Servidor de Produção Oficial Render
   const RENDER_SERVER_URL = 'https://maxdrive-9us2.onrender.com';
 
   let userConfigured = (typeof window.SERVIDOR_MAXDRIVE === 'string' && window.SERVIDOR_MAXDRIVE.trim())
-    ? window.SERVIDOR_MAXDRIVE.trim().replace(/\/+$/, '') 
+    ? window.SERVIDOR_MAXDRIVE.trim()
     : '';
+
+  // Limpar protocolo inseguro http: e porta :3000 para domínios onrender.com
+  if (userConfigured.includes('onrender.com')) {
+    userConfigured = userConfigured.replace(/^http:/i, 'https:').replace(/:3000\/?$/i, '').replace(/:3001\/?$/i, '').replace(/\/+$/, '');
+  }
 
   let defaultApiBase = '';
   if (isCapacitorNative) {
-    // Modo APK (Capacitor / Android WebView) -> Sempre usa o servidor Render de produção
+    // Modo APK (Capacitor / Android WebView) -> Sempre usa o servidor Render de produção HTTPS
     defaultApiBase = userConfigured || savedApiServer || RENDER_SERVER_URL;
   } else if (!isWebHttp) {
     defaultApiBase = userConfigured || savedApiServer || RENDER_SERVER_URL;
@@ -47,6 +56,11 @@
     }
   }
 
+  // Sanitize: Se contiver onrender.com, forçar https:// e remover :3000
+  if (defaultApiBase && defaultApiBase.includes('onrender.com')) {
+    defaultApiBase = defaultApiBase.replace(/^http:/i, 'https:').replace(/:3000\/?$/i, '').replace(/:3001\/?$/i, '').replace(/\/+$/, '');
+  }
+
   // Garantir que API_BASE sempre aponte para RENDER_SERVER_URL se vazia no APK
   if (!defaultApiBase && isCapacitorNative) {
     defaultApiBase = RENDER_SERVER_URL;
@@ -58,13 +72,13 @@
     
     // Metadados do App
     APP_NAME: 'MAX DRIVE',
-    APP_VERSION: '1.0.22',
+    APP_VERSION: '1.0.23',
     BUILD_TYPE: isCapacitorNative ? 'APK' : 'WEB',
     
     // Função utilitária para definir novo servidor backend em tempo de execução
     setServerUrl: function (newUrl) {
       if (!newUrl) return;
-      let cleanUrl = newUrl.trim().replace(/\/+$/, '');
+      let cleanUrl = newUrl.trim().replace(/^http:/i, 'https:').replace(/:3000\/?$/i, '').replace(/\/+$/, '');
       localStorage.setItem('maxdrive_api_server', cleanUrl);
       window.MAXDRIVE_CONFIG.API_BASE = cleanUrl;
       console.log('📡 [MAX DRIVE] Servidor API atualizado para:', cleanUrl);
@@ -77,7 +91,10 @@
   window.fetch = function (input, init) {
     let url = typeof input === 'string' ? input : (input && input.url ? input.url : '');
     if (url && url.startsWith('/api/')) {
-      const base = (window.MAXDRIVE_CONFIG && window.MAXDRIVE_CONFIG.API_BASE) || RENDER_SERVER_URL;
+      let base = (window.MAXDRIVE_CONFIG && window.MAXDRIVE_CONFIG.API_BASE) || RENDER_SERVER_URL;
+      if (base.includes('onrender.com')) {
+        base = base.replace(/^http:/i, 'https:').replace(/:3000\/?$/i, '');
+      }
       if (typeof input === 'string') {
         input = base + input;
       } else if (input && input.url) {

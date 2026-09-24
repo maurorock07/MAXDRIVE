@@ -24,8 +24,11 @@
   };
 
   function getWebSocketUrl() {
-    const apiBase = (window.MAXDRIVE_CONFIG && window.MAXDRIVE_CONFIG.API_BASE) || '';
+    let apiBase = (window.MAXDRIVE_CONFIG && window.MAXDRIVE_CONFIG.API_BASE) || '';
     if (apiBase) {
+      if (apiBase.includes('onrender.com')) {
+        apiBase = apiBase.replace(/^http:/i, 'https:').replace(/:3000\/?$/i, '').replace(/:3001\/?$/i, '');
+      }
       return apiBase.replace(/^http:/i, 'ws:').replace(/^https:/i, 'wss:');
     }
     const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
