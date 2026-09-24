@@ -540,8 +540,13 @@ const App = (function() {
       }
       populateUserData(data.user);
     } catch (err) {
-      console.error(err);
-      showToast('Erro fetch: ' + (err.message || String(err)));
+      console.error('Erro no login:', err);
+      const isFailedFetch = String(err.message || err).toLowerCase().includes('failed to fetch');
+      if (isFailedFetch) {
+        showToast('Não foi possível conectar ao servidor na nuvem. Se o servidor estava em repouso, aguarde alguns instantes e tente novamente.', 'error');
+      } else {
+        showToast('Erro de conexão: ' + (err.message || String(err)), 'error');
+      }
     }
   }
 

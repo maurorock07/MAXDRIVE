@@ -791,10 +791,12 @@ const server = http.createServer(async (req, res) => {
 
   // Handle CORS preflight
   if (method === 'OPTIONS') {
+    const origin = req.headers.origin || '*';
     res.writeHead(204, {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': origin,
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-User-Email, X-User-Id, X-Session-Token, X-Admin-Request, X-User-Role, X-Requested-With, *'
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-User-Email, X-User-Id, X-Session-Token, X-Admin-Request, X-User-Role, X-Requested-With, *',
+      'Access-Control-Max-Age': '86400'
     });
     res.end();
     return;

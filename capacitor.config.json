@@ -4,6 +4,16 @@
   "webDir": "aplicativo",
   "server": {
     "cleartext": true,
-    "androidScheme": "http"
+    "androidScheme": "https",
+    "allowNavigation": [
+      "maxdrive-9us2.onrender.com",
+      "*.onrender.com"
+    ]
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
   }
 }
+

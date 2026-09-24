@@ -13,33 +13,41 @@
   const isCapacitorNative = !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform()) ||
                            window.location.protocol === 'file:' ||
                            window.location.protocol === 'capacitor:' ||
+                           window.location.protocol === 'https:' && window.location.hostname === 'localhost' ||
                            (window.location.hostname === 'localhost' && window.location.port !== '3000' && window.location.port !== '3001');
 
-  // Limpar qualquer URL antiga salva com porta :3000 no localStorage
-  let savedApiServer = localStorage.getItem('maxdrive_api_server') || '';
-  if (savedApiServer && (savedApiServer.includes('onrender.com') || savedApiServer.includes(':3000'))) {
-    localStorage.removeItem('maxdrive_api_server');
-    savedApiServer = '';
+  // 2. Servidor de Produção Oficial Render
+  const RENDER_SERVER_URL = 'https://maxdrive-9us2.onrender.com';
+
+  // No APK Android, limpamos qualquer URL de rede local antiga salva no celular (ex: 192.168... ou 10.x... ou :10000)
+  if (isCapacitorNative) {
+    try {
+      const saved = localStorage.getItem('maxdrive_api_server') || '';
+      if (saved && (!saved.includes('onrender.com') || saved.startsWith('http:'))) {
+        localStorage.removeItem('maxdrive_api_server');
+      }
+    } catch (_) {}
   }
 
-  // 3. Servidor de Produção Oficial Render
-  const RENDER_SERVER_URL = 'https://maxdrive-9us2.onrender.com';
+  let savedApiServer = '';
+  try {
+    savedApiServer = localStorage.getItem('maxdrive_api_server') || '';
+  } catch (_) {}
 
   let userConfigured = (typeof window.SERVIDOR_MAXDRIVE === 'string' && window.SERVIDOR_MAXDRIVE.trim())
     ? window.SERVIDOR_MAXDRIVE.trim()
     : '';
 
-  // Limpar protocolo inseguro http: e porta :3000 para domínios onrender.com
   if (userConfigured.includes('onrender.com')) {
-    userConfigured = userConfigured.replace(/^http:/i, 'https:').replace(/:3000\/?$/i, '').replace(/:3001\/?$/i, '').replace(/\/+$/, '');
+    userConfigured = userConfigured.replace(/^http:/i, 'https:').replace(/:3000\/?$/i, '').replace(/:10000\/?$/i, '').replace(/\/+$/, '');
   }
 
   let defaultApiBase = '';
   if (isCapacitorNative) {
-    // Modo APK (Capacitor / Android WebView) -> Sempre usa o servidor Render de produção HTTPS
-    defaultApiBase = userConfigured || savedApiServer || RENDER_SERVER_URL;
+    // Modo APK (Capacitor / Android WebView) -> Sempre utiliza o servidor oficial Render
+    defaultApiBase = RENDER_SERVER_URL;
   } else if (!isWebHttp) {
-    defaultApiBase = userConfigured || savedApiServer || RENDER_SERVER_URL;
+    defaultApiBase = RENDER_SERVER_URL;
   } else {
     // Modo Web (Navegador)
     const currentOrigin = (window.location.origin || '').replace(/\/+$/, '');
@@ -56,12 +64,10 @@
     }
   }
 
-  // Sanitize: Se contiver onrender.com, forçar https:// e remover :3000
   if (defaultApiBase && defaultApiBase.includes('onrender.com')) {
-    defaultApiBase = defaultApiBase.replace(/^http:/i, 'https:').replace(/:3000\/?$/i, '').replace(/:3001\/?$/i, '').replace(/\/+$/, '');
+    defaultApiBase = defaultApiBase.replace(/^http:/i, 'https:').replace(/:3000\/?$/i, '').replace(/:10000\/?$/i, '').replace(/\/+$/, '');
   }
 
-  // Garantir que API_BASE sempre aponte para RENDER_SERVER_URL se vazia no APK
   if (!defaultApiBase && isCapacitorNative) {
     defaultApiBase = RENDER_SERVER_URL;
   }
@@ -72,13 +78,13 @@
     
     // Metadados do App
     APP_NAME: 'MAX DRIVE',
-    APP_VERSION: '1.0.23',
+    APP_VERSION: '1.0.25',
     BUILD_TYPE: isCapacitorNative ? 'APK' : 'WEB',
     
     // Função utilitária para definir novo servidor backend em tempo de execução
     setServerUrl: function (newUrl) {
       if (!newUrl) return;
-      let cleanUrl = newUrl.trim().replace(/^http:/i, 'https:').replace(/:3000\/?$/i, '').replace(/\/+$/, '');
+      let cleanUrl = newUrl.trim().replace(/^http:/i, 'https:').replace(/:3000\/?$/i, '').replace(/:10000\/?$/i, '').replace(/\/+$/, '');
       localStorage.setItem('maxdrive_api_server', cleanUrl);
       window.MAXDRIVE_CONFIG.API_BASE = cleanUrl;
       console.log('📡 [MAX DRIVE] Servidor API atualizado para:', cleanUrl);
@@ -90,18 +96,22 @@
   const _originalFetch = window.fetch;
   window.fetch = function (input, init) {
     let url = typeof input === 'string' ? input : (input && input.url ? input.url : '');
-    if (url && url.startsWith('/api/')) {
+    if (url && (url.startsWith('/api/') || url.startsWith('api/'))) {
       let base = (window.MAXDRIVE_CONFIG && window.MAXDRIVE_CONFIG.API_BASE) || RENDER_SERVER_URL;
       if (base.includes('onrender.com')) {
-        base = base.replace(/^http:/i, 'https:').replace(/:3000\/?$/i, '');
+        base = base.replace(/^http:/i, 'https:').replace(/:3000\/?$/i, '').replace(/:10000\/?$/i, '').replace(/\/+$/, '');
       }
+      const cleanPath = url.startsWith('/') ? url : '/' + url;
       if (typeof input === 'string') {
-        input = base + input;
+        input = base + cleanPath;
       } else if (input && input.url) {
-        input = new Request(base + input.url, init || input);
+        input = new Request(base + cleanPath, init || input);
       }
     }
-    return _originalFetch.call(this, input, init);
+    return _originalFetch.call(this, input, init).catch(err => {
+      console.error(`[MAX DRIVE Fetch Error] URL: ${typeof input === 'string' ? input : (input && input.url ? input.url : '')} |`, err.message || err);
+      throw err;
+    });
   };
 
   console.log(`🚀 [MAX DRIVE] Config carregado | Modo: ${window.MAXDRIVE_CONFIG.BUILD_TYPE} | API_BASE: "${window.MAXDRIVE_CONFIG.API_BASE}"`);
