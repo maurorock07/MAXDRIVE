@@ -2,8 +2,7 @@
  * MAX DRIVE - Configuração do Aplicativo Cliente (APK & Web)
  * 
  * Este arquivo define a URL do servidor backend para que o aplicativo
- * funcione tanto diretamente no navegador quanto empacotado como APK Android
- * (via Capacitor, Cordova, WebView ou Website 2 APK).
+ * funcione tanto diretamente no navegador quanto empacotado como APK Android.
  */
 
 (function () {
@@ -19,17 +18,19 @@
   // 2. Permitir sobrescrever via localStorage (útil para testes em rede local no celular)
   const savedApiServer = localStorage.getItem('maxdrive_api_server');
 
-  // 3. Definir URL padrão do servidor
+  // 3. Servidor de Produção Oficial Render
+  const RENDER_SERVER_URL = 'https://maxdrive-9us2.onrender.com';
+
   let userConfigured = (typeof window.SERVIDOR_MAXDRIVE === 'string' && window.SERVIDOR_MAXDRIVE.trim())
     ? window.SERVIDOR_MAXDRIVE.trim().replace(/\/+$/, '') 
     : '';
 
   let defaultApiBase = '';
   if (isCapacitorNative) {
-    // Modo APK (Capacitor / Android WebView)
-    defaultApiBase = userConfigured || savedApiServer || 'http://localhost:3000';
+    // Modo APK (Capacitor / Android WebView) -> Sempre usa o servidor Render de produção
+    defaultApiBase = userConfigured || savedApiServer || RENDER_SERVER_URL;
   } else if (!isWebHttp) {
-    defaultApiBase = userConfigured || savedApiServer || 'http://localhost:3000';
+    defaultApiBase = userConfigured || savedApiServer || RENDER_SERVER_URL;
   } else {
     // Modo Web (Navegador)
     const currentOrigin = (window.location.origin || '').replace(/\/+$/, '');
@@ -42,17 +43,22 @@
     } else if (savedApiServer) {
       defaultApiBase = savedApiServer;
     } else {
-      defaultApiBase = `http://${window.location.hostname || 'localhost'}:3000`;
+      defaultApiBase = RENDER_SERVER_URL;
     }
   }
 
+  // Garantir que API_BASE sempre aponte para RENDER_SERVER_URL se vazia no APK
+  if (!defaultApiBase && isCapacitorNative) {
+    defaultApiBase = RENDER_SERVER_URL;
+  }
+
   window.MAXDRIVE_CONFIG = {
-    // URL Base da API do Servidor (ex: "http://192.168.1.100:3000" ou "https://api.maxdrive.com.br")
-    API_BASE: defaultApiBase,
+    // URL Base da API do Servidor (Produção Render)
+    API_BASE: defaultApiBase || RENDER_SERVER_URL,
     
     // Metadados do App
     APP_NAME: 'MAX DRIVE',
-    APP_VERSION: '1.0.21',
+    APP_VERSION: '1.0.22',
     BUILD_TYPE: isCapacitorNative ? 'APK' : 'WEB',
     
     // Função utilitária para definir novo servidor backend em tempo de execução
@@ -71,7 +77,7 @@
   window.fetch = function (input, init) {
     let url = typeof input === 'string' ? input : (input && input.url ? input.url : '');
     if (url && url.startsWith('/api/')) {
-      const base = (window.MAXDRIVE_CONFIG && window.MAXDRIVE_CONFIG.API_BASE) || '';
+      const base = (window.MAXDRIVE_CONFIG && window.MAXDRIVE_CONFIG.API_BASE) || RENDER_SERVER_URL;
       if (typeof input === 'string') {
         input = base + input;
       } else if (input && input.url) {
