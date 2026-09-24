@@ -1,0 +1,7 @@
+﻿node_modules/
+*.apk
+*.xz
+.env
+dist/
+build/
+servidor/database/*.json

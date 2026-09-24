@@ -1,0 +1,24 @@
+{
+  "name": "maxdrive",
+  "version": "1.0.0",
+  "description": "Plataforma web completa e responsiva para transporte urbano e corridas por aplicativo (Passageiro, Motorista e Painel Administrativo). Conta com motor de mapas interativo, geolocalização por GPS, cálculo preciso de distâncias viárias e tarifas inteligentes por cidade.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node servidor/server.js",
+    "test": "node servidor/test_suite.js",
+    "sync": "npx cap sync"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/cli": "^8.5.2",
+    "@capacitor/core": "^8.5.2",
+    "@capacitor/push-notifications": "^8.1.2"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5"
+  }
+}

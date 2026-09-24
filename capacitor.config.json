@@ -1,0 +1,9 @@
+{
+  "appId": "com.maxdrive.app",
+  "appName": "MAX DRIVE",
+  "webDir": "aplicativo",
+  "server": {
+    "cleartext": true,
+    "androidScheme": "http"
+  }
+}

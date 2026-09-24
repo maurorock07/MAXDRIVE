@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAX DRIVE - Corridas a Preço Justo</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <link rel="stylesheet" href="lib/leaflet/leaflet.css">
+  <link rel="stylesheet" href="css/style.css?v=1.0.26">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#080A0F">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="icon" href="assets/icons/MAXDRIVET.svg?v=1.0.17" type="image/svg+xml">
+</head>
+<body>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- App Mobile Simulator Viewport -->
+  <main class="app-viewport" id="app-viewport">
+
+    <!-- ============================================================= -->
+    <!-- 1. SPLASH SCREEN -->
+    <!-- ============================================================= -->
+    <section class="screen splash-screen active" id="screen-splash" onclick="App.handleLogoClick()">
+      <div class="splash-logo-wrap">
+        <img src="assets/icons/MAXDRIVET.svg" alt="MAX DRIVE - Corridas a Preço Justo" class="splash-logo-img">
+        <div class="splash-tap-tip">Toque na tela para iniciar</div>
+      </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- 2. LOGIN SCREEN -->
+    <!-- ============================================================= -->
+    <section class="screen" id="screen-login">
+      <div class="splash-logo-wrap" style="margin-bottom: 24px;">
+        <img src="assets/icons/MAXDRIVET.svg" alt="MAX DRIVE" class="login-logo-img splash-logo-img" style="width: 170px;">
+      </div>
+
+      <form id="form-login" onsubmit="App.handleLogin(event)" autocomplete="off">
+        <!-- Email / User Input -->
+        <div class="form-group">
+          <div class="pill-input-wrap">
+            <img src="assets/icons/user.svg" alt="Usuário" class="pill-icon pill-icon-yellow">
+            <input type="email" id="login-email" class="pill-input" placeholder="seuemail@exemplo.com" required autocomplete="off" spellcheck="false">
+          </div>
+        </div>
+
+        <!-- Password Input -->
+        <div class="form-group">
+          <div class="pill-input-wrap">
+            <img src="assets/icons/power.svg" alt="Senha" class="pill-icon pill-icon-yellow">
+            <input type="password" id="login-password" class="pill-input" placeholder="Digite sua senha" required autocomplete="new-password" spellcheck="false">
+          </div>
+        </div>
+
+        <a class="link-text" onclick="App.forgotPassword()">ESQUECEU A SENHA?</a>
+
+        <button type="submit" class="btn-pill btn-white" style="margin-bottom: 16px;">
+          ENTRAR NO APP
+        </button>
+
+        <!-- Register Link Button -->
+        <button type="button" class="btn-pill btn-yellow" onclick="App.goToScreen('screen-register')">
+          <img src="assets/icons/receipt.svg" alt="Cadastre-se" style="width: 18px; height: 18px;">
+          Clique aqui e cadastre-se
+        </button>
+      </form>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- 3. CADASTRO SCREEN (Passageiro / Motorista) -->
+    <!-- ============================================================= -->
+    <section class="screen" id="screen-register">
+      <div class="app-header" style="justify-content: center; margin-bottom: 12px;">
+        <img src="assets/icons/MAXDRIVET.svg" alt="MAX DRIVE" class="app-logo-small" onclick="App.handleLogoClick()">
+      </div>
+
+      <form id="form-register" onsubmit="App.handleRegister(event)" autocomplete="off">
+
+        <!-- Avatar / Foto de Perfil Upload no Cadastro -->
+        <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 16px;">
+          <label class="form-label" style="margin-bottom: 6px; color: var(--yellow-primary);">FOTO DE PERFIL (OBRIGATÓRIO):</label>
+          <div class="avatar-circle yellow avatar-editable" id="reg-photo-circle" onclick="document.getElementById('input-reg-avatar').click()" title="Clique para enviar foto de perfil">
+            <span id="reg-photo-text" style="font-size: 10px; font-weight: 800; color: #000;">FOTO *</span>
+            <img id="reg-photo-img" src="" alt="Avatar" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+            <div class="avatar-edit-icon" title="Enviar foto"><img src="assets/icons/camera.svg" alt="" class="svg-icon-img sm" style="filter: invert(1);"></div>
+          </div>
+          <div style="font-size: 11px; font-weight: 700; color: #00E5FF; cursor: pointer; margin-top: 6px;" onclick="document.getElementById('input-reg-avatar').click()">
+            Toque para selecionar foto (Máx 10MB - PNG, JPG, JPEG)
+          </div>
+          <input type="file" id="input-reg-avatar" accept="image/png, image/jpeg, image/jpg" style="display: none;" onchange="App.handleRegAvatarSelect(event)">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">NOME E SOBRENOME (COMPLETO):</label>
+          <div class="pill-input-wrap">
+            <input type="text" id="reg-name" class="pill-input" placeholder="Ex: João da Silva" required autocomplete="off" spellcheck="false">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">EMAIL:</label>
+          <div class="pill-input-wrap">
+            <input type="email" id="reg-email" class="pill-input" placeholder="seuemail@exemplo.com" required autocomplete="off" spellcheck="false">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">TELEFONE / CONTATO:</label>
+          <div class="pill-input-wrap">
+            <input type="tel" id="reg-phone" class="pill-input" placeholder="(34) 99999-9999" required autocomplete="off" spellcheck="false">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">CPF:</label>
+          <div class="pill-input-wrap">
+            <input type="text" id="reg-cpf" class="pill-input" placeholder="000.000.000-00" required autocomplete="off" spellcheck="false">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">DATA DE NASCIMENTO:</label>
+          <div class="pill-input-wrap">
+            <input type="date" id="reg-birth" class="pill-input" required autocomplete="off">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">CÓDIGO DE SEGURANÇA (PIN - 6 NÚMEROS):</label>
+          <div class="security-code-wrap">
+            <input type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" class="code-digit-input" data-idx="0">
+            <input type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" class="code-digit-input" data-idx="1">
+            <input type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" class="code-digit-input" data-idx="2">
+            <input type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" class="code-digit-input" data-idx="3">
+            <input type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" class="code-digit-input" data-idx="4">
+            <input type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" class="code-digit-input" data-idx="5">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">SENHA (DE 6 A 20 CARACTERES):</label>
+          <div class="pill-input-wrap">
+            <input type="password" id="reg-password" class="pill-input" placeholder="Crie uma senha de 6 a 20 caracteres" minlength="6" maxlength="20" required>
+          </div>
+        </div>
+
+        <!-- Role Selection -->
+        <label class="form-label">TIPO DE CONTA:</label>
+        <div class="role-select-wrap">
+          <button type="button" class="role-btn passenger active" id="btn-role-passenger" onclick="App.selectRegisterRole('passenger')">
+            SOU PASSAGEIRO
+          </button>
+          <button type="button" class="role-btn driver" id="btn-role-driver" onclick="App.selectRegisterRole('driver')">
+            SOU MOTORISTA
+          </button>
+        </div>
+
+        <!-- Driver Extra Required Fields -->
+        <div id="reg-driver-extra-fields" style="display: none; margin-top: 12px; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1);">
+          <div class="section-title-yellow" style="font-size: 13px; margin-bottom: 8px;">DADOS OBRIGATÓRIOS DO MOTORISTA:</div>
+
+          <div class="form-group">
+            <label class="form-label">CNH:</label>
+            <div class="pill-input-wrap">
+              <input type="text" id="reg-cnh" class="pill-input" placeholder="Número da CNH" autocomplete="off" spellcheck="false">
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+            <button type="button" class="btn-pill btn-cyan" id="btn-reg-veh-car" style="height: 36px; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="App.selectRegVehicleType('car')">
+              <img src="assets/icons/car-front.svg" alt="Carro" style="height: 18px; width: 18px;"> CARRO
+            </button>
+            <button type="button" class="btn-pill btn-white" id="btn-reg-veh-moto" style="height: 36px; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="App.selectRegVehicleType('moto')">
+              <img src="assets/icons/moto.svg" alt="Moto" style="height: 18px; width: 18px;"> MOTO
+            </button>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">MODELO DO VEÍCULO:</label>
+            <div class="pill-input-wrap">
+              <input type="text" id="reg-veh-model" class="pill-input" placeholder="Ex: Onix Preto, CG 160 Fan" autocomplete="off">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">PLACA:</label>
+            <div class="pill-input-wrap">
+              <input type="text" id="reg-veh-plate" class="pill-input" placeholder="ABC-1234 / ABC1D23" autocomplete="off">
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label">COR:</label>
+              <div class="pill-input-wrap">
+                <input type="text" id="reg-veh-color" class="pill-input" placeholder="Ex: Prata" autocomplete="off">
+              </div>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label">ANO:</label>
+              <div class="pill-input-wrap">
+                <input type="text" id="reg-veh-year" class="pill-input" placeholder="Ex: 2022" autocomplete="off">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Checkbox Termos de Uso -->
+        <div style="margin-top: 14px; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 10px;">
+          <input type="checkbox" id="reg-terms-check" style="width: 20px; height: 20px; accent-color: var(--yellow-primary); margin-top: 2px; cursor: pointer;" required>
+          <label for="reg-terms-check" style="font-size: 11px; color: #cbd5e1; line-height: 1.4; cursor: pointer;">
+            Li e concordo com os <a href="javascript:void(0)" onclick="App.openTermsModal()" style="color: #00E5FF; font-weight: 800; text-decoration: underline;">Termos de Uso e Condições do Serviço</a>.
+          </label>
+        </div>
+
+        <button type="submit" class="btn-pill btn-white" style="margin-top: 8px;">
+          FINALIZAR CADASTRO
+        </button>
+
+        <a class="link-text" style="text-align: center; margin-top: 14px;" onclick="App.handleLogoClick()">
+          Já possui uma conta? Faça login
+        </a>
+      </form>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- 4. PASSAGEIRO: HOME (Solicitação de Corrida) -->
+    <!-- ============================================================= -->
+    <section class="screen" id="screen-passenger-home">
+      <!-- Top Header Row with motorista | passageiro Switcher -->
+      <div class="screen-top-role-bar">
+        <div class="header-admin-badge" id="header-admin-badge-pass" style="display: none;" onclick="App.openAdminPanel()" title="Acessar Painel da Diretoria">
+          <img src="assets/icons/shield.svg" alt="" class="svg-icon-img sm"> PAINEL ADMIN
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
+          <button type="button" class="header-theme-toggle-btn" onclick="App.toggleTheme()" title="Alternar Modo Noturno / Claro">
+            <span class="header-theme-icon">☀️</span>
+          </button>
+          <div class="header-role-toggle-wrap">
+            <span class="header-role-label">PASSAGEIRO</span>
+            <label class="toggle-switch header-toggle-switch">
+              <input type="checkbox" class="header-role-toggle-input" onchange="App.toggleUserRole(this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Header Row with Large Logo and Styled City Selector -->
+      <div class="home-header-row">
+        <img src="assets/icons/MAXDRIVET.svg?v=1.0.13" alt="MAX DRIVE" class="home-logo-large" onclick="App.handleLogoClick()">
+
+        <!-- Styled Custom City Selector -->
+        <div class="city-selector-container" id="city-selector-container">
+          <img src="assets/icons/pin-red.svg" alt="Localização" class="city-pin-red-icon">
+          <div class="city-pill-button" id="city-pill-button" onclick="App.toggleCityDropdown()">
+            <span id="city-current-name">SELECIONE SUA CIDADE</span>
+            <span class="city-chevron"><img src="assets/icons/chevron-down.svg" alt="" class="svg-icon-img sm"></span>
+          </div>
+          <div class="custom-city-dropdown" id="custom-city-dropdown" style="display: none;">
+            <div class="city-dropdown-item" onclick="App.selectCity('araguari')"><span>Araguari - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('araxa')"><span>Araxá - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('canapolis')"><span>Canápolis - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('capinopolis')"><span>Capinópolis - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('centralina')"><span>Centralina - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('frutal')"><span>Frutal - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('ituiutaba')"><span>Ituiutaba - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('itumbiara')"><span>Itumbiara - GO</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('iturama')"><span>Iturama - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('monte_carmelo')"><span>Monte Carmelo - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('patos_de_minas')"><span>Patos de Minas - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('patrocinio')"><span>Patrocínio - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('prata')"><span>Prata - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('santa_vitoria')"><span>Santa Vitória - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('tupaciguara')"><span>Tupaciguara - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('uberaba')"><span>Uberaba - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('uberlandia')"><span>Uberlândia - MG</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title-yellow">Para onde vamos?</div>
+
+      <!-- Route Section with Vertical Dashed Line & Colored Indicators (Image 2 Pixel-Perfect) -->
+      <div class="route-form-container">
+        <!-- Departure Input -->
+        <div class="route-step-group">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+            <label class="route-step-label" style="margin-bottom: 0;">ESCOLHA SEU LOCAL DE PARTIDA:</label>
+          </div>
+          <div class="route-input-row">
+            <div class="route-track-col">
+              <span class="route-dot-cyan"></span>
+              <div class="route-dashed-line"></div>
+            </div>
+            <div class="route-fields-split">
+              <div class="route-pill-wrap route-field-address" onclick="App.checkCityBeforeInput(event)">
+                <input type="text" id="pass-origin" class="pill-input-route input-city-locked" placeholder="Selecione sua cidade primeiro" autocomplete="off" value="" disabled oninput="App.onStreetInput('origin', this.value); App.updateEstimatedValues();" onfocus="App.onStreetFocus('origin')" onclick="App.checkCityBeforeInput(event)">
+                <div class="street-suggestions-dropdown" id="suggest-origin" style="display: none;"></div>
+              </div>
+              <div class="route-pill-wrap route-field-bairro" onclick="App.checkCityBeforeInput(event)">
+                <input type="text" id="pass-origin-bairro" class="pill-input-route input-city-locked" placeholder="Bairro" autocomplete="off" value="" disabled oninput="App.updateEstimatedValues();" onclick="App.checkCityBeforeInput(event)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Arrival Input -->
+        <div class="route-step-group">
+          <label class="route-step-label">ESCOLHA SEU LOCAL DE CHEGADA:</label>
+          <div class="route-input-row">
+            <div class="route-track-col">
+              <span class="route-dot-yellow"></span>
+            </div>
+            <div class="route-fields-split">
+              <div class="route-pill-wrap route-field-address" onclick="App.checkCityBeforeInput(event)">
+                <input type="text" id="pass-dest" class="pill-input-route input-city-locked" placeholder="Selecione sua cidade primeiro" autocomplete="off" value="" disabled oninput="App.onStreetInput('dest', this.value); App.updateEstimatedValues();" onfocus="App.onStreetFocus('dest')" onclick="App.checkCityBeforeInput(event)">
+                <div class="street-suggestions-dropdown" id="suggest-dest" style="display: none;"></div>
+              </div>
+              <div class="route-pill-wrap route-field-bairro" onclick="App.checkCityBeforeInput(event)">
+                <input type="text" id="pass-dest-bairro" class="pill-input-route input-city-locked" placeholder="Bairro" autocomplete="off" value="" disabled oninput="App.updateEstimatedValues();" onclick="App.checkCityBeforeInput(event)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reference Point Input -->
+        <div class="route-step-group">
+          <label class="route-step-label">PONTO DE REFERÊNCIA (OPCIONAL):</label>
+          <div class="route-input-row">
+            <div class="route-track-col">
+              <img src="assets/icons/pin-red.svg" alt="Referência" class="route-payment-hand-icon">
+            </div>
+            <div class="route-pill-wrap">
+              <input type="text" id="pass-ref" class="pill-input-route" placeholder="Ex.: Próximo à padaria, portão preto...">
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="route-step-group">
+          <label class="route-step-label">FORMA DE PAGAMENTO:</label>
+          <div class="route-input-row">
+            <div class="route-track-col">
+              <img src="assets/icons/payment-hand.svg" alt="Pagamento" class="route-payment-hand-icon">
+            </div>
+            <div class="route-pill-payment-wrap" id="payment-selector-container">
+              <div class="pill-select-payment" id="payment-pill-trigger" onclick="App.togglePaymentDropdown()">
+                <span id="payment-display-text">SELECIONE A FORMA DE PAGAMENTO</span>
+                <span class="city-chevron"><img src="assets/icons/chevron-down.svg" alt="" class="svg-icon-img sm"></span>
+              </div>
+              <div class="custom-payment-dropdown" id="custom-payment-dropdown" style="display: none;">
+                <div class="payment-dropdown-item active" onclick="App.selectPaymentMethod('Dinheiro')">
+                  <span><img src="assets/icons/cash.svg" alt="" class="svg-icon-img sm" style="margin-right: 6px;"> Dinheiro</span>
+                </div>
+                <div class="payment-dropdown-item" onclick="App.selectPaymentMethod('Pix')">
+                  <span><img src="assets/icons/pix.svg" alt="" class="svg-icon-img sm" style="margin-right: 6px;"> Pix</span>
+                </div>
+                <div class="payment-dropdown-item" onclick="App.selectPaymentMethod('Cartão de Crédito')">
+                  <span><img src="assets/icons/card.svg" alt="" class="svg-icon-img sm" style="margin-right: 6px;"> Cartão de Crédito</span>
+                </div>
+                <div class="payment-dropdown-item" onclick="App.selectPaymentMethod('Cartão de Débito')">
+                  <span><img src="assets/icons/card.svg" alt="" class="svg-icon-img sm" style="margin-right: 6px;"> Cartão de Débito</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Uber-Style Map & Trajectory Box -->
+      <div class="passenger-map-section-wrap" style="margin: 16px 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <div style="font-size: 11px; font-weight: 800; color: var(--text-secondary); display: flex; align-items: center; gap: 6px;">
+            <img src="assets/icons/route.svg" class="svg-icon-img sm" alt="">
+            MAPA E TRAJETO DA CORRIDA:
+          </div>
+          <span style="font-size: 10.5px; color: #00E5FF; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 3px;" onclick="App.useCurrentLocationGPS()">
+            📍 Centrar no meu GPS
+          </span>
+        </div>
+        <div class="map-box" id="passenger-map-box" style="height: 240px; width: 100%; border-radius: 16px; border: 1.5px solid rgba(0, 229, 255, 0.35); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); overflow: hidden; position: relative;">
+          <!-- Uber/99 Style Floating Info Overlay -->
+          <div id="passenger-map-overlay" class="map-floating-overlay" style="display: none;">
+            <div class="overlay-row">
+              <span class="overlay-badge cyan" id="overlay-dist-time">🛣️ -- • --</span>
+              <span class="overlay-badge yellow" id="overlay-price-tag">R$ --</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vehicle Selection Section & Modern Estimation Cards -->
+      <div class="vehicle-select-header">
+        <img src="assets/icons/checkbox-cyan.svg" alt="Check" class="checkbox-cyan-icon">
+        <span class="vehicle-header-text">SELECIONE O TIPO DE VEÍCULO:</span>
+      </div>
+
+      <div class="ride-dual-cards">
+        <!-- Car Card -->
+        <div class="ride-card-column" id="card-col-car" onclick="App.selectVehicleCard('car')">
+          <div class="ride-card-white vehicle-card-modern selected" id="vcard-car">
+            <div class="vcard-top-row">
+              <div class="vcard-title-wrap">
+                <span class="vcard-title">MAX CARRO</span>
+                <span class="vcard-subtitle">Conforto & Ar</span>
+              </div>
+              <span class="vcard-tag vcard-tag-popular">POPULAR</span>
+            </div>
+
+            <div class="vcard-center-row">
+              <div class="vcard-art-box">
+                <div class="vcard-art-ambient-glow"></div>
+                <img src="assets/icons/car-front.svg" alt="Carro" class="card-vehicle-art">
+              </div>
+              <div class="vcard-price-container">
+                <span class="vcard-price-hint">VALOR ESTIMADO</span>
+                <div class="vcard-price-display" id="card-car-price"><small>R$</small>--</div>
+              </div>
+            </div>
+
+            <div class="vcard-divider"></div>
+
+            <div class="vcard-metrics-grid">
+              <div class="vcard-pill distance-pill" title="Distância estimada">
+                <svg class="vcard-pill-svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/>
+                </svg>
+                <div class="vcard-pill-content">
+                  <span class="vcard-pill-label">DISTÂNCIA</span>
+                  <span class="vcard-pill-val" id="card-car-distance">--</span>
+                </div>
+              </div>
+              <div class="vcard-pill time-pill" title="Tempo estimado de viagem">
+                <svg class="vcard-pill-svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                </svg>
+                <div class="vcard-pill-content">
+                  <span class="vcard-pill-label">TEMPO</span>
+                  <span class="vcard-pill-val" id="card-car-time">--</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="vcard-capacity-row">
+              <span class="vcard-capacity-item"><img src="assets/icons/user.svg" alt="" class="svg-icon-img xs" style="opacity: 0.7;"> Até 4 passageiros</span>
+            </div>
+          </div>
+          <button type="button" class="btn-card-yellow" onclick="event.stopPropagation(); App.requestRide('car')">
+            <span>CHAMAR CARRO</span>
+          </button>
+        </div>
+
+        <!-- Moto Card -->
+        <div class="ride-card-column" id="card-col-moto" onclick="App.selectVehicleCard('moto')">
+          <div class="ride-card-white vehicle-card-modern" id="vcard-moto">
+            <div class="vcard-top-row">
+              <div class="vcard-title-wrap">
+                <span class="vcard-title">MAX MOTO</span>
+                <span class="vcard-subtitle">Ágil & Econômico</span>
+              </div>
+              <span class="vcard-tag vcard-tag-fast">MAIS RÁPIDO</span>
+            </div>
+
+            <div class="vcard-center-row">
+              <div class="vcard-art-box">
+                <div class="vcard-art-ambient-glow moto-glow"></div>
+                <img src="assets/icons/moto.svg" alt="Moto" class="card-vehicle-art">
+              </div>
+              <div class="vcard-price-container">
+                <span class="vcard-price-hint">VALOR ESTIMADO</span>
+                <div class="vcard-price-display" id="card-moto-price"><small>R$</small>--</div>
+              </div>
+            </div>
+
+            <div class="vcard-divider"></div>
+
+            <div class="vcard-metrics-grid">
+              <div class="vcard-pill distance-pill" title="Distância estimada">
+                <svg class="vcard-pill-svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/>
+                </svg>
+                <div class="vcard-pill-content">
+                  <span class="vcard-pill-label">DISTÂNCIA</span>
+                  <span class="vcard-pill-val" id="card-moto-distance">--</span>
+                </div>
+              </div>
+              <div class="vcard-pill time-pill" title="Tempo estimado de viagem">
+                <svg class="vcard-pill-svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                </svg>
+                <div class="vcard-pill-content">
+                  <span class="vcard-pill-label">TEMPO</span>
+                  <span class="vcard-pill-val" id="card-moto-time">--</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="vcard-capacity-row">
+              <span class="vcard-capacity-item"><img src="assets/icons/user.svg" alt="" class="svg-icon-img xs" style="opacity: 0.7;"> 1 passageiro • Capacete</span>
+            </div>
+          </div>
+          <button type="button" class="btn-card-yellow" onclick="event.stopPropagation(); App.requestRide('moto')">
+            <span>CHAMAR MOTO</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Bottom Nav Bar -->
+      <nav class="bottom-nav">
+        <div class="nav-item active" onclick="App.handleLogoClick()">
+          <img src="assets/icons/home.svg" alt="Início">
+          <span>Início</span>
+        </div>
+        <div class="nav-item" onclick="App.goToScreen('screen-history')">
+          <img src="assets/icons/clock.svg" alt="Histórico">
+          <span>Histórico</span>
+        </div>
+        <div class="nav-item" onclick="App.goToScreen('screen-profile')">
+          <img src="assets/icons/user.svg" alt="Perfil">
+          <span>Perfil</span>
+        </div>
+        <div class="nav-item nav-item-settings" onclick="App.goToScreen('screen-settings')">
+          <span class="nav-notification-dot"></span>
+          <img src="assets/icons/settings.svg" alt="Configurações">
+          <span>Configurações</span>
+        </div>
+      </nav>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- 4b. PASSAGEIRO: AGUARDANDO MOTORISTA ACEITAR -->
+    <!-- ============================================================= -->
+    <section class="screen" id="screen-passenger-waiting">
+      <!-- Top Header Row with motorista | passageiro Switcher -->
+      <div class="screen-top-role-bar">
+        <div class="header-admin-badge" id="header-admin-badge-drv" style="display: none;" onclick="window.open('/admin.html', '_blank')" title="Acessar Painel da Diretoria">
+          <img src="assets/icons/shield.svg" alt="" class="svg-icon-img sm"> PAINEL ADMIN
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
+          <button type="button" class="header-theme-toggle-btn" onclick="App.toggleTheme()" title="Alternar Modo Noturno / Claro">
+            <span class="header-theme-icon">☀️</span>
+          </button>
+          <div class="header-role-toggle-wrap">
+            <span class="header-role-label">PASSAGEIRO</span>
+            <label class="toggle-switch header-toggle-switch">
+              <input type="checkbox" class="header-role-toggle-input" onchange="App.toggleUserRole(this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Header Row with Large Logo and Styled City Selector -->
+      <div class="home-header-row">
+        <img src="assets/icons/MAXDRIVET.svg?v=1.0.13" alt="MAX DRIVE" class="home-logo-large" onclick="App.handleLogoClick()">
+
+        <div class="city-selector-container">
+          <img src="assets/icons/pin-red.svg" alt="Cidade" class="city-pin-red-icon">
+          <div class="city-pill-button">
+            <span id="waiting-city-badge-name">Ituiutaba</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title-yellow">AGUARDANDO MOTORISTA ACEITAR:</div>
+
+      <!-- Searching Radar / Waiting Pulse Animation Box -->
+      <div class="waiting-radar-card">
+        <div class="waiting-radar-halo-wrap">
+          <div class="waiting-radar-halo h1"></div>
+          <div class="waiting-radar-halo h2"></div>
+          <div class="waiting-radar-halo h3"></div>
+          <div class="waiting-center-icon-wrap" id="waiting-icon-box">
+            <img src="assets/icons/car-front.svg" alt="Veículo" id="waiting-center-vehicle-img" class="waiting-center-img">
+          </div>
+        </div>
+        <div class="waiting-status-text-main">PROCURANDO MOTORISTAS PRÓXIMOS...</div>
+        <div class="waiting-status-sub" id="waiting-status-detail">
+          Sua solicitação está no radar dos motoristas da região.
+        </div>
+        <div class="waiting-countdown-badge" id="waiting-countdown-box">
+          <svg style="width: 14px; height: 14px; flex-shrink: 0;" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/>
+          </svg>
+          <span>Expira em: <strong id="waiting-countdown-timer">15:00</strong></span>
+        </div>
+      </div>
+
+      <!-- Ride Summary Card -->
+      <div class="white-card" style="margin-top: 14px;">
+        <div class="ride-driver-header" style="margin-bottom: 12px;">
+          <div class="avatar-circle" id="waiting-passenger-avatar">--</div>
+          <div class="driver-info-meta">
+            <h4 id="waiting-passenger-name">PASSAGEIRO</h4>
+            <div class="rating-tag" id="waiting-passenger-rating"><img src="assets/icons/star.svg" alt="" class="svg-icon-img sm" style="filter: brightness(0) saturate(100%); margin-right: 3px;"> 5.0 (Passageiro)</div>
+          </div>
+          <div style="margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+            <span class="vehicle-pill-tag" id="waiting-vehicle-type-tag" style="font-size: 11px; padding: 4px 10px; background: #020835; color: #00F0FF; font-weight: 800; border-radius: 20px;">
+              <img src="assets/icons/car.svg" alt="" class="svg-icon-img sm" style="margin-right: 4px;"> CARRO COMUM
+            </span>
+            <span style="font-size: 10px; font-weight: 800; color: #00D04B; background: rgba(0, 208, 75, 0.15); padding: 2px 8px; border-radius: 10px;">
+              AGUARDANDO ACEITE
+            </span>
+          </div>
+        </div>
+
+        <div class="route-steps-box">
+          <div class="route-step-row">
+            <span class="route-dot cyan"></span>
+            <span id="waiting-route-origin">Carregando partida...</span>
+          </div>
+          <div class="route-step-row">
+            <span class="route-dot yellow"></span>
+            <span id="waiting-route-dest">Carregando chegada...</span>
+          </div>
+        </div>
+
+        <div class="price-display-row" style="margin-top: 10px;">
+          <div>
+            <div class="price-display-label">VALOR DA CORRIDA:</div>
+            <div class="price-display-big" id="waiting-route-price">R$ --</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 10px; font-weight: 700;" id="waiting-route-dist-time">-- • --</div>
+            <div class="payment-method-badge" id="waiting-route-payment" style="margin-top: 4px;">Forma de pagamento: Dinheiro</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Waiting Ride Map & Trajectory -->
+      <div class="map-box" id="waiting-ride-map-box" style="height: 190px; width: 100%; border-radius: 16px; border: 1.5px solid rgba(0, 229, 255, 0.35); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4); margin: 12px 0; overflow: hidden; position: relative;"></div>
+
+      <!-- Informational Box -->
+      <div class="security-alert-box" style="margin-top: 14px;">
+        <div class="security-alert-item">
+          <span class="security-alert-icon"><img src="assets/icons/shield.svg" alt="" class="svg-icon-img md"></span>
+          <span>Se a corrida não for aceita em até 15 minutos, ela expira automaticamente e você poderá solicitar uma nova corrida.</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
+        <button type="button" class="btn-pill btn-danger" onclick="App.cancelWaitingRide()">
+          CANCELAR SOLICITAÇÃO
+        </button>
+      </div>
+
+      <!-- Bottom Nav Bar -->
+      <nav class="bottom-nav">
+        <div class="nav-item active" onclick="App.goToScreen('screen-passenger-waiting')">
+          <img src="assets/icons/home.svg" alt="Início">
+          <span>Início</span>
+        </div>
+        <div class="nav-item" onclick="App.goToScreen('screen-history')">
+          <img src="assets/icons/clock.svg" alt="Histórico">
+          <span>Histórico</span>
+        </div>
+        <div class="nav-item" onclick="App.goToScreen('screen-profile')">
+          <img src="assets/icons/user.svg" alt="Perfil">
+          <span>Perfil</span>
+        </div>
+        <div class="nav-item nav-item-settings" onclick="App.goToScreen('screen-settings')">
+          <span class="nav-notification-dot"></span>
+          <img src="assets/icons/settings.svg" alt="Configurações">
+          <span>Configurações</span>
+        </div>
+      </nav>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- 5. PASSAGEIRO: CORRIDA EM ANDAMENTO -->
+    <!-- ============================================================= -->
+    <section class="screen" id="screen-passenger-active-ride">
+      <div class="app-header">
+        <img src="assets/icons/MAXDRIVET.svg" alt="MAX DRIVE" class="app-logo-small">
+        <div class="city-badge" id="badge-active-city">
+          <img src="assets/icons/pin.svg" alt="Cidade" style="width: 14px; height: 14px;">
+          <span>Ituiutaba</span>
+        </div>
+      </div>
+
+      <div class="section-title-yellow">Corrida em andamento:</div>
+
+      <!-- Main Active Ride Card (Pixel Identical) -->
+      <div class="white-card">
+        <div class="ride-driver-header">
+          <div class="avatar-circle" id="active-driver-avatar">--</div>
+          <div class="driver-info-meta">
+            <h4 id="active-driver-name">MOTORISTA</h4>
+            <div class="rating-tag" id="active-driver-rating"><img src="assets/icons/star.svg" alt="" class="svg-icon-img sm" style="filter: brightness(0) saturate(100%); margin-right: 3px;"> 5.0</div>
+            <div class="vehicle-pill-tag" id="active-driver-vehicle">VEÍCULO: ONIX PRETO • ABC-1234</div>
+          </div>
+        </div>
+
+        <div class="route-steps-box">
+          <div class="route-step-row">
+            <span class="route-dot green"></span>
+            <span id="active-route-origin">Rua 20, nº 450, Centro - Ituiutaba</span>
+          </div>
+          <div class="route-step-row">
+            <span class="route-dot yellow"></span>
+            <span id="active-route-dest">Av. 31, nº 1200, Platina - Ituiutaba</span>
+          </div>
+        </div>
+
+        <div class="price-display-row">
+          <div>
+            <div class="price-display-label">PREÇO:</div>
+            <div class="price-display-big" id="active-route-price">R$ 10,00</div>
+          </div>
+          <div class="payment-method-badge" id="active-route-payment">Forma de pagamento: Pix</div>
+        </div>
+
+        <div class="action-links-row">
+          <a onclick="App.callDriver()">Ligar para motorista</a>
+          <a onclick="App.openReportModal()">Reportar incidente</a>
+          <a onclick="App.cancelRide()">Cancelar corrida</a>
+        </div>
+      </div>
+
+      <!-- Live Active Ride Tracking Map -->
+      <div class="map-box" id="active-ride-map-box" style="height: 180px; margin: 12px 0;"></div>
+
+      <!-- Contact Driver Pill Button -->
+      <button type="button" class="btn-pill btn-yellow" id="btn-passenger-chat" onclick="App.openChatModal()">
+        <img src="assets/icons/chat.svg" alt="Chat" style="width: 20px; height: 20px;">
+        <span id="txt-passenger-chat-btn">CONTATAR MOTORISTA</span>
+      </button>
+
+      <!-- Safety Alerts List -->
+      <div class="security-alert-box">
+        <div class="security-alert-item">
+          <span class="security-alert-icon"><img src="assets/icons/alert-triangle.svg" alt="" class="svg-icon-img md" style="filter: invert(79%) sepia(85%) saturate(1210%) hue-rotate(359deg);"></span>
+          <span>Conferir placa e modelo do veículo antes de embarcar.</span>
+        </div>
+        <div class="security-alert-item">
+          <span class="security-alert-icon"><img src="assets/icons/alert-triangle.svg" alt="" class="svg-icon-img md" style="filter: invert(79%) sepia(85%) saturate(1210%) hue-rotate(359deg);"></span>
+          <span>Nunca pague valores por fora do aplicativo MAX DRIVE.</span>
+        </div>
+        <div class="security-alert-item">
+          <span class="security-alert-icon"><img src="assets/icons/alert-triangle.svg" alt="" class="svg-icon-img md" style="filter: invert(79%) sepia(85%) saturate(1210%) hue-rotate(359deg);"></span>
+          <span>Em caso de emergência ou desvio de rota, acione o botão de segurança.</span>
+        </div>
+      </div>
+
+      <!-- Bottom Nav Bar -->
+      <nav class="bottom-nav">
+        <div class="nav-item active" onclick="App.handleLogoClick()">
+          <img src="assets/icons/home.svg" alt="Início">
+          <span>Início</span>
+        </div>
+        <div class="nav-item" onclick="App.goToScreen('screen-history')">
+          <img src="assets/icons/clock.svg" alt="Histórico">
+          <span>Histórico</span>
+        </div>
+        <div class="nav-item" onclick="App.goToScreen('screen-profile')">
+          <img src="assets/icons/user.svg" alt="Perfil">
+          <span>Perfil</span>
+        </div>
+        <div class="nav-item nav-item-settings" onclick="App.goToScreen('screen-settings')">
+          <span class="nav-notification-dot"></span>
+          <img src="assets/icons/settings.svg" alt="Configurações">
+          <span>Configurações</span>
+        </div>
+      </nav>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- 6. MOTORISTA: HOME (Radar de Corridas) -->
+    <!-- ============================================================= -->
+    <section class="screen" id="screen-driver-home">
+      <!-- Top Header Row with motorista | passageiro Switcher -->
+      <div class="screen-top-role-bar">
+        <div class="header-admin-badge" id="header-admin-badge-drv" style="display: none;" onclick="App.openAdminPanel()" title="Acessar Painel da Diretoria">
+          <img src="assets/icons/shield.svg" alt="" class="svg-icon-img sm"> PAINEL ADMIN
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
+          <button type="button" class="header-theme-toggle-btn" onclick="App.toggleTheme()" title="Alternar Modo Noturno / Claro">
+            <span class="header-theme-icon">☀️</span>
+          </button>
+          <div class="header-role-toggle-wrap">
+            <span class="header-role-label">MOTORISTA (LIGADO)</span>
+            <label class="toggle-switch header-toggle-switch">
+              <input type="checkbox" class="header-role-toggle-input" checked onchange="App.toggleUserRole(this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Header Row with Large Logo and Styled City Selector -->
+      <div class="home-header-row">
+        <img src="assets/icons/MAXDRIVET.svg?v=1.0.13" alt="MAX DRIVE" class="home-logo-large" onclick="App.handleLogoClick()">
+
+        <div class="city-selector-container" id="driver-city-selector-container">
+          <img src="assets/icons/pin-red.svg" alt="Cidade" class="city-pin-red-icon">
+          <div class="city-pill-button" id="driver-city-pill-button" onclick="App.toggleCityDropdown()">
+            <span id="driver-city-current-name">Ituiutaba</span>
+            <span class="city-chevron"><img src="assets/icons/chevron-down.svg" alt="" class="svg-icon-img sm"></span>
+          </div>
+          <div class="custom-city-dropdown" id="driver-custom-city-dropdown" style="display: none;">
+            <div class="city-dropdown-item" onclick="App.selectCity('araguari')"><span>Araguari - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('araxa')"><span>Araxá - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('canapolis')"><span>Canápolis - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('capinopolis')"><span>Capinópolis - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('centralina')"><span>Centralina - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('frutal')"><span>Frutal - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('ituiutaba')"><span>Ituiutaba - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('itumbiara')"><span>Itumbiara - GO</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('iturama')"><span>Iturama - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('monte_carmelo')"><span>Monte Carmelo - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('patos_de_minas')"><span>Patos de Minas - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('patrocinio')"><span>Patrocínio - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('prata')"><span>Prata - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('santa_vitoria')"><span>Santa Vitória - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('tupaciguara')"><span>Tupaciguara - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('uberaba')"><span>Uberaba - MG</span></div>
+            <div class="city-dropdown-item" onclick="App.selectCity('uberlandia')"><span>Uberlândia - MG</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title-yellow">RADAR DE CORRIDAS:</div>
+
+      <!-- Radar Animation Container (Pixel Identical to Image 1) -->
+      <div class="radar-screen-wrap" id="driver-radar-container">
+        <div class="radar-scope" id="driver-radar-scope">
+          <div class="radar-ring r1"></div>
+          <div class="radar-ring r2"></div>
+          <div class="radar-ring r3"></div>
+          <div class="radar-axis-x"></div>
+          <div class="radar-axis-y"></div>
+          <div class="radar-sweep"></div>
+          <!-- Glowing blips matching Image 1 design -->
+          <div class="radar-blip" style="top: 35%; left: 68%;"></div>
+          <div class="radar-blip" style="top: 70%; left: 30%;"></div>
+        </div>
+        <div class="radar-searching-text">
+          BUSCANDO PASSAGEIROS PRÓXIMOS...
+        </div>
+      </div>
+
+      <!-- Available Ride Cards (Populated dynamically by refreshDriverRadar) -->
+      <div id="driver-radar-cards-list" style="margin-top: 14px; display: flex; flex-direction: column; gap: 12px;"></div>
+
+      <!-- Bottom Nav Bar -->
+      <nav class="bottom-nav">
+        <div class="nav-item active" onclick="App.goToScreen('screen-driver-home')">
+          <img src="assets/icons/home.svg" alt="Início">
+          <span>Início</span>
+        </div>
+        <div class="nav-item" onclick="App.goToScreen('screen-history')">
+          <img src="assets/icons/clock.svg" alt="Histórico">
+          <span>Histórico</span>
+        </div>
+        <div class="nav-item driver-only-nav nav-item-finances" onclick="App.goToScreen('screen-finances')">
+          <img src="assets/icons/cash.svg" alt="Finanças">
+          <span>Finanças</span>
+        </div>
+        <div class="nav-item" onclick="App.goToScreen('screen-profile')">
+          <img src="assets/icons/user.svg" alt="Perfil">
+          <span>Perfil</span>
+        </div>
+        <div class="nav-item nav-item-settings" onclick="App.goToScreen('screen-settings')">
+          <span class="nav-notification-dot"></span>
+          <img src="assets/icons/settings.svg" alt="Configurações">
+          <span>Configurações</span>
+        </div>
+      </nav>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- 7. MOTORISTA: CORRIDA EM ANDAMENTO -->
+    <!-- ============================================================= -->
+    <section class="screen" id="screen-driver-active-ride">
+      <div class="app-header">
+        <img src="assets/icons/MAXDRIVET.svg" alt="MAX DRIVE" class="app-logo-small">
+        <div class="city-badge">
+          <img src="assets/icons/pin.svg" alt="Cidade" style="width: 14px; height: 14px;">
+          <span>Ituiutaba</span>
+        </div>
+      </div>
+
+      <div class="section-title-yellow">CORRIDA EM ANDAMENTO:</div>
+
+      <!-- Active Driver Card -->
+      <div class="white-card">
+        <div class="ride-driver-header">
+          <div class="avatar-circle" id="driver-active-avatar">--</div>
+          <div class="driver-info-meta">
+            <h4 id="driver-active-name">PASSAGEIRO</h4>
+            <div class="rating-tag" id="driver-active-rating"><img src="assets/icons/star.svg" alt="" class="svg-icon-img sm" style="filter: brightness(0) saturate(100%); margin-right: 3px;"> 5.0 (48)</div>
+          </div>
+        </div>
+
+        <div class="route-steps-box">
+          <div class="route-step-row">
+            <span class="route-dot cyan"></span>
+            <span id="driver-active-origin">Rua 22, nº 450, Centro - Ituiutaba</span>
+          </div>
+          <div class="route-step-row">
+            <span class="route-dot yellow"></span>
+            <span id="driver-active-dest">Av. 17, nº 1800, Platina - Ituiutaba</span>
+          </div>
+        </div>
+
+        <!-- Driver Map & Trajectory Box -->
+        <div class="map-box" id="driver-active-map-box" style="height: 200px; width: 100%; border-radius: 14px; border: 1.5px solid rgba(0, 229, 255, 0.35); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4); margin: 10px 0; overflow: hidden; position: relative;"></div>
+
+        <div style="display: flex; gap: 8px; margin: 10px 0;">
+          <button type="button" class="btn-pill btn-cyan" id="btn-driver-waze" style="height: 38px; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="App.openWazeNavigation()">
+            <svg style="width: 15px; height: 15px; flex-shrink: 0;" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
+            IR COM WAZE
+          </button>
+          <button type="button" class="btn-pill btn-cyan" id="btn-driver-arrived" style="height: 38px; font-size: 11px;" onclick="App.driverArrived()">
+            CHEGUEI
+          </button>
+        </div>
+
+        <div class="price-display-row">
+          <div>
+            <div class="price-display-label">PREÇO:</div>
+            <div class="price-display-big" id="driver-active-price">R$ 10,00</div>
+          </div>
+          <div class="payment-method-badge" id="driver-active-payment">Forma de pagamento: Pix</div>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 10px;">
+          <button type="button" class="btn-pill btn-cyan" style="height: 42px; font-size: 12px; flex: 1.2;" onclick="App.driverFinishRide()">
+            FINALIZAR CORRIDA
+          </button>
+          <button type="button" class="btn-pill btn-red" style="height: 42px; font-size: 11px; flex: 1;" onclick="App.openDriverRideActions()">
+            CANCELAR / REPORTAR
+          </button>
+        </div>
+      </div>
+
+      <!-- Contact Passenger Actions (In-App Chat & WhatsApp) -->
+      <div style="display: flex; gap: 8px; margin-top: 10px;">
+        <button type="button" class="btn-pill btn-yellow" id="btn-driver-chat" style="flex: 1.2;" onclick="App.openChatModal()">
+          <img src="assets/icons/chat.svg" alt="Chat" style="width: 18px; height: 18px;">
+          <span id="txt-driver-chat-btn">CHAT INTERNO</span>
+        </button>
+        <button type="button" class="btn-pill btn-green" id="btn-driver-whatsapp" style="flex: 1; background: #25D366; color: #fff; border-color: #25D366;" onclick="App.contactPassengerWhatsApp()">
+          <svg style="width: 18px; height: 18px; fill: currentColor; margin-right: 4px;" viewBox="0 0 24 24">
+            <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 14.99 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67M9.53 7.34C9.33 7.34 9 7.42 8.72 7.73C8.44 8.04 7.65 8.78 7.65 10.28C7.65 11.78 8.74 13.23 8.89 13.43C9.05 13.64 11.04 16.71 14.1 18.03C14.83 18.35 15.39 18.53 15.84 18.67C16.57 18.9 17.23 18.87 17.76 18.79C18.35 18.7 19.57 18.05 19.83 17.33C20.08 16.61 20.08 15.99 20 15.86C19.93 15.74 19.75 15.67 19.49 15.54C19.23 15.41 17.97 14.79 17.74 14.7C17.5 14.62 17.34 14.58 17.17 14.83C17 15.08 16.53 15.67 16.38 15.84C16.24 16 16.09 16.02 15.83 15.89C15.57 15.76 14.74 15.49 13.76 14.61C13 13.93 12.48 13.09 12.34 12.85C12.19 12.6 12.32 12.46 12.45 12.33C12.57 12.21 12.71 12.03 12.85 11.87C13 11.71 13.04 11.59 13.14 11.39C13.23 11.19 13.19 11.01 13.12 10.88C13.05 10.75 12.56 9.55 12.35 9.06C12.15 8.58 11.95 8.64 11.79 8.63C11.64 8.62 11.47 8.62 11.3 8.62C11.13 8.62 10.86 8.68 10.63 8.93C10.4 9.18 9.75 9.79 9.75 11.04C9.75 12.29 10.66 13.49 10.79 13.66C10.92 13.83 12.6 16.42 15.17 17.53C15.78 17.79 16.26 17.95 16.63 18.07C17.25 18.27 17.81 18.24 18.26 18.17C18.76 18.09 19.8 17.54 20.02 16.92C20.24 16.3 20.24 15.77 20.17 15.66C20.11 15.55 19.95 15.49 19.73 15.38L19.53 7.34Z"/>
+          </svg>
+          WHATSAPP
+        </button>
+      </div>
+
+      <!-- Bottom Nav Bar -->
+      <nav class="bottom-nav">
+        <div class="nav-item active" onclick="App.goToScreen('screen-driver-home')">
+          <img src="assets/icons/home.svg" alt="Início">
+          <span>Início</span>
+        </div>
+        <div class="nav-item" onclick="App.goToScreen('screen-history')">
+          <img src="assets/icons/clock.svg" alt="Histórico">
+          <span>Histórico</span>
+        </div>
+        <div class="nav-item driver-only-nav nav-item-finances" onclick="App.goToScreen('screen-finances')">
+          <img src="assets/icons/cash.svg" alt="Finanças">
+          <span>Finanças</span>
+        </div>
+        <div class="nav-item" onclick="App.goToScreen('screen-profile')">
+          <img src="assets/icons/user.svg" alt="Perfil">
+          <span>Perfil</span>
+        </div>
+        <div class="nav-item nav-item-settings" onclick="App.goToScreen('screen-settings')">
+          <span class="nav-notification-dot"></span>
+          <img src="assets/icons/settings.svg" alt="Configurações">
+          <span>Configurações</span>
+        </div>
+      </nav>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- 8. HISTÓRICO DE CORRIDAS (Passageiro & Motorista) -->
+    <!-- ============================================================= -->
+    <section class="screen" id="screen-history">
+      <div class="app-header">
+        <img src="assets/icons/MAXDRIVET.svg" alt="MAX DRIVE" class="app-logo-small">
+        <div class="city-badge">
+          <img src="assets/icons/clock.svg" alt="Histórico" style="width: 14px; height: 14px;">
+          <span>Minhas Viagens</span>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin: 16px 0 8px 0;">
+        <div class="section-title-yellow" style="margin: 0;">Histórico de corridas:</div>
+        <span style="font-size: 11px; font-weight: 700; color: #94A3B8; background: rgba(255,255,255,0.06); padding: 3px 8px; border-radius: 10px;">Últimas 5 corridas</span>
+      </div>
+
+      <!-- History List (Populated dynamically by App.renderHistory) -->
+      <div id="history-cards-container" style="display: flex; flex-direction: column; gap: 14px;"></div>
+
+      <!-- Bottom Nav Bar -->
+      <nav class="bottom-nav">
+        <div class="nav-item" onclick="App.goToScreen(App.state.userRole === 'driver' ? 'screen-driver-home' : 'screen-passenger-home')">
+          <img src="assets/icons/home.svg" alt="Início">
+          <span>Início</span>
+        </div>
+        <div class="nav-item active" onclick="App.goToScreen('screen-history')">
+          <img src="assets/icons/clock.svg" alt="Histórico">
+          <span>Histórico</span>
+        </div>
+        <div class="nav-item driver-only-nav nav-item-finances" onclick="App.goToScreen('screen-finances')">
+          <img src="assets/icons/cash.svg" alt="Finanças">
+          <span>Finanças</span>
+        </div>
+        <div class="nav-item" onclick="App.goToScreen('screen-profile')">
+          <img src="assets/icons/user.svg" alt="Perfil">
+          <span>Perfil</span>
+        </div>
+        <div class="nav-item nav-item-settings" onclick="App.goToScreen('screen-settings')">
+          <span class="nav-notification-dot"></span>
+          <img src="assets/icons/settings.svg" alt="Configurações">
+          <span>Configurações</span>
+        </div>
+      </nav>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- 8.1. PAINEL FINANCEIRO / FINANÇAS (Exclusivo Motorista) -->
+    <!-- ============================================================= -->
+    <section class="screen" id="screen-finances">
+      <div class="app-header">
+        <img src="assets/icons/MAXDRIVET.svg" alt="MAX DRIVE" class="app-logo-small">
+        <div class="city-badge" style="background: rgba(0, 208, 75, 0.15); border: 1px solid rgba(0, 208, 75, 0.4);">
+          <img src="assets/icons/cash.svg" alt="Finanças" style="width: 14px; height: 14px; filter: invert(72%) sepia(85%) saturate(700%) hue-rotate(90deg) brightness(105%) contrast(105%);">
+          <span style="color: #00D04B; font-weight: 800;">Painel Financeiro (Motorista)</span>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; justify-content: space-between; margin: 14px 0 10px 0;">
+        <div class="section-title-yellow" style="margin: 0;" id="finances-role-title">Ganhos do Motorista:</div>
+        <button type="button" class="btn-pill" style="height: 28px; width: auto; padding: 0 10px; font-size: 11px; background: rgba(255,255,255,0.06); color: #00F0FF; border: 1px solid rgba(0, 240, 255, 0.3); display: flex; align-items: center; gap: 4px;" onclick="App.renderFinances()">
+          <img src="assets/icons/refresh.svg" class="svg-icon-img sm" alt="" style="filter: brightness(0) invert(1);"> Atualizar
+        </button>
+      </div>
+
+      <!-- Main Total Earnings Card (Ganhos Totais desde o início) -->
+      <div class="white-card finance-hero-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+          <div>
+            <div style="font-size: 11px; font-weight: 800; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.8px;">Ganhos Totais (Desde o início)</div>
+            <div id="finance-total-val" style="font-size: 32px; font-weight: 900; color: #00D04B; letter-spacing: -0.5px; text-shadow: 0 0 16px rgba(0, 208, 75, 0.35); margin-top: 4px;">R$ 0,00</div>
+          </div>
+          <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(0, 208, 75, 0.15); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(0, 208, 75, 0.3);">
+            <img src="assets/icons/wallet.svg" alt="Total" class="svg-icon-img lg" style="filter: invert(72%) sepia(85%) saturate(700%) hue-rotate(90deg) brightness(105%) contrast(105%);">
+          </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 12px;">
+          <span style="color: #CBD5E1;"><strong id="finance-total-rides" style="color: #FFE600;">0</strong> corridas finalizadas</span>
+          <span id="finance-ticket-medio" style="color: #00F0FF; font-weight: 700;">Média: R$ 0,00/corrida</span>
+        </div>
+      </div>
+
+      <!-- Financial Metrics Grid (Hoje, Na Semana, No Mês) -->
+      <div class="finance-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px;">
+        <!-- Card 1: Hoje -->
+        <div class="white-card finance-metric-box" style="border: 1px solid rgba(255, 230, 0, 0.35);">
+          <div style="font-size: 10px; font-weight: 800; color: #FFE600; text-transform: uppercase;">HOJE</div>
+          <div id="finance-day-val" class="metric-val" style="font-size: 15px; font-weight: 900; color: #FFF; margin: 4px 0;">R$ 0,00</div>
+          <div id="finance-day-rides" style="font-size: 10px; color: #94A3B8;">0 corridas</div>
+        </div>
+
+        <!-- Card 2: Na Semana -->
+        <div class="white-card finance-metric-box" style="border: 1px solid rgba(0, 240, 255, 0.35);">
+          <div style="font-size: 10px; font-weight: 800; color: #00F0FF; text-transform: uppercase;">NA SEMANA</div>
+          <div id="finance-week-val" class="metric-val" style="font-size: 15px; font-weight: 900; color: #FFF; margin: 4px 0;">R$ 0,00</div>
+          <div id="finance-week-rides" style="font-size: 10px; color: #94A3B8;">0 corridas</div>
+        </div>
+
+        <!-- Card 3: No Mês -->
+        <div class="white-card finance-metric-box" style="border: 1px solid rgba(0, 208, 75, 0.35);">
+          <div style="font-size: 10px; font-weight: 800; color: #00D04B; text-transform: uppercase;">NO MÊS</div>
+          <div id="finance-month-val" class="metric-val" style="font-size: 15px; font-weight: 900; color: #FFF; margin: 4px 0;">R$ 0,00</div>
+          <div id="finance-month-rides" style="font-size: 10px; color: #94A3B8;">0 corridas</div>
+        </div>
+      </div>
+
+      <!-- Weekly App Fee Status Box (Para Motoristas) -->
+      <div id="finance-fee-status-card" class="white-card" style="margin-bottom: 16px; border-left: 4px solid #FFE600; display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-size: 11px; font-weight: 800; color: #94A3B8; text-transform: uppercase;">Taxa Semanal do Aplicativo</div>
+            <div id="finance-fee-text" style="font-size: 12px; font-weight: 800; color: var(--text-main); margin-top: 2px;">R$ 100,00 (Carro) • Segunda a Domingo</div>
+          </div>
+          <span id="finance-fee-badge" class="badge-status-green" style="font-size: 11px; padding: 4px 8px; border-radius: 8px;">EM DIA</span>
+        </div>
+      </div>
+
+      <!-- Recent Transactions List / Extrato -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 13px; font-weight: 800; color: var(--text-main);">Extrato de Corridas:</div>
+        <span style="font-size: 11px; color: #94A3B8;" id="finance-transactions-count">0 registros</span>
+      </div>
+      <div id="finance-transactions-list" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px;">
+        <!-- Dynamically populated by App.renderFinances -->
+      </div>
+
+      <!-- Bottom Nav Bar -->
+      <nav class="bottom-nav">
+        <div class="nav-item" onclick="App.goToScreen('screen-driver-home')">
+          <img src="assets/icons/home.svg" alt="Início">
+          <span>Início</span>
+        </div>
+        <div class="nav-item" onclick="App.goToScreen('screen-history')">
+          <img src="assets/icons/clock.svg" alt="Histórico">
+          <span>Histórico</span>
+        </div>
+        <div class="nav-item active driver-only-nav nav-item-finances" onclick="App.goToScreen('screen-finances')">
+          <img src="assets/icons/cash.svg" alt="Finanças">
+          <span>Finanças</span>
+        </div>
+        <div class="nav-item" onclick="App.goToScreen('screen-profile')">
+          <img src="assets/icons/user.svg" alt="Perfil">
+          <span>Perfil</span>
+        </div>
+        <div class="nav-item nav-item-settings" onclick="App.goToScreen('screen-settings')">
+          <span class="nav-notification-dot"></span>
+          <img src="assets/icons/settings.svg" alt="Configurações">
+          <span>Configurações</span>
+        </div>
+      </nav>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- 9. PERFIL (Passageiro & Motorista) -->
+    <!-- ============================================================= -->
+    <section class="screen" id="screen-profile">
+      <div class="app-header" style="justify-content: center;">
+        <img src="assets/icons/MAXDRIVET.svg" alt="MAX DRIVE" class="app-logo-small">
+      </div>
+
+      <div class="section-title-yellow">PERFIL:</div>
+
+      <!-- Avatar com upload e pré-visualização -->
+      <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 16px;">
+        <div class="avatar-circle yellow avatar-editable" id="profile-photo-circle" onclick="document.getElementById('input-driver-avatar').click()" title="Clique para enviar/alterar foto de perfil">
+          <span id="profile-photo-text">FOTO</span>
+          <img id="profile-photo-img" src="" alt="Avatar" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+          <div class="avatar-edit-icon" title="Trocar foto"><img src="assets/icons/camera.svg" alt="" class="svg-icon-img sm" style="filter: invert(1);"></div>
+        </div>
+        <div style="font-size: 11px; font-weight: 700; color: #00E5FF; cursor: pointer; margin-top: -6px;" onclick="document.getElementById('input-driver-avatar').click()">
+          Toque para enviar foto de perfil
+        </div>
+        <input type="file" id="input-driver-avatar" accept="image/*" style="display: none;" onchange="App.handleAvatarFileSelect(event)">
+      </div>
+
+      <form id="form-profile" onsubmit="App.handleProfileSave(event)" autocomplete="off">
+        <div class="form-group">
+          <label class="form-label">NOME COMPLETO:</label>
+          <div class="pill-input-wrap">
+            <input type="text" id="prof-name" class="pill-input" value="" placeholder="Seu nome completo" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">DATA DE NASCIMENTO:</label>
+          <div class="pill-input-wrap">
+            <input type="date" id="prof-birth" class="pill-input" value="1989-11-23">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">CPF:</label>
+          <div class="pill-input-wrap">
+            <input type="text" id="prof-cpf" class="pill-input" value="123.241.512-12">
+          </div>
+        </div>
+
+        <!-- Driver-only Fields (CNH, Vehicle, Photos) -->
+        <div id="driver-profile-extra-fields">
+          <div class="form-group">
+            <label class="form-label">TELEFONE:</label>
+            <div class="pill-input-wrap">
+              <input type="tel" id="prof-phone" class="pill-input" value="(34) 99876-5432">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">EMAIL:</label>
+            <div class="pill-input-wrap">
+              <input type="email" id="prof-email" class="pill-input" value="motorista@maxdrive.com">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">CNH:</label>
+            <div class="pill-input-wrap">
+              <input type="text" id="prof-cnh" class="pill-input" value="98765432100">
+            </div>
+          </div>
+
+          <div class="section-title-yellow" style="font-size: 13px; margin-top: 12px;">DADOS DO VEÍCULO:</div>
+
+          <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <button type="button" class="btn-pill btn-cyan" id="btn-veh-car" style="height: 36px; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="App.selectVehicleType('car')">
+              <img src="assets/icons/car-front.svg" alt="Carro" style="height: 18px; width: 18px;">
+              CARRO
+            </button>
+            <button type="button" class="btn-pill btn-white" id="btn-veh-moto" style="height: 36px; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="App.selectVehicleType('moto')">
+              <img src="assets/icons/moto.svg" alt="Moto" style="height: 18px; width: 18px;">
+              MOTO
+            </button>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">MODELO DO VEÍCULO:</label>
+            <div class="pill-input-wrap">
+              <input type="text" id="prof-veh-model" class="pill-input" value="ONIX PRETO">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">PLACA:</label>
+            <div class="pill-input-wrap">
+              <input type="text" id="prof-veh-plate" class="pill-input" value="ABC-1234">
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label">COR:</label>
+              <div class="pill-input-wrap">
+                <input type="text" id="prof-veh-color" class="pill-input" value="Preto">
+              </div>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label">ANO:</label>
+              <div class="pill-input-wrap">
+                <input type="text" id="prof-veh-year" class="pill-input" value="2022">
+              </div>
+            </div>
+          </div>
+
+          <!-- Fotos do Veículo e Documentos para Aprovação do Administrador -->
+          <div class="section-title-yellow" style="font-size: 13px; margin-top: 18px; display: flex; justify-content: space-between; align-items: center;">
+            <span>FOTOS P/ AVALIAÇÃO DO ADMIN:</span>
+            <span style="font-size: 9px; color: #00E5FF; font-weight: 800; background: rgba(0,229,255,0.15); padding: 2px 6px; border-radius: 6px; border: 1px solid rgba(0,229,255,0.3);">OBRIGATÓRIO</span>
+          </div>
+          <p style="font-size: 11px; color: #94a3b8; margin-bottom: 12px; line-height: 1.4;">
+            Envie fotos legíveis do seu veículo e documentos para que a administração MAX DRIVE possa aprovar o seu perfil.
+          </p>
+
+          <div class="driver-photos-grid">
+            <!-- 1. Frente do Veículo -->
+            <div class="driver-photo-card" id="card-veh-photo-front" onclick="document.getElementById('input-veh-photo-front').click()">
+              <input type="file" id="input-veh-photo-front" accept="image/*" style="display: none;" onchange="App.handleVehiclePhotoSelect(event, 'front')">
+              <div class="driver-photo-preview-wrap">
+                <img id="preview-veh-photo-front" class="driver-photo-preview" style="display: none;" alt="Frente do Veículo">
+                <div id="placeholder-veh-photo-front" class="driver-photo-placeholder">
+                  <img src="assets/icons/car-front.svg" alt="" class="svg-icon-img lg">
+                  <span style="font-size: 10px; color: #94a3b8; font-weight: 700; margin-top: 4px;">Toque p/ enviar</span>
+                </div>
+              </div>
+              <div class="driver-photo-title">Frente do Veículo</div>
+              <div class="driver-photo-sub">Placa visível</div>
+              <div id="badge-veh-photo-front" class="driver-photo-badge pending">Pendente</div>
+            </div>
+
+            <!-- 2. Lateral do Veículo -->
+            <div class="driver-photo-card" id="card-veh-photo-side" onclick="document.getElementById('input-veh-photo-side').click()">
+              <input type="file" id="input-veh-photo-side" accept="image/*" style="display: none;" onchange="App.handleVehiclePhotoSelect(event, 'side')">
+              <div class="driver-photo-preview-wrap">
+                <img id="preview-veh-photo-side" class="driver-photo-preview" style="display: none;" alt="Lateral do Veículo">
+                <div id="placeholder-veh-photo-side" class="driver-photo-placeholder">
+                  <img src="assets/icons/car.svg" alt="" class="svg-icon-img lg">
+                  <span style="font-size: 10px; color: #94a3b8; font-weight: 700; margin-top: 4px;">Toque p/ enviar</span>
+                </div>
+              </div>
+              <div class="driver-photo-title">Lateral do Veículo</div>
+              <div class="driver-photo-sub">Conservação e lataria</div>
+              <div id="badge-veh-photo-side" class="driver-photo-badge pending">Pendente</div>
+            </div>
+
+            <!-- 3. Traseira do Veículo -->
+            <div class="driver-photo-card" id="card-veh-photo-rear" onclick="document.getElementById('input-veh-photo-rear').click()">
+              <input type="file" id="input-veh-photo-rear" accept="image/*" style="display: none;" onchange="App.handleVehiclePhotoSelect(event, 'rear')">
+              <div class="driver-photo-preview-wrap">
+                <img id="preview-veh-photo-rear" class="driver-photo-preview" style="display: none;" alt="Traseira do Veículo">
+                <div id="placeholder-veh-photo-rear" class="driver-photo-placeholder">
+                  <img src="assets/icons/car-side.svg" alt="" class="svg-icon-img lg">
+                  <span style="font-size: 10px; color: #94a3b8; font-weight: 700; margin-top: 4px;">Toque p/ enviar</span>
+                </div>
+              </div>
+              <div class="driver-photo-title">Traseira do Veículo</div>
+              <div class="driver-photo-sub">Placa e lanternas</div>
+              <div id="badge-veh-photo-rear" class="driver-photo-badge pending">Pendente</div>
+            </div>
+
+            <!-- 4. Bancos / Interior -->
+            <div class="driver-photo-card" id="card-veh-photo-seats" onclick="document.getElementById('input-veh-photo-seats').click()">
+              <input type="file" id="input-veh-photo-seats" accept="image/*" style="display: none;" onchange="App.handleVehiclePhotoSelect(event, 'seats')">
+              <div class="driver-photo-preview-wrap">
+                <img id="preview-veh-photo-seats" class="driver-photo-preview" style="display: none;" alt="Bancos e Interior">
+                <div id="placeholder-veh-photo-seats" class="driver-photo-placeholder">
+                  <img src="assets/icons/car-seat.svg" alt="" class="svg-icon-img lg">
+                  <span style="font-size: 10px; color: #94a3b8; font-weight: 700; margin-top: 4px;">Toque p/ enviar</span>
+                </div>
+              </div>
+              <div class="driver-photo-title">Bancos / Interior</div>
+              <div class="driver-photo-sub">Higiene e estofamento</div>
+              <div id="badge-veh-photo-seats" class="driver-photo-badge pending">Pendente</div>
+            </div>
+
+            <!-- 5. CNH (Foto ou PDF) -->
+            <div class="driver-photo-card" id="card-veh-photo-cnh" onclick="document.getElementById('input-veh-photo-cnh').click()">
+              <input type="file" id="input-veh-photo-cnh" accept="image/*,application/pdf" style="display: none;" onchange="App.handleVehiclePhotoSelect(event, 'cnh')">
+              <div class="driver-photo-preview-wrap">
+                <img id="preview-veh-photo-cnh" class="driver-photo-preview" style="display: none;" alt="Documento CNH">
+                <div id="pdf-badge-veh-photo-cnh" class="doc-pdf-badge-card" style="display: none;">
+                  <img src="assets/icons/file-text.svg" alt="" class="svg-icon-img lg">
+                  <span style="font-size: 10px; color: #fff; font-weight: 800; margin-top: 4px;" id="pdf-name-cnh">Documento PDF</span>
+                </div>
+                <div id="placeholder-veh-photo-cnh" class="driver-photo-placeholder">
+                  <img src="assets/icons/id-card.svg" alt="" class="svg-icon-img lg">
+                  <span style="font-size: 10px; color: #94a3b8; font-weight: 700; margin-top: 4px;">Foto ou PDF</span>
+                </div>
+              </div>
+              <div class="driver-photo-title">CNH (Foto ou PDF)</div>
+              <div class="driver-photo-sub">Habilitação ou PDF Gov</div>
+              <div id="badge-veh-photo-cnh" class="driver-photo-badge pending">Pendente</div>
+            </div>
+
+            <!-- 6. Documento CRLV (Foto ou PDF) -->
+            <div class="driver-photo-card" id="card-veh-photo-doc" onclick="document.getElementById('input-veh-photo-doc').click()">
+              <input type="file" id="input-veh-photo-doc" accept="image/*,application/pdf" style="display: none;" onchange="App.handleVehiclePhotoSelect(event, 'doc')">
+              <div class="driver-photo-preview-wrap">
+                <img id="preview-veh-photo-doc" class="driver-photo-preview" style="display: none;" alt="Documento CRLV">
+                <div id="pdf-badge-veh-photo-doc" class="doc-pdf-badge-card" style="display: none;">
+                  <img src="assets/icons/file-text.svg" alt="" class="svg-icon-img lg">
+                  <span style="font-size: 10px; color: #fff; font-weight: 800; margin-top: 4px;" id="pdf-name-doc">Documento PDF</span>
+                </div>
+                <div id="placeholder-veh-photo-doc" class="driver-photo-placeholder">
+                  <img src="assets/icons/file-text.svg" alt="" class="svg-icon-img lg">
+                  <span style="font-size: 10px; color: #94a3b8; font-weight: 700; margin-top: 4px;">Foto ou PDF</span>
+                </div>
+              </div>
+              <div class="driver-photo-title">Doc. Veículo (Foto/PDF)</div>
+              <div class="driver-photo-sub">CRLV ou PDF Digital</div>
+              <div id="badge-veh-photo-doc" class="driver-photo-badge pending">Pendente</div>
+            </div>
+          </div>
+
+          <!-- Campos Opcionais de Mensagem / Código de Validação -->
+          <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 12px; margin-top: 4px; margin-bottom: 14px;">
+            <div style="font-size: 11px; font-weight: 800; color: #00E5FF; text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+              <img src="assets/icons/chat.svg" alt="" class="svg-icon-img sm"> Enviar via Mensagem / Código de Validação (Opcional):
+            </div>
+            <div class="form-group" style="margin-bottom: 10px;">
+              <label class="form-label" style="font-size: 10px; color: #cbd5e1;">Código de Segurança / Link CNH:</label>
+              <div class="pill-input-wrap" style="border-radius: 12px; height: 42px;">
+                <input type="text" id="prof-cnh-message" class="pill-input" placeholder="Ex: Chave de validação da CNH Digital ou link gov.br">
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" style="font-size: 10px; color: #cbd5e1;">Código de Segurança do CLA / Renavam do CRLV:</label>
+              <div class="pill-input-wrap" style="border-radius: 12px; height: 42px;">
+                <input type="text" id="prof-doc-message" class="pill-input" placeholder="Ex: Código de segurança do CLA, Renavam ou link do CRLV">
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <!-- Password Section -->
+        <div class="section-title-yellow" style="font-size: 13px; margin-top: 10px;">SENHA:</div>
+
+        <div class="form-group">
+          <label class="form-label">DIGITE SEU CÓDIGO DE SEGURANÇA:</label>
+          <div class="security-code-wrap">
+            <input type="text" maxlength="1" class="code-digit-input" data-prof-idx="0">
+            <input type="text" maxlength="1" class="code-digit-input" data-prof-idx="1">
+            <input type="text" maxlength="1" class="code-digit-input" data-prof-idx="2">
+            <input type="text" maxlength="1" class="code-digit-input" data-prof-idx="3">
+            <input type="text" maxlength="1" class="code-digit-input" data-prof-idx="4">
+            <input type="text" maxlength="1" class="code-digit-input" data-prof-idx="5">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">DIGITE SUA NOVA SENHA:</label>
+          <div class="pill-input-wrap">
+            <input type="password" id="prof-new-pass" class="pill-input" placeholder="Nova senha (opcional)">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">CONFIRME SUA NOVA SENHA:</label>
+          <div class="pill-input-wrap">
+            <input type="password" id="prof-confirm-pass" class="pill-input" placeholder="Confirme a nova senha">
+          </div>
+        </div>
+
+        <button type="submit" class="btn-pill btn-green" style="margin-top: 10px; margin-bottom: 10px;">
+          SALVAR DADOS
+        </button>
+        <button type="button" class="btn-pill btn-white" style="height: 42px; font-weight: 800; font-size: 11px; margin-bottom: 24px; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--border-color);" onclick="App.openTermsModal()">
+          <img src="assets/icons/file-text.svg" alt="" class="svg-icon-img sm">
+          LER TERMOS DE USO E CONDIÇÕES DO SERVIÇO
+        </button>
+      </form>
+
+      <!-- Bottom Nav Bar -->
+      <nav class="bottom-nav">
+        <div class="nav-item" onclick="App.goToScreen(App.state.userRole === 'driver' ? 'screen-driver-home' : 'screen-passenger-home')">
+          <img src="assets/icons/home.svg" alt="Início">
+          <span>Início</span>
+        </div>
+        <div class="nav-item" onclick="App.goToScreen('screen-history')">
+          <img src="assets/icons/clock.svg" alt="Histórico">
+          <span>Histórico</span>
+        </div>
+        <div class="nav-item driver-only-nav nav-item-finances" onclick="App.goToScreen('screen-finances')">
+          <img src="assets/icons/cash.svg" alt="Finanças">
+          <span>Finanças</span>
+        </div>
+        <div class="nav-item active" onclick="App.goToScreen('screen-profile')">
+          <img src="assets/icons/user.svg" alt="Perfil">
+          <span>Perfil</span>
+        </div>
+        <div class="nav-item nav-item-settings" onclick="App.goToScreen('screen-settings')">
+          <span class="nav-notification-dot"></span>
+          <img src="assets/icons/settings.svg" alt="Configurações">
+          <span>Configurações</span>
+        </div>
+      </nav>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- 10. CONFIGURAÇÕES (Status, Banimento, Pagamento Semanal) -->
+    <!-- ============================================================= -->
+    <section class="screen" id="screen-settings">
+      <div class="app-header">
+        <img src="assets/icons/MAXDRIVET.svg" alt="MAX DRIVE" class="app-logo-small">
+        <div class="city-badge">
+          <img src="assets/icons/settings.svg" alt="Configurações" style="width: 14px; height: 14px;">
+          <span>Ajustes</span>
+        </div>
+      </div>
+
+      <div class="section-title">CONFIGURAÇÕES</div>
+
+
+  <div class="toggle-row">
+  <span class="toggle-label">MODO ESCURO:</span>
+  <label class="toggle-switch">
+  <input id="theme-toggle" onchange="App.toggleTheme(event)" type="checkbox"/>
+  <span class="toggle-slider"></span>
+  </label>
+  </div>
+
+
+      <!-- Account Status Toggle -->
+      <div class="toggle-row">
+        <span class="toggle-label">STATUS DA CONTA:</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-account-status" checked onchange="App.handleStatusToggle(this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- Sound Toggle (Moved inside Configurações) -->
+      <div class="toggle-row" style="align-items: center;">
+        <span class="toggle-label">EFEITOS SONOROS (SOM):</span>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button type="button" id="btn-toggle-sound" class="btn-pill btn-sound-toggle" onclick="App.toggleSound()">
+            <img src="assets/icons/volume-2.svg" alt="" class="svg-icon-img sm"> Som: ON
+          </button>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-sound-settings" checked onchange="App.handleSoundToggle(this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Mode Switcher (Inside App only) -->
+      <div style="margin: 8px 0 14px 0;">
+        <button type="button" class="btn-pill btn-white" id="btn-switch-role" style="height: 38px; font-size: 11px;" onclick="App.toggleUserRole()">
+          MUDAR PARA MODO MOTORISTA
+        </button>
+      </div>
+
+      <!-- Admin Panel Access Button (Only visible if user has admin privileges) -->
+      <div id="admin-access-row" style="display: none; margin-bottom: 14px;">
+        <a href="/admin.html" target="_blank" onclick="App.openAdminPanel()" class="btn-pill btn-cyan" style="height: 38px; font-size: 11px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px;">
+          <img src="assets/icons/shield.svg" alt="" class="svg-icon-img md"> ACESSAR PAINEL ADMINISTRATIVO
+        </a>
+      </div>
+
+      <!-- Driver Stats Grid (Only on Driver Mode) -->
+      <div class="stats-grid-2x2" id="driver-settings-stats">
+        <div class="stat-box-yellow">
+          <span>CORRIDAS:</span>
+          <span id="stat-total-rides">2000</span>
+        </div>
+        <div class="stat-box-yellow">
+          <span>AVALIAÇÃO:</span>
+          <span id="stat-driver-rating">5.0</span>
+        </div>
+        <div class="stat-box-yellow">
+          <span>REGISTRO:</span>
+          <span id="stat-reg-years">2 ANOS</span>
+        </div>
+        <div class="stat-box-yellow">
+          <span>CONDUÇÃO:</span>
+          <span id="stat-veh-type">CARRO</span>
+        </div>
+        <div class="stat-box-yellow" style="grid-column: span 2;">
+          <span>SITUAÇÃO DO REPASSE:</span>
+          <span id="stat-weekly-payment" style="font-size: 11px; font-weight: 800; color: #00D04B;">REGULAR</span>
+        </div>
+      </div>
+
+      <!-- Weekly Payment Banner (Driver Only - Idêntico à foto enviada) -->
+      <div id="driver-payment-weekly-row" class="payment-weekly-banner" style="display: none;">
+        <div class="pw-header-title">PAGAMENTO SEMANAL:</div>
+        <div class="pw-subtitle">MOTO - R$ 50,00 | CARRO R$ 100,00</div>
+
+        <div class="pw-status-row">
+          <span class="pw-status-label">STATUS DE PAGAMENTO:</span>
+          <span class="pw-status-value regular" id="driver-weekly-status-display">REGULAR - ATÉ DIA - 20/09/2026</span>
+        </div>
+
+        <div class="pw-bottom-row">
+          <div class="pw-pix-info">
+            <span>chave pix - <span class="pw-pix-key">3499999-4077</span></span>
+            <button type="button" class="btn-pw-copy-pix" onclick="App.copyPixKey()" title="Copiar Chave Pix para o banco">
+              <img src="assets/icons/copy.svg" alt="" class="svg-icon-img sm" style="margin-right: 4px;"> COPIAR
+            </button>
+          </div>
+          <button type="button" class="btn-pw-whatsapp" onclick="App.sendPaymentReceiptWhatsApp()">
+            <svg class="pw-whatsapp-icon" viewBox="0 0 24 24">
+              <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 14.99 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67M9.53 7.34C9.33 7.34 9 7.42 8.72 7.73C8.44 8.04 7.65 8.78 7.65 10.28C7.65 11.78 8.74 13.23 8.89 13.43C9.05 13.64 11.04 16.71 14.1 18.03C14.83 18.35 15.39 18.53 15.84 18.67C16.57 18.9 17.23 18.87 17.76 18.79C18.35 18.7 19.57 18.05 19.83 17.33C20.08 16.61 20.08 15.99 20 15.86C19.93 15.74 19.75 15.67 19.49 15.54C19.23 15.41 17.97 14.79 17.74 14.7C17.5 14.62 17.34 14.58 17.17 14.83C17 15.08 16.53 15.67 16.38 15.84C16.24 16 16.09 16.02 15.83 15.89C15.57 15.76 14.74 15.49 13.76 14.61C13 13.93 12.48 13.09 12.34 12.85C12.19 12.6 12.32 12.46 12.45 12.33C12.57 12.21 12.71 12.03 12.85 11.87C13 11.71 13.04 11.59 13.14 11.39C13.23 11.19 13.19 11.01 13.12 10.88C13.05 10.75 12.56 9.55 12.35 9.06C12.15 8.58 11.95 8.64 11.79 8.63C11.64 8.62 11.47 8.62 11.3 8.62C11.13 8.62 10.86 8.68 10.63 8.93C10.4 9.18 9.75 9.79 9.75 11.04C9.75 12.29 10.66 13.49 10.79 13.66C10.92 13.83 12.6 16.42 15.17 17.53C15.78 17.79 16.26 17.95 16.63 18.07C17.25 18.27 17.81 18.24 18.26 18.17C18.76 18.09 19.8 17.54 20.02 16.92C20.24 16.3 20.24 15.77 20.17 15.66C20.11 15.55 19.95 15.49 19.73 15.38L19.53 7.34Z"/>
+            </svg>
+            <span>ENVIAR COMPROVANTE</span>
+          </button>
+        </div>
+
+        <div class="pw-rule-alert">
+          <img src="assets/icons/alert-triangle.svg" alt="" class="svg-icon-img sm" style="margin-right: 4px; vertical-align: -2px;"> <b>Aviso de Vigência:</b> Toda semana inicia na <b>segunda-feira</b> e expira no <b>domingo</b> às 23:59. Se pagar no meio da semana, seu passe é válido somente até o domingo da mesma semana.
+        </div>
+      </div>
+
+      <!-- Ban Reason / Official Notices Area -->
+      <div class="toggle-label" style="margin-bottom: 4px;">MOTIVO DO BANIMENTO / AVISOS:</div>
+      <div class="status-info-box" id="settings-status-box">
+        Conta em situação regular. Nenhuma infração ou restrição ativa no momento. Todas as permissões habilitadas pela administração da MAX DRIVE.
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- CANAL DIRETO COM A DIRETORIA / ADMINISTRAÇÃO (NOVO) -->
+      <!-- ========================================================= -->
+      <div class="admin-support-channel-card" id="settings-admin-chat-card">
+        <div class="support-channel-header">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="support-channel-icon-wrap">
+              <img src="assets/icons/shield.svg" alt="Diretoria" class="svg-icon-img md">
+            </div>
+            <div>
+              <div class="support-channel-title">DIRETORIA & SUPORTE ONLINE</div>
+              <div class="support-channel-status">
+                <span class="status-indicator-dot online"></span>
+                <span>Administração Online para Atendimento</span>
+              </div>
+            </div>
+          </div>
+          <span class="unread-messages-pill" id="settings-admin-unread-pill" style="display: none;">NOVA MENSAGEM</span>
+        </div>
+
+        <div class="support-channel-preview" id="settings-admin-preview-text">
+          Canal exclusivo para falar com qualquer administrador online. Relate problemas de corrida, tire dúvidas ou envie solicitações com resposta imediata.
+        </div>
+
+        <div class="support-channel-actions">
+          <button type="button" class="btn-open-admin-chat" onclick="App.openAdminChatModal()">
+            <img src="assets/icons/chat.svg" alt="" class="svg-icon-img sm" style="filter: brightness(0);">
+            ABRIR CHAT COM A DIRETORIA
+            <span class="chat-badge-count" id="settings-chat-badge-count" style="display: none;">0</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- SESSÃO DE SOLICITAÇÕES & REPORTES (Parecer da Diretoria) -->
+      <!-- ========================================================= -->
+      <div class="user-solicitations-box">
+        <div class="user-solicitations-header">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <img src="assets/icons/receipt.svg" alt="" class="svg-icon-img md">
+            <div>
+              <div class="section-title-yellow" style="font-size: 13px; margin: 0;">MINHAS SOLICITAÇÕES & REPORTES</div>
+              <div style="font-size: 10px; color: #94A3B8; font-weight: 600;">Acompanhe o parecer e respostas da diretoria</div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span class="solicitations-badge" id="user-reports-badge">0</span>
+            <button type="button" class="btn-refresh-solicitations" onclick="App.loadUserReports(true)" title="Atualizar solicitações">
+              <img src="assets/icons/refresh.svg" alt="" class="svg-icon-img sm">
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter tabs: Todos, Respondidos, Em Análise -->
+        <div class="solicitations-tabs">
+          <button type="button" class="solicitation-tab active" id="tab-rep-all" onclick="App.filterUserReports('all')">TODOS (<span id="count-rep-all">0</span>)</button>
+          <button type="button" class="solicitation-tab" id="tab-rep-resolved" onclick="App.filterUserReports('resolved')">RESPONDIDOS (<span id="count-rep-resolved">0</span>)</button>
+          <button type="button" class="solicitation-tab" id="tab-rep-pending" onclick="App.filterUserReports('pending')">EM ANÁLISE (<span id="count-rep-pending">0</span>)</button>
+        </div>
+
+        <!-- Lista de Solicitações do Usuário -->
+        <div id="user-reports-list" class="user-reports-list-wrap">
+          <div class="user-reports-empty">
+            <img src="assets/icons/file-text.svg" alt="" class="svg-icon-img lg" style="display: block; margin: 0 auto 6px auto; opacity: 0.5;">
+            Carregando suas solicitações...
+          </div>
+        </div>
+      </div>
+
+            <!-- Action Buttons: Report, Direct Support Message & Logout -->
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px; margin-bottom: 24px;">
+        <button type="button" class="btn-pill btn-red" onclick="App.openReportModal(null, 'Administração / Configurações')">
+          <img src="assets/icons/siren.svg" alt="" class="svg-icon-img sm" style="margin-right: 6px;"> REPORTAR PROBLEMA / RECLAMAÇÃO
+        </button>
+        <button type="button" class="btn-pill btn-green" onclick="App.openAdminChatModal()">
+          <img src="assets/icons/chat.svg" alt="Suporte" style="width: 18px; height: 18px; margin-right: 6px;">
+          FALAR DIRETAMENTE COM A DIRETORIA
+        </button>
+        <button type="button" class="btn-pill" id="btn-settings-logout" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #EF4444; font-weight: 800; height: 42px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;" onclick="App.logout()">
+          <img src="assets/icons/power.svg" alt="" class="svg-icon-img sm" style="filter: invert(36%) sepia(87%) saturate(2716%) hue-rotate(338deg);">
+          SAIR DA CONTA (DESCONECTAR)
+        </button>
+      </div>
+
+      <!-- Bottom Nav Bar -->
+      <nav class="bottom-nav">
+        <div class="nav-item" onclick="App.goToScreen(App.state.userRole === 'driver' ? 'screen-driver-home' : 'screen-passenger-home')">
+          <img src="assets/icons/home.svg" alt="Início">
+          <span>Início</span>
+        </div>
+        <div class="nav-item" onclick="App.goToScreen('screen-history')">
+          <img src="assets/icons/clock.svg" alt="Histórico">
+          <span>Histórico</span>
+        </div>
+        <div class="nav-item driver-only-nav nav-item-finances" onclick="App.goToScreen('screen-finances')">
+          <img src="assets/icons/cash.svg" alt="Finanças">
+          <span>Finanças</span>
+        </div>
+        <div class="nav-item" onclick="App.goToScreen('screen-profile')">
+          <img src="assets/icons/user.svg" alt="Perfil">
+          <span>Perfil</span>
+        </div>
+        <div class="nav-item nav-item-settings active" onclick="App.goToScreen('screen-settings')">
+          <span class="nav-notification-dot"></span>
+          <img src="assets/icons/settings.svg" alt="Configurações">
+          <span>Configurações</span>
+        </div>
+      </nav>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- CHAT MODAL OVERLAY (Pixel Identical with layout) -->
+    <!-- ============================================================= -->
+    <div class="modal-backdrop" id="modal-chat">
+      <div class="modal-content-card chat-modal-box">
+        <div class="chat-modal-header">
+          <div class="chat-header-user">
+            <div class="avatar-circle" style="width: 32px; height: 32px; font-size: 12px;" id="chat-header-avatar">--</div>
+            <div>
+              <div style="font-size: 13px; font-weight: 800;" id="chat-header-name">CONVERSA</div>
+              <div style="font-size: 10px; color: #00D04B; font-weight: 700; display: flex; align-items: center; gap: 4px;"><span style="width: 7px; height: 7px; background: #00D04B; border-radius: 50%; display: inline-block;"></span> Online</div>
+            </div>
+          </div>
+          <button type="button" class="chat-close-btn" onclick="App.closeChatModal()">&times;</button>
+        </div>
+
+        <!-- Chat Bubbles Area -->
+        <div class="chat-messages-area" id="chat-messages-container">
+          <!-- Populated dynamically matching the screenshot -->
+        </div>
+
+        <form class="chat-input-row" onsubmit="App.handleSendChatMessage(event)">
+          <input type="text" id="chat-input-text" class="chat-input-field" placeholder="Digite sua mensagem..." required>
+          <button type="submit" class="chat-send-btn">ENVIAR</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- DIRECT ADMIN CHAT MODAL (Passageiro & Motorista <-> Diretoria) -->
+    <!-- ============================================================= -->
+    <div class="modal-backdrop" id="modal-admin-chat">
+      <div class="modal-content-card chat-modal-box admin-chat-modal-box">
+        <div class="chat-modal-header">
+          <div class="chat-header-user">
+            <div class="avatar-circle admin-avatar-badge">
+              <img src="assets/icons/shield.svg" alt="" class="svg-icon-img sm" style="filter: invert(1);">
+            </div>
+            <div>
+              <div style="font-size: 13px; font-weight: 800; display: flex; align-items: center; gap: 6px;">
+                DIRETORIA MAX DRIVE
+                <span class="badge-official">OFICIAL</span>
+              </div>
+              <div style="font-size: 10px; color: #00D04B; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+                <span style="width: 7px; height: 7px; background: #00D04B; border-radius: 50%; display: inline-block;"></span> 
+                Atendimento Online
+              </div>
+            </div>
+          </div>
+          <button type="button" class="chat-close-btn" onclick="App.closeAdminChatModal()">&times;</button>
+        </div>
+
+        <!-- Quick problem chips for fast reporting -->
+        <div class="admin-chat-quick-chips">
+          <button type="button" class="chat-quick-chip" onclick="App.fillAdminQuickMessage('Estou com um problema em uma corrida recente.')">Problema em corrida</button>
+          <button type="button" class="chat-quick-chip" onclick="App.fillAdminQuickMessage('Preciso de suporte com meu pagamento/repasse.')">Pagamento / Repasse</button>
+          <button type="button" class="chat-quick-chip" onclick="App.fillAdminQuickMessage('Gostaria de solicitar atualização no meu cadastro.')">Atualizar Cadastro</button>
+          <button type="button" class="chat-quick-chip" onclick="App.fillAdminQuickMessage('Tenho uma dúvida sobre as regras do aplicativo.')">Dúvidas gerais</button>
+        </div>
+
+        <!-- Messages Area -->
+        <div class="chat-messages-area" id="admin-chat-messages-container">
+          <div style="text-align: center; color: #888; font-size: 12px; padding: 20px 0;">Carregando histórico com a diretoria...</div>
+        </div>
+
+        <!-- Chat Input Row -->
+        <form class="chat-input-row" onsubmit="App.handleSendAdminChatMessage(event)">
+          <input type="text" id="admin-chat-input-text" class="chat-input-field" placeholder="Escreva sua mensagem ou relate seu problema..." required autocomplete="off">
+          <button type="submit" class="chat-send-btn" id="btn-admin-chat-send">ENVIAR</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- RATING MODAL (Passageiro & Motorista) -->
+    <!-- ============================================================= -->
+    <div class="modal-backdrop" id="modal-rating">
+      <div class="modal-content-card">
+        <h3 style="font-size: 16px; font-weight: 800; text-align: center; margin-bottom: 6px;" id="rating-modal-title">Avaliar Viagem</h3>
+        <p style="font-size: 12px; color: #555; text-align: center;" id="rating-target-name">AVALIAÇÃO</p>
+        
+        <div class="star-rating-row" id="star-rating-stars" onmouseleave="App.resetRatingStarsHover()">
+          <span class="star-icon active" data-star="1" onclick="App.setRatingStars(1)" onmouseenter="App.highlightRatingStars(1)" title="1 estrela">
+            <svg class="star-svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </span>
+          <span class="star-icon active" data-star="2" onclick="App.setRatingStars(2)" onmouseenter="App.highlightRatingStars(2)" title="2 estrelas">
+            <svg class="star-svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </span>
+          <span class="star-icon active" data-star="3" onclick="App.setRatingStars(3)" onmouseenter="App.highlightRatingStars(3)" title="3 estrelas">
+            <svg class="star-svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </span>
+          <span class="star-icon active" data-star="4" onclick="App.setRatingStars(4)" onmouseenter="App.highlightRatingStars(4)" title="4 estrelas">
+            <svg class="star-svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </span>
+          <span class="star-icon active" data-star="5" onclick="App.setRatingStars(5)" onmouseenter="App.highlightRatingStars(5)" title="5 estrelas">
+            <svg class="star-svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </span>
+        </div>
+        <div id="rating-stars-label" class="star-rating-text">★★★★★ Excelente (5 estrelas)</div>
+
+        <div class="form-group">
+          <div class="pill-input-wrap">
+            <input type="text" id="rating-feedback-input" class="pill-input" placeholder="Comentário sobre a corrida...">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn-pill btn-yellow" onclick="App.submitRating()">ENVIAR AVALIAÇÃO</button>
+          <button type="button" class="btn-pill btn-white" onclick="App.closeRatingModal()">FECHAR</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- REPORT INCIDENT MODAL -->
+    <!-- ============================================================= -->
+    <!-- ============================================================= -->
+    <!-- REPORT INCIDENT MODAL -->
+    <!-- ============================================================= -->
+    <div class="modal-backdrop" id="modal-report">
+      <div class="modal-content-card">
+        <h3 id="report-modal-title" style="font-size: 16px; font-weight: 800; text-align: center; margin-bottom: 4px; color: var(--red-danger);">Reportar Incidente</h3>
+        <p id="report-modal-subtitle" style="font-size: 11px; color: #666; text-align: center; margin-bottom: 12px;">
+          Sua reclamação será enviada diretamente para a diretoria da MAX DRIVE.
+        </p>
+
+        <!-- Quick Reason Chips for Rapid Cancellation & Reporting -->
+        <div id="report-quick-tags" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;">
+          <span class="report-quick-chip" onclick="App.setReportReason('Passageiro não compareceu ao ponto de embarque')"><img src="assets/icons/ban.svg" alt="" class="svg-icon-img sm" style="margin-right: 4px;"> Não compareceu</span>
+          <span class="report-quick-chip" onclick="App.setReportReason('Endereço inacessível ou local perigoso')"><img src="assets/icons/pin.svg" alt="" class="svg-icon-img sm" style="margin-right: 4px;"> Local inacessível</span>
+          <span class="report-quick-chip" onclick="App.setReportReason('Comportamento inadequado do passageiro')"><img src="assets/icons/alert-triangle.svg" alt="" class="svg-icon-img sm" style="margin-right: 4px;"> Comportamento</span>
+          <span class="report-quick-chip" onclick="App.setReportReason('Problema mecânico no veículo')"><img src="assets/icons/wrench.svg" alt="" class="svg-icon-img sm" style="margin-right: 4px;"> Veículo avariado</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" style="color: #000;">DESCREVA O OCORRIDO:</label>
+          <textarea id="report-reason-text" style="width: 100%; height: 85px; border-radius: 12px; border: 1px solid #ccc; padding: 10px; font-size: 12px; outline: none;" placeholder="Ex: Passageiro não compareceu, desvio de rota, etc." required></textarea>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn-pill btn-red" id="btn-report-submit" onclick="App.submitReport()">ENVIAR REPORTE</button>
+          <button type="button" class="btn-pill btn-white" onclick="App.closeReportModal()">VOLTAR</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- FORGOT / RESET PASSWORD MODAL -->
+    <!-- ============================================================= -->
+    <div class="modal-backdrop" id="modal-forgot-password">
+      <div class="modal-content-card" style="max-width: 380px; width: 92%; padding: 22px 18px; text-align: left;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <img src="assets/icons/power.svg" alt="" class="svg-icon-img md" style="filter: invert(79%) sepia(85%) saturate(1210%) hue-rotate(359deg);">
+            <h3 style="font-size: 16px; font-weight: 800; color: var(--text-main); margin: 0;">RECUPERAR SENHA</h3>
+          </div>
+          <button type="button" class="chat-close-btn" onclick="App.closeForgotPasswordModal()" style="font-size: 22px; cursor: pointer; background: transparent; border: none; color: var(--text-muted);">&times;</button>
+        </div>
+
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.4;">
+          Informe seu e-mail cadastrado, o código de segurança de 6 dígitos que você definiu no cadastro e digite sua nova senha.
+        </p>
+
+        <form id="form-forgot-password" onsubmit="App.handleResetPassword(event)" autocomplete="off">
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label class="form-label" style="font-size: 11px; margin-bottom: 4px; color: var(--text-muted);">E-MAIL OU TELEFONE:</label>
+            <div class="pill-input-wrap" style="height: 44px;">
+              <input type="text" id="forgot-email" class="pill-input" placeholder="seuemail@exemplo.com" required autocomplete="off" spellcheck="false">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label class="form-label" style="font-size: 11px; margin-bottom: 4px; color: var(--text-muted);">CÓDIGO DE SEGURANÇA (6 DÍGITOS):</label>
+            <div class="pill-input-wrap" style="height: 44px;">
+              <input type="password" maxlength="6" id="forgot-code" class="pill-input" placeholder="Ex: 111111" required autocomplete="off" inputmode="numeric">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label class="form-label" style="font-size: 11px; margin-bottom: 4px; color: var(--text-muted);">NOVA SENHA:</label>
+            <div class="pill-input-wrap" style="height: 44px;">
+              <input type="password" id="forgot-new-password" class="pill-input" placeholder="Mínimo 4 caracteres" required autocomplete="new-password">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label class="form-label" style="font-size: 11px; margin-bottom: 4px; color: var(--text-muted);">CONFIRMAR NOVA SENHA:</label>
+            <div class="pill-input-wrap" style="height: 44px;">
+              <input type="password" id="forgot-confirm-password" class="pill-input" placeholder="Repita a nova senha" required autocomplete="new-password">
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button type="submit" class="btn-pill btn-yellow" style="height: 44px; font-size: 13px; font-weight: 800;">
+              REDEFINIR SENHA
+            </button>
+            <button type="button" class="btn-pill btn-white" style="height: 38px; font-size: 12px;" onclick="App.closeForgotPasswordModal()">
+              CANCELAR
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- CONTACT ADMIN / SUPPORT MODAL -->
+    <!-- ============================================================= -->
+    <div class="modal-backdrop" id="modal-contact-admin">
+      <div class="modal-content-card">
+        <h3 style="font-size: 16px; font-weight: 800; text-align: center; margin-bottom: 6px;">Enviar Mensagem à Diretoria</h3>
+        <p style="font-size: 11px; color: #555; text-align: center; margin-bottom: 12px;">
+          Solicite revisão de cadastro, informe pagamentos ou tire dúvidas.
+        </p>
+
+        <div class="form-group">
+          <textarea id="contact-admin-message" style="width: 100%; height: 90px; border-radius: 12px; border: 1px solid #ccc; padding: 10px; font-size: 12px; outline: none;" placeholder="Digite sua mensagem detalhada..." required></textarea>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn-pill btn-green" onclick="App.submitContactAdmin()">ENVIAR</button>
+          <button type="button" class="btn-pill btn-white" onclick="App.closeContactAdminModal()">FECHAR</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- CUSTOM DIALOG MODAL (Substituto elegante de alert, confirm e prompt) -->
+    <!-- ============================================================= -->
+    <div class="custom-dialog-backdrop" id="modal-custom-dialog">
+      <div class="custom-dialog-card">
+        <div class="custom-dialog-icon" id="custom-dialog-icon"><img src="assets/icons/zap.svg" alt="" class="svg-icon-img xl"></div>
+        <h3 class="custom-dialog-title" id="custom-dialog-title">Aviso</h3>
+        <div class="custom-dialog-message" id="custom-dialog-message">Mensagem</div>
+        <div class="custom-dialog-input-wrap" id="custom-dialog-input-wrap" style="display: none;">
+          <input type="text" id="custom-dialog-input" class="custom-dialog-input" placeholder="">
+        </div>
+        <div class="custom-dialog-buttons" id="custom-dialog-buttons">
+          <button type="button" class="btn-pill btn-white" id="custom-dialog-btn-neutral" style="display: none; height: 40px; padding: 0 16px; font-size: 11px;">VOLTAR</button>
+          <button type="button" class="btn-pill btn-white" id="custom-dialog-btn-cancel" style="display: none; height: 40px; padding: 0 16px; font-size: 11px;">CANCELAR</button>
+          <button type="button" class="btn-pill btn-yellow" id="custom-dialog-btn-confirm" style="height: 40px; padding: 0 20px; font-size: 11px;">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- TERMOS DE USO MODAL -->
+    <!-- ============================================================= -->
+    <div class="modal-backdrop" id="modal-terms-use">
+      <div class="modal-content-card" style="max-width: 460px; max-height: 85vh; display: flex; flex-direction: column; padding: 18px;">
+        <h3 style="font-size: 15px; font-weight: 900; text-align: center; margin-bottom: 12px; color: var(--yellow-primary); letter-spacing: 0.5px;" id="terms-modal-title">
+          TERMOS DE USO E CONDIÇÕES DO SERVIÇO
+        </h3>
+
+        <div id="terms-modal-body" style="flex: 1; overflow-y: auto; padding-right: 6px; font-size: 12px; line-height: 1.55; color: #E2E8F0; background: rgba(0,0,0,0.25); border-radius: 12px; padding: 14px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 12px;">
+          <!-- Populated dynamically based on Passenger or Driver role -->
+        </div>
+
+        <div style="display: flex; gap: 8px; justify-content: center;">
+          <button type="button" class="btn-pill btn-yellow" style="height: 40px; font-weight: 800; font-size: 11px;" onclick="App.acceptTermsFromModal()">
+            LI E CONCORDO COM OS TERMOS
+          </button>
+          <button type="button" class="btn-pill btn-white" style="height: 40px; font-weight: 700; font-size: 11px;" onclick="App.closeTermsModal()">
+            FECHAR
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERSISTENT ACTIVE RIDE FLOATING BANNER -->
+    <div id="active-ride-persistent-banner" class="active-ride-floating-banner" style="display: none;" onclick="App.returnToActiveRide()">
+      <div class="active-ride-banner-content">
+        <span class="active-ride-banner-dot"></span>
+        <span class="active-ride-banner-text" id="active-ride-banner-label">🚗 CORRIDA EM ANDAMENTO — TOQUE PARA VOLTAR</span>
+      </div>
+      <button type="button" class="btn-active-ride-banner-open">ABRIR</button>
+    </div>
+
+  </main>
+
+
+  <script src="lib/leaflet/leaflet.js"></script>
+  <script src="CONFIGURACAO_DO_APP.js?v=1.0.21"></script>
+  <script src="js/config.js?v=1.0.21"></script>
+  <script src="js/map.js?v=1.0.19"></script>
+  <script src="js/realtime.js?v=1.0.22"></script>
+  <script src="js/app.js?v=1.0.22"></script>
+</body>
+</html>
