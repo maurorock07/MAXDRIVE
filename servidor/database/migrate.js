@@ -124,79 +124,85 @@ async function runMigration() {
     const users = readJsonFile('users.json') || [];
     let usersCount = 0;
     for (const u of users) {
-      await client.query(`
-        INSERT INTO users (
-          id, name, email, password, role, is_admin, phone, cpf, cnh, birth_date,
-          security_code, city, rating, rating_count, total_rides, registered_years,
-          status, ban_reason, approved, avatar, vehicle, weekly_payment_status,
-          paid_until, payment_blocked, last_approved_by, last_approved_at, latest_receipt_url,
-          raw_data, created_at, updated_at
-        )
-        VALUES (
-          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
-          $11, $12, $13, $14, $15, $16,
-          $17, $18, $19, $20, $21, $22,
-          $23, $24, $25, $26, $27,
-          $28, $29, NOW()
-        )
-        ON CONFLICT (id) DO UPDATE SET
-          name = EXCLUDED.name,
-          email = EXCLUDED.email,
-          password = EXCLUDED.password,
-          role = EXCLUDED.role,
-          is_admin = EXCLUDED.is_admin,
-          phone = EXCLUDED.phone,
-          cpf = EXCLUDED.cpf,
-          cnh = EXCLUDED.cnh,
-          birth_date = EXCLUDED.birth_date,
-          city = EXCLUDED.city,
-          rating = EXCLUDED.rating,
-          rating_count = EXCLUDED.rating_count,
-          total_rides = EXCLUDED.total_rides,
-          status = EXCLUDED.status,
-          ban_reason = EXCLUDED.ban_reason,
-          approved = EXCLUDED.approved,
-          avatar = EXCLUDED.avatar,
-          vehicle = EXCLUDED.vehicle,
-          weekly_payment_status = EXCLUDED.weekly_payment_status,
-          paid_until = EXCLUDED.paid_until,
-          payment_blocked = EXCLUDED.payment_blocked,
-          last_approved_by = EXCLUDED.last_approved_by,
-          last_approved_at = EXCLUDED.last_approved_at,
-          latest_receipt_url = EXCLUDED.latest_receipt_url,
-          raw_data = EXCLUDED.raw_data,
-          updated_at = NOW()
-      `, [
-        u.id,
-        u.name || 'Usuário',
-        u.email,
-        u.password || '',
-        u.role || 'passenger',
-        Boolean(u.isAdmin || u.role === 'admin'),
-        u.phone || null,
-        u.cpf || null,
-        u.cnh || null,
-        u.birthDate || null,
-        u.securityCode || null,
-        u.city || 'Ituiutaba',
-        Number(u.rating || 5.0),
-        Number(u.ratingCount || 0),
-        Number(u.totalRides || 0),
-        Number(u.registeredYears || 0),
-        u.status || 'active',
-        u.banReason || '',
-        u.approved !== false,
-        u.avatar || null,
-        u.vehicle ? JSON.stringify(u.vehicle) : null,
-        u.weeklyPaymentStatus || 'REGULAR',
-        u.paidUntil ? new Date(u.paidUntil) : null,
-        Boolean(u.paymentBlocked),
-        u.lastApprovedBy || null,
-        u.lastApprovedAt ? new Date(u.lastApprovedAt) : null,
-        u.latestReceiptUrl || null,
-        JSON.stringify(u),
-        u.createdAt ? new Date(u.createdAt) : new Date()
-      ]);
+      if (!u.email) continue;
+      const existing = await client.query('SELECT id FROM users WHERE email = $1 OR id = $2 LIMIT 1', [u.email, u.id]);
+      if (existing.rows.length > 0) {
+        const targetId = existing.rows[0].id;
+        await client.query(`
+          UPDATE users SET
+            name = COALESCE($1, name),
+            role = COALESCE($2, role),
+            is_admin = $3,
+            phone = COALESCE($4, phone),
+            status = COALESCE($5, status),
+            approved = $6,
+            updated_at = NOW()
+          WHERE id = $7
+        `, [
+          u.name,
+          u.role,
+          Boolean(u.isAdmin || u.role === 'admin'),
+          u.phone || null,
+          u.status || 'active',
+          u.approved !== false,
+          targetId
+        ]);
+      } else {
+        await client.query(`
+          INSERT INTO users (
+            id, name, email, password, role, is_admin, phone, cpf, cnh, birth_date,
+            security_code, city, rating, rating_count, total_rides, registered_years,
+            status, ban_reason, approved, avatar, vehicle, weekly_payment_status,
+            paid_until, payment_blocked, last_approved_by, last_approved_at, latest_receipt_url,
+            raw_data, created_at, updated_at
+          )
+          VALUES (
+            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
+            $11, $12, $13, $14, $15, $16,
+            $17, $18, $19, $20, $21, $22,
+            $23, $24, $25, $26, $27,
+            $28, $29, NOW()
+          )
+          ON CONFLICT (id) DO UPDATE SET
+            name = EXCLUDED.name,
+            role = EXCLUDED.role,
+            is_admin = EXCLUDED.is_admin,
+            phone = EXCLUDED.phone,
+            status = EXCLUDED.status,
+            approved = EXCLUDED.approved,
+            updated_at = NOW()
+        `, [
+          u.id,
+          u.name || 'Usuário',
+          u.email,
+          u.password || '',
+          u.role || 'passenger',
+          Boolean(u.isAdmin || u.role === 'admin'),
+          u.phone || null,
+          u.cpf || null,
+          u.cnh || null,
+          u.birthDate || null,
+          u.securityCode || null,
+          u.city || 'Ituiutaba',
+          Number(u.rating || 5.0),
+          Number(u.ratingCount || 0),
+          Number(u.totalRides || 0),
+          Number(u.registeredYears || 0),
+          u.status || 'active',
+          u.banReason || '',
+          u.approved !== false,
+          u.avatar || null,
+          u.vehicle ? JSON.stringify(u.vehicle) : null,
+          u.weeklyPaymentStatus || 'REGULAR',
+          u.paidUntil ? new Date(u.paidUntil) : null,
+          Boolean(u.paymentBlocked),
+          u.lastApprovedBy || null,
+          u.lastApprovedAt ? new Date(u.lastApprovedAt) : null,
+          u.latestReceiptUrl || null,
+          JSON.stringify(u),
+          u.createdAt ? new Date(u.createdAt) : new Date()
+        ]);
+      }
       usersCount++;
     }
     console.log(`✅ ${usersCount} usuários/motoristas migrados com sucesso.`);

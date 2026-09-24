@@ -238,7 +238,7 @@ VALUES (
     'active',
     TRUE
 )
-ON CONFLICT (id) DO UPDATE SET is_admin = TRUE, role = 'admin';
+ON CONFLICT (email) DO UPDATE SET is_admin = TRUE, role = 'admin', status = 'active', approved = TRUE;
 
 INSERT INTO users (id, name, email, password, role, is_admin, status, approved)
 VALUES (
@@ -251,5 +251,6 @@ VALUES (
     'active',
     TRUE
 )
-ON CONFLICT (id) DO UPDATE SET is_admin = TRUE, role = 'admin';
+ON CONFLICT (email) DO UPDATE SET is_admin = TRUE, role = 'admin', status = 'active', approved = TRUE;
+
 
