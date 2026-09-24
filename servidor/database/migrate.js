@@ -475,11 +475,13 @@ async function runMigration() {
 
   } catch (err) {
     console.error('\n❌ Erro durante a migração:', err);
-    process.exit(1);
   } finally {
     client.release();
-    await pool.end();
   }
 }
 
-runMigration();
+module.exports = { runMigration };
+
+if (require.main === module) {
+  runMigration().then(() => pool.end());
+}

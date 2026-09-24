@@ -99,6 +99,17 @@ async function initDB() {
       const res = await client.query('SELECT NOW() as now, current_database() as db_name');
       client.release();
 
+      // Ensure all schema tables and indexes exist automatically
+      try {
+        const schemaPath = path.join(__dirname, 'database', 'schema.sql');
+        if (fs.existsSync(schemaPath)) {
+          const schemaSql = fs.readFileSync(schemaPath, 'utf8');
+          await pool.query(schemaSql);
+        }
+      } catch (sErr) {
+        console.warn('⚠️ [DB Engine] Aviso ao inicializar schema.sql:', sErr.message);
+      }
+
       isPostgresReady = true;
       console.log(`✅ [DB Engine] PostgreSQL CONECTADO com sucesso! Banco: ${res.rows[0].db_name} (${isLocal ? 'Local' : 'Nuvem/SSL'})`);
       return true;
@@ -1193,8 +1204,15 @@ async function hydrateJsonFromPostgres() {
     const countRes = await pool.query('SELECT count(*) FROM users');
     const totalUsers = parseInt(countRes.rows[0].count, 10);
     if (totalUsers === 0) {
-      console.log('ℹ️  [DB Hydrate] O PostgreSQL ainda não possui dados. Execute a migração (APP/database/migrate.js) para importar os dados iniciais.');
-      return false;
+      console.log('ℹ️  [DB Hydrate] O PostgreSQL está vazio na nuvem. Executando carga inicial automática...');
+      try {
+        const migrate = require('./database/migrate.js');
+        if (typeof migrate.runMigration === 'function') {
+          await migrate.runMigration();
+        }
+      } catch (mErr) {
+        console.warn('⚠️ [DB Hydrate] Aviso durante carga inicial automática:', mErr.message);
+      }
     }
 
     const existingJsonUsers = readJson('users.json') || [];
