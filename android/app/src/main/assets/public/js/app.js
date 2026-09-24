@@ -1106,8 +1106,8 @@ const App = (function() {
       return;
     }
 
-    const origin = origStreet + (origBairro ? ` - ${origBairro}` : '');
-    const destination = destStreet + (destBairro ? ` - ${destBairro}` : '');
+    const origin = origStreet + (origBairro ? `, Nº ${origBairro}` : '');
+    const destination = destStreet + (destBairro ? `, Nº ${destBairro}` : '');
     const reference = document.getElementById('pass-ref') ? document.getElementById('pass-ref').value.trim() : '';
 
     const priceEl = document.getElementById(type === 'moto' ? 'card-moto-price' : 'card-car-price');
@@ -2040,9 +2040,9 @@ const App = (function() {
     });
 
     if (origInput) origInput.placeholder = 'Selecione sua cidade primeiro';
-    if (origBairro) origBairro.placeholder = 'Bairro';
+    if (origBairro) origBairro.placeholder = 'Nº';
     if (destInput) destInput.placeholder = 'Selecione sua cidade primeiro';
-    if (destBairro) destBairro.placeholder = 'Bairro';
+    if (destBairro) destBairro.placeholder = 'Nº';
 
     closeAllStreetSuggestions();
     updateEstimatedValues();
@@ -2062,9 +2062,9 @@ const App = (function() {
     });
 
     if (origInput) origInput.placeholder = 'Endereço de partida';
-    if (origBairro) origBairro.placeholder = 'Bairro';
+    if (origBairro) origBairro.placeholder = 'Nº';
     if (destInput) destInput.placeholder = 'Endereço de chegada';
-    if (destBairro) destBairro.placeholder = 'Bairro';
+    if (destBairro) destBairro.placeholder = 'Nº';
   }
 
   function selectCity(newCity) {
@@ -2133,6 +2133,10 @@ const App = (function() {
       const vType = (state.currentUser && state.currentUser.vehicle && state.currentUser.vehicle.type) ? state.currentUser.vehicle.type : 'car';
       window.MaxRealtime.updateContext(state.currentUser ? state.currentUser.id : null, state.userRole, newCity, vType);
     }
+
+    // Reset previous route coordinates so pointers never point to previous city!
+    state.originCoords = null;
+    state.destCoords = null;
 
     // Unlock inputs now that city is chosen
     unlockRouteInputs();
@@ -2263,6 +2267,62 @@ const App = (function() {
       'centro': { lat: -18.6822, lng: -49.5694 },
       'semiramis': { lat: -18.6750, lng: -49.5750 },
       'sao joao': { lat: -18.6900, lng: -49.5620 }
+    },
+    araxa: {
+      'centro': { lat: -19.5931, lng: -46.9406 },
+      'barreiro': { lat: -19.5850, lng: -46.9320 },
+      'urciano lemos': { lat: -19.6010, lng: -46.9520 }
+    },
+    canapolis: {
+      'centro': { lat: -18.7233, lng: -49.5039 },
+      'laranjeiras': { lat: -18.7280, lng: -49.4980 }
+    },
+    centralina: {
+      'centro': { lat: -18.5819, lng: -49.5392 },
+      'sao jose': { lat: -18.5870, lng: -49.5320 }
+    },
+    frutal: {
+      'centro': { lat: -20.0242, lng: -48.9406 },
+      'alto boa vista': { lat: -20.0310, lng: -48.9510 }
+    },
+    itumbiara: {
+      'centro': { lat: -18.4194, lng: -49.2158 },
+      'beira rio': { lat: -18.4120, lng: -49.2080 },
+      'novo horizonte': { lat: -18.4280, lng: -49.2280 }
+    },
+    iturama: {
+      'centro': { lat: -19.7289, lng: -50.1964 },
+      'tiradentes': { lat: -19.7210, lng: -50.1880 }
+    },
+    monte_carmelo: {
+      'centro': { lat: -18.7258, lng: -47.4989 }
+    },
+    patos_de_minas: {
+      'centro': { lat: -18.5789, lng: -46.5181 },
+      'lagoa grande': { lat: -18.5710, lng: -46.5100 }
+    },
+    patrocinio: {
+      'centro': { lat: -18.9439, lng: -46.9928 },
+      'morada nova': { lat: -18.9370, lng: -46.9850 }
+    },
+    prata: {
+      'centro': { lat: -19.3072, lng: -48.9242 },
+      'pratinha': { lat: -19.3000, lng: -48.9180 }
+    },
+    tupaciguara: {
+      'centro': { lat: -18.5922, lng: -48.7050 },
+      'tiradentes': { lat: -18.5850, lng: -48.6980 }
+    },
+    uberaba: {
+      'centro': { lat: -19.7483, lng: -47.9319 },
+      'abadia': { lat: -19.7380, lng: -47.9220 },
+      'shopping': { lat: -19.7590, lng: -47.9450 }
+    },
+    uberlandia: {
+      'centro': { lat: -18.9186, lng: -48.2772 },
+      'santa monica': { lat: -18.9100, lng: -48.2600 },
+      'tibery': { lat: -18.8950, lng: -48.2500 },
+      'rondon pacheco': { lat: -18.9400, lng: -48.2700 }
     }
   };
 
@@ -2623,6 +2683,11 @@ const App = (function() {
 
   function onStreetInput(field, query) {
     if (!checkCityBeforeInput()) return;
+    if (field === 'origin') {
+      state.originCoords = null;
+    } else {
+      state.destCoords = null;
+    }
     if (streetSearchTimeout) clearTimeout(streetSearchTimeout);
     const q = (query || '').trim();
     if (q.length < 2) {

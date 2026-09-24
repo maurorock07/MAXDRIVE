@@ -436,10 +436,23 @@ const KNOWN_BAIRROS_SERVER = {
 };
 
 const CITY_DEFAULT_CENTERS = {
-  ituiutaba: { lat: -18.9688, lng: -49.4642, name: 'Ituiutaba' },
-  araguari: { lat: -18.6475, lng: -48.1872, name: 'Araguari' },
-  santa_vitoria: { lat: -18.8436, lng: -50.1219, name: 'Santa Vitória' },
-  capinopolis: { lat: -18.6822, lng: -49.5694, name: 'Capinópolis' }
+  araguari:      { lat: -18.6475, lng: -48.1872, name: 'Araguari', state: 'MG' },
+  araxa:         { lat: -19.5931, lng: -46.9406, name: 'Araxá', state: 'MG' },
+  canapolis:     { lat: -18.7233, lng: -49.5039, name: 'Canápolis', state: 'MG' },
+  capinopolis:   { lat: -18.6822, lng: -49.5694, name: 'Capinópolis', state: 'MG' },
+  centralina:    { lat: -18.5819, lng: -49.5392, name: 'Centralina', state: 'MG' },
+  frutal:        { lat: -20.0242, lng: -48.9406, name: 'Frutal', state: 'MG' },
+  ituiutaba:     { lat: -18.9688, lng: -49.4642, name: 'Ituiutaba', state: 'MG' },
+  itumbiara:     { lat: -18.4194, lng: -49.2158, name: 'Itumbiara', state: 'GO' },
+  iturama:       { lat: -19.7289, lng: -50.1964, name: 'Iturama', state: 'MG' },
+  monte_carmelo: { lat: -18.7258, lng: -47.4989, name: 'Monte Carmelo', state: 'MG' },
+  patos_de_minas:{ lat: -18.5789, lng: -46.5181, name: 'Patos de Minas', state: 'MG' },
+  patrocinio:    { lat: -18.9439, lng: -46.9928, name: 'Patrocínio', state: 'MG' },
+  prata:         { lat: -19.3072, lng: -48.9242, name: 'Prata', state: 'MG' },
+  santa_vitoria: { lat: -18.8436, lng: -50.1219, name: 'Santa Vitória', state: 'MG' },
+  tupaciguara:   { lat: -18.5922, lng: -48.7050, name: 'Tupaciguara', state: 'MG' },
+  uberaba:       { lat: -19.7483, lng: -47.9319, name: 'Uberaba', state: 'MG' },
+  uberlandia:    { lat: -18.9186, lng: -48.2772, name: 'Uberlândia', state: 'MG' }
 };
 
 // 2. Online Free Geocoding (Photon by Komoot / OpenStreetMap) with caching
@@ -454,7 +467,8 @@ function geocodeWithPhoton(query, cityKey) {
     }
 
     const cInfo = CITY_DEFAULT_CENTERS[cityKey] || CITY_DEFAULT_CENTERS.ituiutaba;
-    const fullQuery = `${cleanQ}, ${cInfo.name}, MG, Brasil`;
+    const stateCode = cInfo.state || (cityKey === 'itumbiara' ? 'GO' : 'MG');
+    const fullQuery = `${cleanQ}, ${cInfo.name}, ${stateCode}, Brasil`;
     const urlStr = `https://photon.komoot.io/api/?q=${encodeURIComponent(fullQuery)}&lat=${cInfo.lat}&lon=${cInfo.lng}&limit=1`;
 
     const req = https.get(urlStr, { headers: { 'User-Agent': 'MaxDriveApp/1.0 (contact@maxdrive.local)' }, timeout: 2500 }, (res) => {
@@ -491,8 +505,8 @@ async function resolveCoordsForCityServer(street, bairro, city) {
   const normB = normalizeTextRoute(bairro);
   const houseNum = extractHouseNumber(street);
 
-  // A. Check in local street_coordinates.json indexed database
-  const cityIndex = streetIndexMap.get(cityKey) || streetIndexMap.get('ituiutaba');
+  // A. Check in local street_coordinates.json indexed database (ONLY for the specific city!)
+  const cityIndex = streetIndexMap.get(cityKey);
   if (cityIndex && street) {
     const cleanKey = normalizeStreetKey(street.replace(/(?:(?:n[ºo°]?|n[uú]mero|num)\s*[:.]?\s*|[,\s]+)\d{1,5}(?:\s*|$)/i, ' '));
     
@@ -518,17 +532,19 @@ async function resolveCoordsForCityServer(street, bairro, city) {
     }
   }
 
-  // B. Online Photon Geocoding (high precision address / POI search)
+  // B. Online Photon Geocoding (high precision address / POI search in the actual target city)
   if (street && street.trim().length >= 3) {
     const onlineGeo = await geocodeWithPhoton(street + (bairro ? ' ' + bairro : ''), cityKey);
     if (onlineGeo) return onlineGeo;
   }
 
   // C. Known Bairros server list
-  const bairros = KNOWN_BAIRROS_SERVER[cityKey] || KNOWN_BAIRROS_SERVER.ituiutaba;
-  for (const [bName, coord] of Object.entries(bairros)) {
-    if ((normB && normB.includes(bName)) || normS.includes(bName)) {
-      return { ...coord };
+  const bairros = KNOWN_BAIRROS_SERVER[cityKey];
+  if (bairros) {
+    for (const [bName, coord] of Object.entries(bairros)) {
+      if ((normB && normB.includes(bName)) || normS.includes(bName)) {
+        return { ...coord };
+      }
     }
   }
 
@@ -544,7 +560,7 @@ async function resolveCoordsForCityServer(street, bairro, city) {
     }
   }
 
-  // E. Fallback to default city center
+  // E. Fallback to default city center of requested city (never fall back to Ituiutaba if another city was chosen)
   return CITY_DEFAULT_CENTERS[cityKey] || CITY_DEFAULT_CENTERS.ituiutaba;
 }
 
@@ -1360,7 +1376,7 @@ const server = http.createServer(async (req, res) => {
 
       // Fallback to in-memory streetIndexMap/JSON if SQL returned empty
       if (items.length === 0) {
-        const cityIndex = streetIndexMap.get(cityParam) || streetIndexMap.get('ituiutaba');
+        const cityIndex = streetIndexMap.get(cityParam);
         const cityStreetsData = readDB('city_streets.json');
         const list = cityStreetsData[cityParam] || [];
 
@@ -1432,7 +1448,7 @@ const server = http.createServer(async (req, res) => {
         return sendJSON(res, 400, { success: false, message: 'Parâmetros lat e lng são obrigatórios' });
       }
 
-      const cityIndex = streetIndexMap.get(cityParam) || streetIndexMap.get('ituiutaba');
+      const cityIndex = streetIndexMap.get(cityParam);
       let closest = null;
       let minDist = Infinity;
       if (cityIndex) {

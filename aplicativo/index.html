@@ -304,8 +304,8 @@
                 <input type="text" id="pass-origin" class="pill-input-route input-city-locked" placeholder="Selecione sua cidade primeiro" autocomplete="off" value="" disabled oninput="App.onStreetInput('origin', this.value); App.updateEstimatedValues();" onfocus="App.onStreetFocus('origin')" onclick="App.checkCityBeforeInput(event)">
                 <div class="street-suggestions-dropdown" id="suggest-origin" style="display: none;"></div>
               </div>
-              <div class="route-pill-wrap route-field-bairro" onclick="App.checkCityBeforeInput(event)">
-                <input type="text" id="pass-origin-bairro" class="pill-input-route input-city-locked" placeholder="Bairro" autocomplete="off" value="" disabled oninput="App.updateEstimatedValues();" onclick="App.checkCityBeforeInput(event)">
+              <div class="route-pill-wrap route-field-bairro" onclick="App.checkCityBeforeInput(event)" title="Número">
+                <input type="text" id="pass-origin-bairro" class="pill-input-route input-city-locked" placeholder="Nº" autocomplete="off" value="" disabled oninput="App.updateEstimatedValues();" onclick="App.checkCityBeforeInput(event)">
               </div>
             </div>
           </div>
@@ -323,8 +323,8 @@
                 <input type="text" id="pass-dest" class="pill-input-route input-city-locked" placeholder="Selecione sua cidade primeiro" autocomplete="off" value="" disabled oninput="App.onStreetInput('dest', this.value); App.updateEstimatedValues();" onfocus="App.onStreetFocus('dest')" onclick="App.checkCityBeforeInput(event)">
                 <div class="street-suggestions-dropdown" id="suggest-dest" style="display: none;"></div>
               </div>
-              <div class="route-pill-wrap route-field-bairro" onclick="App.checkCityBeforeInput(event)">
-                <input type="text" id="pass-dest-bairro" class="pill-input-route input-city-locked" placeholder="Bairro" autocomplete="off" value="" disabled oninput="App.updateEstimatedValues();" onclick="App.checkCityBeforeInput(event)">
+              <div class="route-pill-wrap route-field-bairro" onclick="App.checkCityBeforeInput(event)" title="Número">
+                <input type="text" id="pass-dest-bairro" class="pill-input-route input-city-locked" placeholder="Nº" autocomplete="off" value="" disabled oninput="App.updateEstimatedValues();" onclick="App.checkCityBeforeInput(event)">
               </div>
             </div>
           </div>
